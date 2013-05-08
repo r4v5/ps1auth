@@ -1,4 +1,7 @@
+import os
 # Django settings for auth project.
+
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),os.pardir))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -87,9 +90,10 @@ SECRET_KEY = '=572(5dj4fgluccykivexvs)mu_86k(0wwqc8%pltdlzk*lzzr'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
+    #'django.template.loaders.cached.Loader',
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-     'django.template.loaders.eggs.Loader',
+    'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -114,6 +118,8 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
+    'account',
+    'bootstrap_toolkit',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -155,6 +161,6 @@ LOGGING = {
     }
 }
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends',
-)
+#AUTHENTICATION_BACKENDS = (
+#    'django.contrib.auth.backends',
+#)
