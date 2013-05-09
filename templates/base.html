@@ -18,12 +18,13 @@
   <body>
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
-        <div c;ass="container">
+        <div class="container">
           <a class="brand" href="/"> PS1 Auth</a>
-          <ul class="nav">
-            <li><a href="/">blog</a></li>
-            <li><a href="/">wiki</a></li>
-          </ul>
+          {% if user.is_authenticated %}
+          <a class="btn pull-right" href="/accounts/logout">Sign Out, {{ user.username }}</a>
+          {% else %}
+          <a class="btn btn-primary pull-right" href="/accounts/login">Sign in</a>
+          {% endif %}
         </div>
       </div>
     </div>

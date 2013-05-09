@@ -119,7 +119,7 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-    'account',
+    'accounts',
     'bootstrap_toolkit',
     'django.contrib.auth',
     'django.contrib.contenttypes',
