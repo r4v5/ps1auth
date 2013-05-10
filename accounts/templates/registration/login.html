@@ -7,12 +7,16 @@
 
 
 {% block content %}
-
-<form class="form-horizontal" action="" method="post">
-  {% csrf_token %}
-  {{ form|as_bootstrap }}
-  <p class="form-actions">
-    <input type="submit" value="Submit" class="btn btn-primary">
-  </p>
-</form>
+<div class="row">
+  <div class="span6 offset3">
+    <form class="form-horizontal well" action="" method="post">
+      {% csrf_token %}
+      {{ form|as_bootstrap }}
+      <div class="form-actions">
+        <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
+        <a href={% url 'django.contrib.auth.views.password_reset' %}>Forgot Password</a>
+      </div>
+    </form>
+  </div>
+</div>
 {% endblock %}

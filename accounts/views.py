@@ -30,8 +30,10 @@ def login(request):
     
 def logout(request):
     logout(request)
-
-
-
-
+    
+def activate(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
 
