@@ -163,9 +163,14 @@ LOGGING = {
     }
 }
 
-#AUTHENTICATION_BACKENDS = (
-#    'django.contrib.auth.backends',
-#)
+# HEFTODO split up settings into different modules
+AUTHENTICATION_BACKENDS = (
+    'accounts.backends.PS1Backend',
+)
+
+AD_URL = 'ldaps://auth.pumpingstationone.org:636'
+AD_DOMAIN = 'PS1'
+AD_BASEDN = 'CN=Users,DC=ad,DC=pumpingstationone,DC=org'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
