@@ -1,7 +1,7 @@
 import os
 # Django settings for auth project.
 
-ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),os.pardir))
+SITE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__),os.pardir))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -115,7 +115,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(ROOT_DIR, "templates"),
+    os.path.join(SITE_ROOT, "templates"),
 )
 
 INSTALLED_APPS = (
@@ -163,14 +163,9 @@ LOGGING = {
     }
 }
 
-# HEFTODO split up settings into different modules
-AUTHENTICATION_BACKENDS = (
-    'accounts.backends.PS1Backend',
-)
-
-AD_URL = 'ldaps://auth.pumpingstationone.org:636'
-AD_DOMAIN = 'PS1'
-AD_BASEDN = 'CN=Users,DC=ad,DC=pumpingstationone,DC=org'
-
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+try:
+    from local_settings import *
+except ImportError:
+    pass
 

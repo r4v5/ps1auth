@@ -4,3 +4,4 @@ venv
 db.sqlite3
 *.swp
 sensitive
+local_settings.py
