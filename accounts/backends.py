@@ -1,7 +1,7 @@
 from pprint import pprint
 import ldap
-from django.contrib.auth.models import User
-from django.confconf import settings
+from django.contrib.auth.models import User, AbstractBaseUser
+from django.conf import settings
 
 class PS1Backend(object):
 
@@ -11,6 +11,7 @@ class PS1Backend(object):
 
         user = None
         try:
+            ldap.set_option(ldap.OPT_X_TLS_CACERTFILE, 'cacert.pem')
             l = ldap.initialize(settings.AD_URL)
             l.set_option(ldap.OPT_PROTOCOL_VERSION, 3)
             binddn = "{0}@{1}".format(username, settings.AD_DOMAIN)
@@ -44,7 +45,7 @@ class PS1Backend(object):
             pass
         pprint(user)
         return user
-la
+
     def get_user(self, user_id):
         # HEFTODO: return a PS1User
         return User.objects.get(pk=user_id)
@@ -66,4 +67,27 @@ la
     def has_module_perms(self, user_obj, app_label):
         print("has_module_perms({0} {1})".format(user_obj, app_label))
 
+class PS1User(AbstractBaseUser):
 
+    def __init__(ldap_user):
+        self.ldap_user = ldap_user
+
+    def get_full_name(self):
+        first_name = self.ldap_user['name']
+        last_name = self.ldap_user['sn']
+        return ("{0} {1}").format(firstname, last_name)
+
+    def get_short_name(self):
+        return self.ldap_user['name']
+
+    def set_password(self, raw_password):
+        pass
+
+    def check_password(self, raw_password):
+        pass
+
+    def set_unusable_password(self):
+        pass
+
+    def has_usable_password(self):
+        pass
