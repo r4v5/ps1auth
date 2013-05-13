@@ -1,6 +1,6 @@
 from pprint import pprint
 import ldap
-from django.contrib.auth.models import User, AbstractBaseUser
+from django.contrib.auth.models import User, AbstractBaseUser, BaseUserManager
 from django.conf import settings
 
 class PS1Backend(object):
@@ -11,7 +11,7 @@ class PS1Backend(object):
 
         user = None
         try:
-            ldap.set_option(ldap.OPT_X_TLS_CACERTFILE, 'cacert.pem')
+            #ldap.set_option(ldap.OPT_X_TLS_CACERTFILE, 'cacert.pem')
             l = ldap.initialize(settings.AD_URL)
             l.set_option(ldap.OPT_PROTOCOL_VERSION, 3)
             binddn = "{0}@{1}".format(username, settings.AD_DOMAIN)
@@ -27,10 +27,16 @@ class PS1Backend(object):
             try:
                 user = User.objects.get(username=username)
             except User.DoesNotExist:
-                django_user = User(username=ldap_user['sAMAccountName'])
+                django_user = User(username=username)
                 django_user.first_name = ldap_user['name']
-                django_user.last_name = ldap_user['sn']
-                django_user.email = ldap_user['mail']
+                try:
+                    django_user.last_name = ldap_user['sn']
+                except KeyError:
+                    pass
+                try:
+                    django_user.email = ldap_user['mail']
+                except KeyError:
+                    pass
                 django_user.password = ''
                 django_user.is_staff = True
                 django_user.is_active = True
@@ -80,14 +86,34 @@ class PS1User(AbstractBaseUser):
     def get_short_name(self):
         return self.ldap_user['name']
 
-    def set_password(self, raw_password):
-        pass
-
     def check_password(self, raw_password):
-        pass
+        #http://marcitland.blogspot.com/2011/02/python-active-directory-linux.html
+        l = ldap.initialize(settings.AD_URL)
+        l.set_option(ldap.OPT_PROTOCOL_VERSION, 3)
+        user_dn = self.ldap_user['distinguishedName'][0]
+        l.simple_bind_s(settings.AD_BINDDN, settings.AD_BINDDN_PASSWORD)
+        unicode_pass = unicode( '"' + raw_password + '"', 'iso-8859-1')
+        password_value = unicode_pass.encode('utf-16-le')
+        add_pass = [(ldap.MOD_REPLACE, 'unicodePwd', [password_value])]
+
+        # Replace password
+        try:
+            l.modify_s("", add_pass)
+
+
+
 
     def set_unusable_password(self):
         pass
 
     def has_usable_password(self):
         pass
+
+class PS1UserManager(BaseUserManager):
+
+        
+    def create_user(self, username, email, password):
+        pass
+
+    def create_superuser(self, username, email, password):
+        self.create_user(username, email, password)
