@@ -163,6 +163,8 @@ LOGGING = {
     }
 }
 
+AUTH_USER_MODEL = 'accounts.PS1User'
+
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 try:
     from local_settings import *
