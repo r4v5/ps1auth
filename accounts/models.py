@@ -17,13 +17,14 @@ class PS1User(AbstractBaseUser):
             max_length=255,
             unique=True,
             db_index=True,
+            primary_key=True,
             )
     USERNAME_FIELD = 'sAMAccountName'
 
     def get_full_name(self):
         first_name = self.ldap_user['name']
         last_name = self.ldap_user['sn']
-        return ("{0} {1}").format(firstname, last_name)
+        return ("{0} {1}").format(first_name, last_name)
 
     def get_short_name(self):
         return self.ldap_user['name']
@@ -59,7 +60,8 @@ class PS1User(AbstractBaseUser):
         print("password changed")
         
     def set_unusable_password(self):
-        pass
+        print("Set unusable password")
 
     def has_usable_password(self):
-        pass
+        print("has unusable password")
+        return False

@@ -38,11 +38,11 @@ class PS1Backend(object):
             l.unbind_s()
         except ldap.INVALID_CREDENTIALS:
             print('invalid_credentials')
-            pass
         pprint(user)
         return user
 
     def get_user(self, user_id):
+        print("get user:{0}".format(user_id))
         return PS1User.objects.get(sAMAccountName=user_id)
 
     def get_group_permissions(self, user_obj, obj=None):
