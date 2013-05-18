@@ -13,13 +13,14 @@ class PS1UserManager(BaseUserManager):
 class PS1User(AbstractBaseUser):
 
     objects = PS1UserManager()
-    sAMAccountName = models.EmailField(verbose_name='Username',
-            max_length=255,
+    object_guid = models.CharField(
+            max_length=48,
+            primary_key=True,
             unique=True,
             db_index=True,
-            primary_key=True,
-            )
-    USERNAME_FIELD = 'sAMAccountName'
+            editable=False,
+        )
+    USERNAME_FIELD = 'object_guid'
 
     def get_full_name(self):
         first_name = self.ldap_user['name']

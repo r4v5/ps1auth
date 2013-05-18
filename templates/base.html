@@ -21,7 +21,7 @@
         <div class="container">
           <a class="brand" href="/"> PS1 Auth</a>
           {% if user.is_authenticated %}
-          <a class="btn pull-right" href="/accounts/logout">Sign Out, {{ user.sAMAccountName }}</a>
+          <a class="btn pull-right" href="/accounts/logout">Sign Out, {{ user.ldap_user.name.0 }}</a>
           {% else %}
           <a class="btn btn-primary pull-right" href="/accounts/login">Sign in</a>
           {% endif %}
