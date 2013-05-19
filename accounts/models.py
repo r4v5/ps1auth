@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-# Create your models here
+import backends
+import ldap
+from django.conf import settings
+from pprint import pprint
 
 class PS1UserManager(BaseUserManager):
         
@@ -35,9 +38,10 @@ class PS1User(AbstractBaseUser):
         ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_ALLOW)
         l = ldap.initialize(settings.AD_URL)
         l.set_option(ldap.OPT_PROTOCOL_VERSION, 3)
-        binddn = "{0}@{1}".format(self.username,  settings.AD_DOMAIN)
+        username = self.ldap_user['sAMAccountName'][0]
+        binddn = "{0}@{1}".format(username,  settings.AD_DOMAIN)
         try:
-            l.simple_bind_s(binddn, password)
+            l.simple_bind_s(binddn, raw_password)
             return True
         except ldap.INVALID_CREDENTIALS:
             return False
@@ -47,17 +51,13 @@ class PS1User(AbstractBaseUser):
         That means we need the current password and the new password.
         Requiring those means that the change password form needs some
         rework."""
-        ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT,ldap.OPT_X_TLS_ALLOW)
-        l = ldap.initialize(settings.AD_URL)
-        l.set_option(ldap.OPT_PROTOCOL_VERSION, 3)
-        binddn = "{0}@{1}".format(settings.AD_BINDDN, settings.AD_DOMAIN)
-        l.simple_bind_s(binddn, settings.AD_BINDDN_PASSWORD)
-        unicode_pass = unicode('"' + password + '"', 'iso-8859-1')
-        password_value = unicode_pass.centerencode('utf-16-le')
+        l = backends.get_ldap_connection()
+        #unicode_pass = unicode('"' + raw_password + '"', 'iso-8859-1')
+        unicode_pass = '"' + raw_password + '"'
+        password_value = unicode_pass.encode('utf-16-le')
         add_pass = [(ldap.MOD_REPLACE, 'unicodePwd', [password_value])]
-       
         user_dn = self.ldap_user['distinguishedName'][0]
-        ldap_connection.modify_s(user_dn, add_pass)
+        l.modify_s(user_dn, add_pass)
         print("password changed")
         
     def set_unusable_password(self):

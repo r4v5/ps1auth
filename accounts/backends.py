@@ -3,8 +3,7 @@ import ldap
 from django.contrib.auth.models import User, BaseUserManager
 from django.conf import settings
 import base64
-
-from models import PS1User
+import models
 
 
 def get_ldap_connection( binddn=settings.AD_BINDDN, password=settings.AD_BINDDN_PASSWORD):
@@ -39,27 +38,25 @@ class PS1Backend(object):
             ldap_user = l.search_ext_s(settings.AD_BASEDN ,ldap.SCOPE_ONELEVEL, filterstr=filter_string)[0][1]
             search_guid = ''.join('\\%02x' % ord(x) for x in ldap_user['objectGUID'][0])
             try:
-                user = PS1User.objects.get(object_guid=search_guid)
+                user = models.PS1User.objects.get(object_guid=search_guid)
                 user.ldap_user = ldap_user
-            except PS1User.DoesNotExist:
-                django_user = PS1User(object_guid=search_guid)
+            except models.PS1User.DoesNotExist:
+                django_user = models.PS1User(object_guid=search_guid)
                 django_user.ldap_user = ldap_user
                 django_user.save()
                 user = django_user
             l.unbind_s()
         except ldap.INVALID_CREDENTIALS:
-            print('invalid_credentials')
-        pprint(user)
+            pass
         return user
 
     def get_user(self, user_id):
-        user = PS1User.objects.get(object_guid=user_id)
+        user = models.PS1User.objects.get(object_guid=user_id)
         l = get_ldap_connection()
         filter_string = r'(objectGUID={0})'.format(user_id)
         result = l.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
         user.ldap_user = result[0][1]
         return user
-        
 
     def get_group_permissions(self, user_obj, obj=None):
         pprint(user_ob)
