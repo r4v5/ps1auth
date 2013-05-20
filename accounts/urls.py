@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+import accounts.views
 
 urlpatterns = patterns('',
     url(r'profile/$', 'accounts.views.hello_world', name="profile"),
@@ -10,4 +11,5 @@ urlpatterns = patterns('',
     url(r'password_reset_done/$', 'django.contrib.auth.views.password_reset_done', {}),
     url(r'password_reset_confirm/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)$', 'django.contrib.auth.views.password_reset_confirm', {}),
     url(r'password_reset_complete/$', 'django.contrib.auth.views.password_reset_complete', {}),
+    url(r'activate_account/$', 'accounts.views.account_activate', {}),
 )

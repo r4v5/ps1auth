@@ -31,9 +31,14 @@ def login(request):
 def logout(request):
     logout(request)
     
-def activate(request):
+def account_activate(request):
+    context = RequestConext(request)
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = froms.account_activate_form(request.POST)
         if form.is_valid():
             user = form.save()
+    else:
+        form = account_activate_form()
+        context['form'] = form
+        return 
 
