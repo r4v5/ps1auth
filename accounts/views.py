@@ -2,6 +2,7 @@ from django.template.loader import get_template
 from django.template import RequestContext
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
+import forms
 
 
 def hello_world(request):
@@ -31,14 +32,16 @@ def login(request):
 def logout(request):
     logout(request)
     
-def account_activate(request):
-    context = RequestConext(request)
+def activate_account(request):
+    context = RequestContext(request)
     if request.method == 'POST':
-        form = froms.account_activate_form(request.POST)
+        form = forms.activate_account_form(request.POST)
         if form.is_valid():
             user = form.save()
     else:
-        form = account_activate_form()
+        form = forms.activate_account_form()
         context['form'] = form
-        return 
+        t = get_template('activate_account.html')
+        return HttpResponse(t.render(context))
+
 
