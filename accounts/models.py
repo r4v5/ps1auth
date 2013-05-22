@@ -17,6 +17,7 @@ class PS1User(AbstractBaseUser):
 
     objects = PS1UserManager()
     object_guid = models.CharField(
+            verbose_name="Username",
             max_length=48,
             primary_key=True,
             unique=True,

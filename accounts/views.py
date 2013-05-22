@@ -43,5 +43,20 @@ def activate_account(request):
         context['form'] = form
         t = get_template('activate_account.html')
         return HttpResponse(t.render(context))
+    # HEFTODO return a "activation link sent"
+    context['form'] = form
+    t = get_template('activate_account.html')
+    return HttpResponse(t.render(context))
 
-
+def account_activate_confirm(request, token):
+    context = RequestContext(request)
+    if request.method == 'POST':
+        form = forms.account_register_form(request.POST)
+        if form.is_valid():
+            user = form.save()
+    else:
+        form = forms.account_register_form()
+        context['form'] = form
+        t = get_template('account_register.html')
+    t = get_template('account_register.html')
+    return HttpResponse(t.render(context))

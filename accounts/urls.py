@@ -12,4 +12,5 @@ urlpatterns = patterns('',
     url(r'password_reset_confirm/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)$', 'django.contrib.auth.views.password_reset_confirm', {}),
     url(r'password_reset_complete/$', 'django.contrib.auth.views.password_reset_complete', {}),
     url(r'activate/$', 'accounts.views.activate_account', {}),
+    url(r'activate/confirm/(?P<token>.*)$', 'accounts.views.account_activate_confirm', {}),
 )
