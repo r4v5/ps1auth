@@ -14,6 +14,8 @@ class activate_account_form(forms.Form):
         c = {
                 'email': email_address,
                 'token': str(uuid.uuid4()),
+                'protocol': 'http', # HEFTODO detemine if dev or not
+                'domain': 'localhost:8000' # HEFTODO determine if dev or not
         }
         subject = render_to_string("activation_email_subject.txt", c)
         subject = ''.join(subject.splitlines())

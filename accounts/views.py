@@ -2,7 +2,10 @@ from django.template.loader import get_template
 from django.template import RequestContext
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
+from django.shortcuts import render
 import forms
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 
 
 def hello_world(request):
@@ -33,20 +36,16 @@ def logout(request):
     logout(request)
     
 def activate_account(request):
-    context = RequestContext(request)
     if request.method == 'POST':
         form = forms.activate_account_form(request.POST)
         if form.is_valid():
             user = form.save()
+            return HttpResponseRedirect(reverse('accounts.views.hello_world'))
     else:
         form = forms.activate_account_form()
-        context['form'] = form
-        t = get_template('activate_account.html')
-        return HttpResponse(t.render(context))
-    # HEFTODO return a "activation link sent"
-    context['form'] = form
-    t = get_template('activate_account.html')
-    return HttpResponse(t.render(context))
+    return render(request, 'activate_account.html', {
+        'form': form,
+        })
 
 def account_activate_confirm(request, token):
     context = RequestContext(request)
@@ -60,3 +59,5 @@ def account_activate_confirm(request, token):
         t = get_template('account_register.html')
     t = get_template('account_register.html')
     return HttpResponse(t.render(context))
+
+
