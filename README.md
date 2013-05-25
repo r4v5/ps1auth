@@ -1,26 +1,23 @@
 PS1 Member Access System
 ========================
 
-authentication handler for Pumping Station one
-
-
 Getting Started
 ===============
 
-on ubuntu
+On Ubuntu
 ---------
 
-   sudo apt-get install libldap-dev
+    sudo apt-get install libldap-dev
 
-On all Platforms
+On All Platforms
 ----------------
 
     virtualenv venv
     source venv/bin/activate
     pip install -r requirements.txt
 
-conf/local_settings.py
-----------------------
+In "conf/local_settings.py"
+--------------------------
 
     AUTHENTICATION_BACKENDS = (
             'accounts.backends.PS1Backend',
@@ -31,7 +28,6 @@ conf/local_settings.py
     AD_BASEDN = 'CN=Users,DC=host'
     AD_BINDDN = 'admin@DOMAIN'
     AD_BINDDN_PASSWORD = 'admin_password'
-
 
 running
 -------
