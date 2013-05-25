@@ -32,7 +32,7 @@ In "conf/local_settings.py"
 Create Tables
 -------------
 
-    ./manage.py syncdb
+    ./manage.py syncdb --noinput
     
 Running
 -------
