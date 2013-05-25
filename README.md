@@ -12,18 +12,15 @@ on ubuntu
 
    sudo apt-get install libldap-dev
 
-----------------
 On all Platforms
+----------------
 
     virtualenv venv
     source venv/bin/activate
     pip install -r requirements.txt
-    ./manage.py syncdb
-    ./manage.py runserver
-    
-In a browser navigate to http://localhost:8000
 
-You can perform further custimizations in conf/local_settings.py
+conf/local_settings.py
+----------------------
 
     AUTHENTICATION_BACKENDS = (
             'accounts.backends.PS1Backend',
@@ -35,3 +32,9 @@ You can perform further custimizations in conf/local_settings.py
     AD_BINDDN = 'admin@DOMAIN'
     AD_BINDDN_PASSWORD = 'admin_password'
 
+
+running
+-------
+
+    ./manage.py syncdb
+    ./manage.py runserver
