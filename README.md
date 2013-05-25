@@ -7,6 +7,14 @@ authentication handler for Pumping Station one
 Getting Started
 ===============
 
+on ubuntu
+---------
+
+   sudo apt-get install libldap-dev
+
+----------------
+On all Platforms
+
     virtualenv venv
     source venv/bin/activate
     pip install -r requirements.txt
