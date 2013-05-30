@@ -10,4 +10,5 @@ class Contact(models.Model):
     last_name = models.CharField(max_length=30)
     email = models.CharField(max_length=30)
     membership_status = models.CharField(max_length=30, choices=MEMBERSHIP_STATUS_CHOICES)
+    modified_time = models.DateField()
 # Create your models here.
