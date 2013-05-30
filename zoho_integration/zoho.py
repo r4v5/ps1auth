@@ -5,6 +5,7 @@ import json
 from django.core.cache import cache
 from zoho_integration.models import Contact
 from datetime import datetime
+import pytz
 
 class ZohoClient(object):
     """ work in progress, Builds up a list of zoho users """
@@ -13,16 +14,19 @@ class ZohoClient(object):
     def get_contacts(self, most_recent='1970-01-01%2012:00:00'):
         print("fetching records")
         url = ("https://crm.zoho.com/crm/private/json/Contacts/getRecords?" 
-                "authtoken={0}&scope=crmapi&lastModifiedTime={1}&"
+                "authtoken={0}&scope=crmapi&lastModifiedTime={1}&fromIndex=1&toIndex=200&"
                 "sortOrderString=asc&sortColumnString=Modified%20Time".format(self.api_key, most_recent))
-        json_contacts = cache.get(url)
-        if not json_contacts:
+        print url
+        response = cache.get(url)
+        if not response:
             print("downloading new info")
             result = urllib2.urlopen(url)
             raw_output = result.read()
-            json_contacts = json.loads(raw_output)
-            cache.set(url, json_contacts)
-        entries = json_contacts[u'response'][u'result'][u'Contacts'][u'row']
+            response = json.loads(raw_output)
+            if not u'result' in response[u'response']:
+                return []
+            cache.set(url, response)
+        entries = response[u'response'][u'result'][u'Contacts'][u'row']
         sane_contacts = []
         for entry in entries:
             e = entry[u'FL']
@@ -33,23 +37,32 @@ class ZohoClient(object):
 if __name__ == '__main__':
     from pprint import pprint
     try:
-        latest = Contact.objects.latest('modified_time')
+        latest_contact = Contact.objects.latest('modified_time')
+        latest = latest_contact.modified_time.astimezone(pytz.utc).strftime('%Y-%m-%d%%20%H:%M:%S')
     except Contact.DoesNotExist:
         latest = "1970-01-01%2012:00:00"
-    pprint(latest)
     zc = ZohoClient()
     contacts = zc.get_contacts(latest)
     for contact in contacts:
-        if u'Membership Status' in contact:
-            pprint(contact)
-            c = Contact()
-            c.contact_id = contact[u'CONTACTID']
-            c.first_name = contact[u'First Name']
-            c.last_name = contact['Last Name']
+        try:
+            c = Contact.objects.get(contact_id=contact[u'CONTACTID'])
+        except Contact.DoesNotExist:
+            c = Contact(contact_id=contact[u'CONTACTID'])
+        c.first_name = contact[u'First Name']
+        c.last_name = contact['Last Name']
+        try:
             c.email = contact[u'Email']
+        except KeyError:
+            pprint(contact)
+        try:
             c.membership_status = contact[u'Membership Status']
-            c.modified_time = datetime.strptime(contact[u'Modified Time'], '%Y-%m-%d %H:%M:%S')
-            c.save()
+        except KeyError:
+            pprint(contact)
+        modified_time = datetime.strptime(contact[u'Modified Time'], '%Y-%m-%d %H:%M:%S')
+        modified_time = modified_time.replace(tzinfo=pytz.utc)
+        pprint(modified_time)
+        c.modified_time = modified_time
+        c.save()
 
     #pprint(zc.get_contacts())
 
