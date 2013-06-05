@@ -2,6 +2,10 @@ from django import forms
 from django.core.mail import send_mail
 import uuid
 from django.template.loader import render_to_string
+import ldap
+import ldap.modlist as modlist
+from django.conf import settings
+from accounts import backends
 
 
 class activate_account_form(forms.Form):
@@ -32,4 +36,48 @@ class account_register_form(forms.Form):
     password2 = forms.CharField(widget = forms.PasswordInput)
 
     def save(self):
-        pass
+        user_dn = "CN={0},{1}".format(self.cleaned_data['preferred_username'], settings.AD_BASEDN)
+        user_attrs = {}
+        user_attrs['objectClass'] = ['top', 'person', 'organizationalPerson', 'user']
+        user_attrs['cn'] = str(self.cleaned_data['preferred_username'])
+        user_attrs['userPrincipalName'] = str(self.cleaned_data['preferred_username'] + '@' + settings.AD_DOMAIN)
+        user_attrs['sAMAccountName'] = str(self.cleaned_data['preferred_username'])
+        user_attrs['givenName'] = str(self.cleaned_data['first_name'])
+        user_attrs['sn'] = str(self.cleaned_data['last_name'])
+        user_attrs['userAccountControl'] = '514'
+        user_ldif = modlist.addModlist(user_attrs)
+
+        # Prep the password
+        unicode_pass = '\"' + self.cleaned_data['password1'] + '\"'
+        password_value = unicode_pass.encode('utf-16-le')
+        add_pass = [(ldap.MOD_REPLACE, 'unicodePwd', [password_value])]
+
+        # prep account enable
+        mod_acct = [(ldap.MOD_REPLACE, 'userAccountControl', '512')]
+
+        ldap_connection = backends.get_ldap_connection()
+
+        # Add user
+        try:
+            ldap_connection.add_s(user_dn, user_ldif)
+        except ldap.LDAPError, error_message:
+            print(error_message)
+            return False
+
+        # Add the password
+        try:
+            ldap_connection.modify_s(user_dn, add_pass)
+        except ldap.LDAPError, error_messages:
+            print("bad things")
+            return False
+
+        try:
+            ldap_connection.modify_s(user_dn, mod_acct)
+        except ldap.LDAPError, error_messages:
+            print("could not enable user")
+            return False
+
+        ldap_connection.unbind_s()
+
+        return True
+
