@@ -6,10 +6,18 @@ import ldap
 import ldap.modlist as modlist
 from django.conf import settings
 from accounts import backends
-
+from django.core.exceptions import ValidationError
+from zoho_integration.models import Contact
 
 class activate_account_form(forms.Form):
     ps1_email = forms.EmailField(label="PS1 Email")
+
+    def clean_ps1_email(self):
+        try:
+            contact = Contact.objects.get(email=self.cleaned_data['ps1_email'])
+        except Contact.DoesNotExist:
+            raise ValidationError("Unknown Email Address")
+        return self.cleaned_data['ps1_email']
 
     def save(self):
         email_address = self.cleaned_data['ps1_email']
