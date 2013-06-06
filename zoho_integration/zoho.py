@@ -26,14 +26,21 @@ class ZohoClient(object):
             cache.set(url, response)
         entries = response[u'response'][u'result'][u'Contacts'][u'row']
         sane_contacts = []
-        # HEFTODO I have a sneaking suspician that zoho returns a list iff there is more than one entry
-        for entry in entries:
-            e = entry[u'FL']
+
+        # zoho returns a list if there is more than one result, but just the
+        # one result if there is only one result
+        if isinstance(entries, list):
+            for entry in entries:
+                e = entry[u'FL']
+                sane_contact = dict(map(lambda x: (x['val'], x['content']), e))
+                sane_contacts.append(sane_contact)
+        else:
+            e = entries[u'FL']
             sane_contact = dict(map(lambda x: (x['val'], x['content']), e))
             sane_contacts.append(sane_contact)
         return sane_contacts
     
-    def update_database():
+    def update_database(self):
         try:
             latest_contact = Contact.objects.latest('modified_time')
             latest = latest_contact.modified_time.astimezone(pytz.utc).strftime('%Y-%m-%d%%20%H:%M:%S')
