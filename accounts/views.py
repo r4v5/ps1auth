@@ -40,12 +40,15 @@ def activate_account(request):
         form = forms.activate_account_form(request.POST)
         if form.is_valid():
             user = form.save()
-            return HttpResponseRedirect(reverse('accounts.views.hello_world'))
+            return HttpResponseRedirect(reverse('accounts.views.activation_email_sent'))
     else:
         form = forms.activate_account_form()
     return render(request, 'activate_account.html', {
         'form': form,
         })
+
+def activation_email_sent(request):
+    return render(request, 'activate_account_email_sent.html')
 
 def account_activate_confirm(request, token):
     context = RequestContext(request)
