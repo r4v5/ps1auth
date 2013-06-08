@@ -122,6 +122,7 @@ INSTALLED_APPS = (
     'accounts',
     'zoho_integration',
     'bootstrap_toolkit',
+    'django.contrib.webdesign',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

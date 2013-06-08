@@ -8,6 +8,7 @@ from django.conf import settings
 from accounts import backends
 from django.core.exceptions import ValidationError
 from zoho_integration.models import Contact
+from accounts.models import Token
 
 class activate_account_form(forms.Form):
     ps1_email = forms.EmailField(label="PS1 Email")
@@ -21,11 +22,13 @@ class activate_account_form(forms.Form):
 
     def save(self):
         email_address = self.cleaned_data['ps1_email']
-        # HEFTODO check email against zoho
         # HEFTODO check email against AD
+        zoho_contact = Contact.objects.get(email=email_address)
+        token = Token(token=uuid.uuid4(), zoho_contact=zoho_contact)
+        token.save()
         c = {
                 'email': email_address,
-                'token': str(uuid.uuid4()),
+                'token': token.token,
                 'protocol': 'http', # HEFTODO detemine if dev or not
                 'domain': 'localhost:8000' # HEFTODO determine if dev or not
         }

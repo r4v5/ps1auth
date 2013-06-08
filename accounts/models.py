@@ -4,6 +4,7 @@ import backends
 import ldap
 from django.conf import settings
 from pprint import pprint
+import zoho_integration.models
 
 class PS1UserManager(BaseUserManager):
         
@@ -66,3 +67,7 @@ class PS1User(AbstractBaseUser):
     def has_usable_password(self):
         print("has unusable password")
         return False
+
+class Token(models.Model):
+    token = models.CharField(max_length=36)
+    zoho_contact = models.ForeignKey(zoho_integration.models.Contact)
