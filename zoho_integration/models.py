@@ -1,4 +1,5 @@
 from django.db import models
+import accounts.models
 
 class Contact(models.Model):
     MEMBERSHIP_STATUS_CHOICES = (
@@ -11,4 +12,8 @@ class Contact(models.Model):
     email = models.CharField(max_length=300)
     membership_status = models.CharField(max_length=300, choices=MEMBERSHIP_STATUS_CHOICES)
     modified_time = models.DateTimeField()
-# Create your models here.
+    user = accounts.models.PS1User
+
+class Token(models.Model):
+    token = models.CharField(max_length=36)
+    zoho_contact = models.ForeignKey(Contact)

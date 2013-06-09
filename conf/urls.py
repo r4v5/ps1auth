@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'auth.views.home', name='home'),
     url(r'^$', 'accounts.views.hello_world', name='hello_world'),
     url(r'^accounts/', include('accounts.urls')),
+    url(r'^zoho/', include('zoho_integration.urls')),
     
     # url(r'^auth/', include('auth.foo.urls')),
 
