@@ -32,7 +32,8 @@ In "conf/local_settings.py"
 Create Tables
 -------------
 
-    ./manage.py syncdb --noinput
+    ./manage.py syncdb
+    ./manage.py migrate
     
 Running
 -------
