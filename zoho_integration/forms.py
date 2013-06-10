@@ -7,6 +7,8 @@ from django.http import HttpResponseRedirect
 import accounts.backends
 from django.conf import settings
 import ldap
+from pprint import pprint
+from accounts.models import PS1User
 
 class activate_account_form(forms.Form):
     ps1_email = forms.EmailField(label="PS1 Email")
@@ -16,6 +18,10 @@ class activate_account_form(forms.Form):
             contact = Contact.objects.get(email=self.cleaned_data['ps1_email'])
         except Contact.DoesNotExist:
             raise forms.ValidationError("Unknown Email Address")
+        if contact.user is not None:
+            #HEFTODO an account recovery link would be nice.
+            raise forms.ValidationError("Your Account has already been activated")
+
         return self.cleaned_data['ps1_email']
 
     def save(self):
@@ -42,6 +48,7 @@ class account_register_form(forms.Form):
     preferred_email = forms.EmailField()
     password1 = forms.CharField(widget = forms.PasswordInput)
     password2 = forms.CharField(widget = forms.PasswordInput)
+    token = forms.CharField(widget = forms.HiddenInput())
 
     def clean_preferred_username(self):
         username = self.cleaned_data['preferred_username']
@@ -49,11 +56,17 @@ class account_register_form(forms.Form):
         filter_string = '(sAMAccountName={0})'.format(username)
         result = l.search_s(settings.AD_BASEDN, ldap.SCOPE_SUBTREE, filterstr=filter_string)
         if result:
-            error_string = "Account name {0} already in use.".format(username)
+            error_string = "A member is already using '{0}' as his or her username.".format(username)
             raise forms.ValidationError(error_string)
         return username
 
     def save(self):
+        """ Create the user
+        A lot of this functionality needs to be moved to PS1UserManager, and
+        some of the duplicate functionality needs with the accounts module
+        needs to be refactored.
+        """
+        token = Token.objects.get(token=self.cleaned_data['token'])
         user_dn = "CN={0},{1}".format(self.cleaned_data['preferred_username'], settings.AD_BASEDN)
         user_attrs = {}
         user_attrs['objectClass'] = ['top', 'person', 'organizationalPerson', 'user']
@@ -63,7 +76,7 @@ class account_register_form(forms.Form):
         user_attrs['givenName'] = str(self.cleaned_data['first_name'])
         user_attrs['sn'] = str(self.cleaned_data['last_name'])
         user_attrs['userAccountControl'] = '514'
-        user_ldif = modlist.addModlist(user_attrs)
+        user_ldif = ldap.modlist.addModlist(user_attrs)
 
         # Prep the password
         unicode_pass = '\"' + self.cleaned_data['password1'] + '\"'
@@ -71,29 +84,28 @@ class account_register_form(forms.Form):
         add_pass = [(ldap.MOD_REPLACE, 'unicodePwd', [password_value])]
 
         # prep account enable
-        mod_acct = [(ldap.MOD_REPLACE, 'userAccountControl', '512')]
+        enable_account = [(ldap.MOD_REPLACE, 'userAccountControl', '512')]
 
         ldap_connection = accounts.backends.get_ldap_connection()
 
-        # Add user
- #       try:
-        ldap_connection.add_s(user_dn, user_ldif)
-#        except ldap.LDAPError, error_message:
-#            print(error_message)
-#            return False
+        # add the user to AD
+        result = ldap_connection.add_s(user_dn, user_ldif)
 
-        # Add the password
-#        try:
+        #now get the user guid
+        filter_string = r'sAMAccountName={0}'.format(str(self.cleaned_data['preferred_username']))
+        result = ldap_connection.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
+        pprint(result)
+        ldap_user = result[0][1]
+        guid = ''.join('\\%02x' % ord(x) for x in ldap_user['objectGUID'][0])
+        user = PS1User(object_guid=guid)
+        user.save()
+        token.zoho_contact.user = user
+        token.zoho_contact.save()
+        token.delete()
+
+
         ldap_connection.modify_s(user_dn, add_pass)
-#        except ldap.LDAPError, error_messages:
-#            print("bad things")
-#            return False
-
-#        try:
-        ldap_connection.modify_s(user_dn, mod_acct)
-#        except ldap.LDAPError, error_messages:
-#            print("could not enable user")
-#            return False
+        ldap_connection.modify_s(user_dn, enable_account)
 
         ldap_connection.unbind_s()
 

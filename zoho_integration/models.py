@@ -12,7 +12,7 @@ class Contact(models.Model):
     email = models.CharField(max_length=300)
     membership_status = models.CharField(max_length=300, choices=MEMBERSHIP_STATUS_CHOICES)
     modified_time = models.DateTimeField()
-    user = accounts.models.PS1User
+    user = models.OneToOneField(accounts.models.PS1User, null=True)
 
 class Token(models.Model):
     token = models.CharField(max_length=36)

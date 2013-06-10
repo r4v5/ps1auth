@@ -5,6 +5,8 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from models import Token
+from django.contrib import messages
+
 
 
 def fetch_contacts(request):
@@ -36,12 +38,14 @@ def account_activate_confirm(request, token):
         form = forms.account_register_form(request.POST)
         if form.is_valid():
             user = form.save()
+            return HttpResponseRedirect(reverse('accounts.views.hello_world'))
     else:
         data = {}
         #data['preferred_username']
         data['first_name'] = zoho_contact.first_name
         data['last_name'] = zoho_contact.last_name
         data['preferred_email'] = zoho_contact.email
+        data['token'] = token.token
         form = forms.account_register_form(initial=data)
     return render(request, 'account_register.html', {
         'form': form,
