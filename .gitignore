@@ -7,3 +7,4 @@ sensitive
 local_settings.py
 *.un~
 *.swo
+cache

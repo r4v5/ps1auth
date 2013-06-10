@@ -17,6 +17,7 @@ class PS1User(AbstractBaseUser):
 
     objects = PS1UserManager()
     object_guid = models.CharField(
+            verbose_name="Username",
             max_length=48,
             primary_key=True,
             unique=True,
@@ -26,12 +27,12 @@ class PS1User(AbstractBaseUser):
     USERNAME_FIELD = 'object_guid'
 
     def get_full_name(self):
-        first_name = self.ldap_user['name']
-        last_name = self.ldap_user['sn']
+        first_name = self.ldap_user['name'][0]
+        last_name = self.ldap_user['sn'][0]
         return ("{0} {1}").format(first_name, last_name)
 
     def get_short_name(self):
-        return self.ldap_user['name']
+        return self.ldap_user['name'][0]
 
     def check_password(self, raw_password):
         # HEFTODO strict check
@@ -58,7 +59,6 @@ class PS1User(AbstractBaseUser):
         add_pass = [(ldap.MOD_REPLACE, 'unicodePwd', [password_value])]
         user_dn = self.ldap_user['distinguishedName'][0]
         l.modify_s(user_dn, add_pass)
-        print("password changed")
         
     def set_unusable_password(self):
         print("Set unusable password")
@@ -66,3 +66,4 @@ class PS1User(AbstractBaseUser):
     def has_usable_password(self):
         print("has unusable password")
         return False
+

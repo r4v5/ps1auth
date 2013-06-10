@@ -120,8 +120,9 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
     'accounts',
-    'zoho',
+    'zoho_integration',
     'bootstrap_toolkit',
+    'django.contrib.webdesign',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

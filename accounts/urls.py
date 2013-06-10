@@ -1,4 +1,6 @@
 from django.conf.urls import patterns, include, url
+import accounts.views
+
 
 urlpatterns = patterns('',
     url(r'profile/$', 'accounts.views.hello_world', name="profile"),
