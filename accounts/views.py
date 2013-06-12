@@ -2,7 +2,11 @@ from django.template.loader import get_template
 from django.template import RequestContext
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
-
+from django.shortcuts import render
+import forms
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.contrib import messages
 
 def hello_world(request):
     t = get_template("hello_world.html")
@@ -30,10 +34,3 @@ def login(request):
     
 def logout(request):
     logout(request)
-    
-def activate(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-

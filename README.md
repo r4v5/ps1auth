@@ -29,8 +29,13 @@ In "conf/local_settings.py"
     AD_BINDDN = 'admin@DOMAIN'
     AD_BINDDN_PASSWORD = 'admin_password'
 
-running
--------
+Create Tables
+-------------
 
     ./manage.py syncdb
+    ./manage.py migrate
+    
+Running
+-------
+
     ./manage.py runserver
