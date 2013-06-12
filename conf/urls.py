@@ -1,4 +1,6 @@
 from django.conf.urls import patterns, include, url
+from django.core.urlresolvers import reverse
+from django.views.generic import RedirectView
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -7,7 +9,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'auth.views.home', name='home'),
-    url(r'^$', 'accounts.views.hello_world', name='hello_world'),
+    url(r'^$', RedirectView.as_view(permanent=False, url='/accounts/access')),
     url(r'^accounts/', include('accounts.urls')),
     url(r'^zoho/', include('zoho_integration.urls')),
     
