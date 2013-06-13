@@ -8,7 +8,6 @@ from models import Token
 from django.contrib import messages
 
 
-
 def fetch_contacts(request):
     pass
 
