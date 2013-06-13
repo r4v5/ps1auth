@@ -122,6 +122,7 @@ INSTALLED_APPS = (
     'accounts',
     'zoho_integration',
     'bootstrap_toolkit',
+    'gunicorn',
     'django.contrib.webdesign',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -164,6 +165,10 @@ LOGGING = {
         },
     }
 }
+
+AUTHENTICATION_BACKENDS = (
+    'accounts.backends.PS1Backend',
+)
 
 AUTH_USER_MODEL = 'accounts.PS1User'
 
