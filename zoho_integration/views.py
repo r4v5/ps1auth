@@ -37,7 +37,7 @@ def account_activate_confirm(request, token):
         form = forms.account_register_form(request.POST)
         if form.is_valid():
             user = form.save()
-            return HttpResponseRedirect(reverse('accounts.views.hello_world'))
+            return HttpResponseRedirect(reverse('accounts.views.access_page'))
     else:
         data = {}
         #data['preferred_username']
