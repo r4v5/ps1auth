@@ -76,9 +76,3 @@ class ZohoClient(object):
                 pprint(contact)
             c.save()
 
-
-if __name__ == '__main__':
-    from pprint import pprint
-    zc = ZohoClient()
-    zc.update_database()
-
