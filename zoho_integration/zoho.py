@@ -68,11 +68,11 @@ class ZohoClient(object):
                 #c.email = contact[u'Email']
                 ContactChange.log(c, 'email', contact[u'Email'])
             except KeyError:
-                pprint(contact)
+                print(contact)
             try:
                 #c.membership_status = contact[u'Membership Status']
                 ContactChange.log(c, 'membership_status', contact[u'Membership Status'])
             except KeyError:
-                pprint(contact)
+                print(contact)
             c.save()
 
