@@ -171,8 +171,11 @@ AUTH_USER_MODEL = 'accounts.PS1User'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 LOGIN_REDIRECT_URL = '/accounts/access/'
-try:
-    from local_settings import *
-except ImportError:
-    pass
+
+AD_URL = get_env_variable('AD_URL')
+AD_DOMAIN = get_env_variable('AD_DOMAIN')
+AD_BASEDN = get_env_variable('AD_BASEDN')
+AD_BINDDN = get_env_variable('AD_BINDDN')
+AD_BINDDN_PASSWORD = get_env_variable('AD_BINDDN_PASSWORD')
+ZOHO_AUTHTOKEN = get_env_variable('ZOHO_AUTHTOKEN')
 
