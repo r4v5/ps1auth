@@ -9,3 +9,4 @@ local_settings.py
 *.swo
 cache
 static
+*.orig
