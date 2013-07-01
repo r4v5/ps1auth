@@ -9,3 +9,5 @@ local_settings.py
 *.swo
 cache
 .vagrant
+static
+*.orig

@@ -3,7 +3,7 @@ from django.conf import settings
 import urllib2
 import json
 from django.core.cache import cache
-from zoho_integration.models import Contact
+from zoho_integration.models import Contact, ContactChange
 from datetime import datetime
 import pytz
 
@@ -52,25 +52,27 @@ class ZohoClient(object):
                 c = Contact.objects.get(contact_id=contact[u'CONTACTID'])
             except Contact.DoesNotExist:
                 c = Contact(contact_id=contact[u'CONTACTID'])
-            c.first_name = contact[u'First Name']
-            c.last_name = contact['Last Name']
-            try:
-                c.email = contact[u'Email']
-            except KeyError:
-                pprint(contact)
-            try:
-                c.membership_status = contact[u'Membership Status']
-            except KeyError:
-                pprint(contact)
+
+            #attach the modified time  
             modified_time = datetime.strptime(contact[u'Modified Time'], '%Y-%m-%d %H:%M:%S')
             modified_time = modified_time.replace(tzinfo=pytz.utc)
-            pprint(modified_time)
+            #pprint(modified_time)
             c.modified_time = modified_time
             c.save()
 
-
-if __name__ == '__main__':
-    from pprint import pprint
-    zc = ZohoClient()
-    zc.update_database()
+            #c.first_name = contact[u'First Name']
+            ContactChange.log(c, 'first_name', contact[u'First Name'])
+            #c.last_name = contact['Last Name']
+            ContactChange.log(c, 'last_name', contact[u'Last Name'])
+            try:
+                #c.email = contact[u'Email']
+                ContactChange.log(c, 'email', contact[u'Email'])
+            except KeyError:
+                pprint(contact)
+            try:
+                #c.membership_status = contact[u'Membership Status']
+                ContactChange.log(c, 'membership_status', contact[u'Membership Status'])
+            except KeyError:
+                pprint(contact)
+            c.save()
 
