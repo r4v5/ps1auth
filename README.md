@@ -14,20 +14,25 @@ On All Platforms
 
     virtualenv venv
     source venv/bin/activate
-    pip install -r requirements.txt
+    pip install -r requirements/local.txt
 
-In "conf/local_settings.py"
---------------------------
-
-    AUTHENTICATION_BACKENDS = (
-            'accounts.backends.PS1Backend',
-    )
+Environment Variables
+---------------------
 
     AD_URL = 'ldaps://host'
     AD_DOMAIN = 'DOMAIN'
     AD_BASEDN = 'CN=Users,DC=host'
     AD_BINDDN = 'admin@DOMAIN'
     AD_BINDDN_PASSWORD = 'admin_password'
+
+Database
+--------
+
+Install and configure postgresql for your system.
+[Arch](https://wiki.archlinux.org/index.php/PostgreSQL)
+
+    createuser -s -U postgres $USER
+    createdb ps1auth
 
 Create Tables
 -------------
@@ -39,3 +44,4 @@ Running
 -------
 
     ./manage.py runserver
+
