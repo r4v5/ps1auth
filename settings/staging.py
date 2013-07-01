@@ -1,7 +1,7 @@
 from .base import *
 
 DEBUG = False
-TEMPLATE_DEBUG = Debug
+TEMPLATE_DEBUG = DEBUG
 
 EMAIL_BACKEND = 'django.core.mail.backends.EmailBackend'
 SERVER_EMAIL = 'no-reply@arbitrarion.com'
@@ -20,4 +20,5 @@ ALLOWED_HOSTS = [
 MIDDLEWARE_CLASSES += (
 )
 
-
+STATIC_ROOT = "/srv/http/arbitrarion.com/static"
+MEDIA_ROOT = "/srv/http/arbitrarion.com/media"
