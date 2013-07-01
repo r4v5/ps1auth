@@ -3,7 +3,6 @@ import accounts.views
 
 
 urlpatterns = patterns('',
-    url(r'profile/$', 'accounts.views.hello_world', name="profile"),
     url(r'login/$', 'django.contrib.auth.views.login', {}),
     url(r'logout/$', 'django.contrib.auth.views.logout', {}),
     url(r'password_change/$', 'django.contrib.auth.views.password_change', {}),

@@ -19,49 +19,26 @@ On All Platforms
 
     virtualenv venv # (virtualenv2 on arch)
     source venv/bin/activate
-    pip install -r requirements.txt
+    pip install -r requirements/local.txt
 
-Configuring
-===========
+Environment Variables
+---------------------
+A good place for these is in $VIRTUAL_ENV/bin/postactivate
 
-Development
------------
+    export AD_URL='ldaps://host'
+    export AD_DOMAIN='DOMAIN'
+    export AD_BASEDN='CN=Users,DC=host'
+    export AD_BINDDN='admin@DOMAIN'
+    export AD_BINDDN_PASSWORD='admin_password'
 
-In conf/local\_settings.py
+Database
+--------
 
-    AD_URL = 'ldaps://host'
-    AD_DOMAIN = 'DOMAIN'
-    AD_BASEDN = 'CN=Users,DC=host'
-    AD_BINDDN = 'admin@DOMAIN'
-    AD_BINDDN_PASSWORD = 'admin_password'
+Install and configure postgresql for your system.
+[Arch](https://wiki.archlinux.org/index.php/PostgreSQL)
 
-Production
-----------
-
-In conf/local\_settings.py
-
-    DEBUG = False
-    TEMPLATE_DEBUG = DEBUG
-    EMAIL_BACKEND = 'django.core.mail.backends.smptp.EmailBackend'
-    SERVER_EMAIL = 'no-reply@host'
-    ADMINS = (
-        ('you', 'you@host'),
-    )
-    MANAGERS = ADMINS
-    ALLOWED_HOSTS = ['hostname']
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_pscopg2'
-            'NAME': 'ps1auth'
-            'USER': 'you'
-        }
-    }
-
-    AD_URL = 'ldaps://host'
-    AD_DOMAIN = 'DOMAIN'
-    AD_BASEDN = 'CN=Users,DC=host'
-    AD_BINDDN = 'admin@DOMAIN'
-    AD_BINDDN_PASSWORD = 'admin_password'
+    createuser -s -U postgres $USER
+    createdb ps1auth
 
 
 
@@ -78,3 +55,4 @@ Running
 -------
 
     ./manage.py runserver
+

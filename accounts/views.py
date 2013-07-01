@@ -26,18 +26,18 @@ def login(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    # Redirect to a success page.
+                    #Redirect to a success page.
                 else:
                     pass
-                    #reutnr a 'disabled account' error message
+                    #return a 'disabled account' error message
             else:
                 pass
                 #return an 'invalid login' error message
-    
+
 def logout(request):
     logout(request)
 
 @login_required()
 def access_page(request):
     data = {}
-    return render( request, "access_page.html", data)
+    return render( request, "access_page.html", data )
