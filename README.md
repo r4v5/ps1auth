@@ -18,12 +18,13 @@ On All Platforms
 
 Environment Variables
 ---------------------
+A good place for these is in $VIRTUAL_ENV/bin/postactivate
 
-    AD_URL = 'ldaps://host'
-    AD_DOMAIN = 'DOMAIN'
-    AD_BASEDN = 'CN=Users,DC=host'
-    AD_BINDDN = 'admin@DOMAIN'
-    AD_BINDDN_PASSWORD = 'admin_password'
+    export AD_URL='ldaps://host'
+    export AD_DOMAIN='DOMAIN'
+    export AD_BASEDN='CN=Users,DC=host'
+    export AD_BINDDN='admin@DOMAIN'
+    export AD_BINDDN_PASSWORD='admin_password'
 
 Database
 --------

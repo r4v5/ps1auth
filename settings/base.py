@@ -1,6 +1,7 @@
 import os
 from django.core.exceptions import ImproperlyConfigured
 
+
 def get_env_variable(var_name):
     try:
         return os.environ[var_name]
@@ -9,9 +10,6 @@ def get_env_variable(var_name):
         raise ImproperlyConfigured(error_msg)
 
 SITE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__),os.pardir))
-
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -108,19 +106,20 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'conf.urls'
+ROOT_URLCONF = 'ps1auth.urls'
 
 # Python dotted patH to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'conf.wsgi.application'
+WSGI_APPLICATION = 'ps1auth.wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(SITE_ROOT, "templates"),
+    #os.path.join(SITE_ROOT, "templates"),
 )
 
 INSTALLED_APPS = (
+    'ps1auth',
     'accounts',
     'zoho_integration',
     'bootstrap_toolkit',
