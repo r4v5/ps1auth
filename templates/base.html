@@ -1,5 +1,6 @@
 <!DOCTYPE html> 
 {% load bootstrap_toolkit %}
+{% load staticfiles %}
 <html lang=en>
   <head>
     <meta charset="utf-8">
@@ -12,6 +13,7 @@
       }
     </style>
     {% bootstrap_stylesheet_tag "responsive" %}
+    <link href={% static "ps1auth.css" %} rel="stylesheet"></link>
     {% block extra_head %}{% endblock %}
   </head>
   <body>
@@ -32,10 +34,10 @@
       {% block content %}<h1>Empty page</h1><p>There doesn't seem to be anything here</p>{% endblock %}
       <hr />
       <footer class = "row">
-      <div class="span6">
+      <div class="span10">
         <p>Pumping Station One</p>
       </div>
-      <div class="span6" style="text-align:right">
+      <div class="span2">
         <p>3519 N. Elston Ave</p>
       </div>
       </footer>

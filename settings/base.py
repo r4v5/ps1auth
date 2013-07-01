@@ -74,6 +74,7 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
+    os.path.join(SITE_ROOT, "static"),
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -84,7 +85,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    #'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -178,4 +179,3 @@ AD_BASEDN = get_env_variable('AD_BASEDN')
 AD_BINDDN = get_env_variable('AD_BINDDN')
 AD_BINDDN_PASSWORD = get_env_variable('AD_BINDDN_PASSWORD')
 ZOHO_AUTHTOKEN = get_env_variable('ZOHO_AUTHTOKEN')
-
