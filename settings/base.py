@@ -166,6 +166,10 @@ LOGGING = {
     }
 }
 
+AUTHENTICATION_BACKENDS = (
+    'accounts.backends.PS1Backend',
+)
+
 AUTH_USER_MODEL = 'accounts.PS1User'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

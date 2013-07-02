@@ -1,8 +1,13 @@
-PS1 Member Access System
+P1 Member Access System
 ========================
 
 Getting Started
 ===============
+
+On Arch Linux
+-------------
+
+    sudo pacman -S base-devel python2-virtualenv
 
 On Ubuntu
 ---------
@@ -12,7 +17,7 @@ On Ubuntu
 On All Platforms
 ----------------
 
-    virtualenv venv
+    virtualenv venv # (virtualenv2 on arch)
     source venv/bin/activate
     pip install -r requirements/local.txt
 
@@ -34,6 +39,11 @@ Install and configure postgresql for your system.
 
     createuser -s -U postgres $USER
     createdb ps1auth
+
+
+
+Initializing
+============
 
 Create Tables
 -------------
