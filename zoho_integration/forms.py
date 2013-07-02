@@ -24,7 +24,7 @@ class activate_account_form(forms.Form):
 
         return self.cleaned_data['ps1_email']
 
-    def save(self):
+    def save(self, use_https, domain):
         email_address = self.cleaned_data['ps1_email']
         # HEFTODO check email against AD
         zoho_contact = Contact.objects.get(email=email_address)
@@ -33,8 +33,9 @@ class activate_account_form(forms.Form):
         c = {
                 'email': email_address,
                 'token': token.token,
-                'protocol': 'http', # HEFTODO detemine if dev or not
-                'domain': 'localhost:8000' # HEFTODO determine if dev or not
+                'protocol': 'https' if use_https else 'http',
+                'domain': domain,
+                # HEFTODO determine if dev or not
         }
         subject = render_to_string("activation_email_subject.txt", c)
         subject = ''.join(subject.splitlines())

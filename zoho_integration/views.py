@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from models import Token
 from django.contrib import messages
+from django.contrib.sites.models import get_current_site
 
 
 def fetch_contacts(request):
@@ -15,7 +16,8 @@ def activate_account(request):
     if request.method == 'POST':
         form = forms.activate_account_form(request.POST)
         if form.is_valid():
-            user = form.save()
+            site = get_current_site(request)
+            user = form.save( request.is_secure(), site.domain)
             return HttpResponseRedirect(reverse('zoho_integration.views.activation_email_sent'))
     else:
         form = forms.activate_account_form()
