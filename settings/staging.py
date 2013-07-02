@@ -1,10 +1,13 @@
 from .base import *
 
 DEBUG = False
-TEMPLATE_DEBUG = DEBUG
 
 EMAIL_BACKEND = 'django.core.mail.backends.EmailBackend'
 SERVER_EMAIL = 'no-reply@arbitrarion.com'
+
+ADMINS = (
+    ('Hef', 'hef+arbitrairon@pbrfrat.com'),
+)
 
 INSTALLED_APPS += (
 )
