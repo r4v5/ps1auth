@@ -8,5 +8,5 @@ local_settings.py
 *.un~
 *.swo
 cache
-static
+.vagrant
 *.orig
