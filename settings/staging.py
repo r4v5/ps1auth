@@ -2,7 +2,7 @@ from .base import *
 
 DEBUG = False
 
-EMAIL_BACKEND = 'django.core.mail.backends.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 SERVER_EMAIL = 'no-reply@arbitrarion.com'
 
 ADMINS = (
