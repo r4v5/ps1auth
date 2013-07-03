@@ -13,7 +13,21 @@ class PS1UserManager(BaseUserManager):
     def create_superuser(self, username, email, password):
         self.create_user(username, email, password)
 
+    def get_users_by_field(self, field, value):
+        l = backends.get_ldap_connection()
+        filter_string = "({0}={1})".format(field, value)
+        #HEFTODO build user result directly
+        result = l.search_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
+        users = []
+        for ldap_user in result:
+            users.append(backends.PS1Backend.get_user(user['ObjectGUID']))
+        return users
+
+
 class PS1User(AbstractBaseUser):
+    """ Represents a User
+        TODO: add an ldapobject property
+    """
 
     objects = PS1UserManager()
     object_guid = models.CharField(
@@ -61,9 +75,7 @@ class PS1User(AbstractBaseUser):
         l.modify_s(user_dn, add_pass)
         
     def set_unusable_password(self):
-        print("Set unusable password")
+        raise NotImplementedError
 
     def has_usable_password(self):
-        print("has unusable password")
-        return False
-
+        raise NotImplementedError
