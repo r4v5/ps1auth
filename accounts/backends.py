@@ -10,11 +10,8 @@ def get_ldap_connection( binddn=settings.AD_BINDDN, password=settings.AD_BINDDN_
     ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_ALLOW)
     l = ldap.initialize(settings.AD_URL)
     l.set_option(ldap.OPT_PROTOCOL_VERSION, 3)
-   # try:
     l.simple_bind_s(binddn, password)
     return l
-    #except ldap.INVALID_CREDENTIALS:
-    #    return None
 
 class PS1Backend(object):
 
