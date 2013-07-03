@@ -1,14 +1,15 @@
-from django import forms
-from zoho_integration.models import Contact, Token
+import ldap
+import ldap.modlist
+from pprint import pprint
 import uuid
-from django.template.loader import render_to_string
+from django import forms
+from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
+from django.template.loader import render_to_string
 import accounts.backends
-from django.conf import settings
-import ldap
-from pprint import pprint
 from accounts.models import PS1User
+from zoho_integration.models import Contact, Token
 
 class activate_account_form(forms.Form):
     ps1_email = forms.EmailField(label="PS1 Email")
@@ -76,6 +77,7 @@ class account_register_form(forms.Form):
         user_attrs['givenName'] = str(self.cleaned_data['first_name'])
         user_attrs['sn'] = str(self.cleaned_data['last_name'])
         user_attrs['userAccountControl'] = '514'
+        user_attrs['mail'] = str(self.cleaned_data['preferred_email']) 
         user_ldif = ldap.modlist.addModlist(user_attrs)
 
         # Prep the password
