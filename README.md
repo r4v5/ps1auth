@@ -56,7 +56,7 @@ Set Site name
 
     ./manage shell
     from django.contrib.sites.models import Site
-    s = Sites.objects.get(pk=1)
+    s = Site.objects.get(pk=1)
     s.domain = u'localhost'
     s.name = u'PS1 Auth Dev Site'
     s.save()
