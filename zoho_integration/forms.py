@@ -35,7 +35,6 @@ class activate_account_form(forms.Form):
                 'token': token.token,
                 'protocol': 'https' if use_https else 'http',
                 'domain': domain,
-                # HEFTODO determine if dev or not
         }
         subject = render_to_string("activation_email_subject.txt", c)
         subject = ''.join(subject.splitlines())
