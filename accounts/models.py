@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import backends
 import ldap
 from django.conf import settings
-from pprint import pprint
+import uuid
 
 class PS1UserManager(BaseUserManager):
         
@@ -18,9 +18,11 @@ class PS1UserManager(BaseUserManager):
         filter_string = "({0}={1})".format(field, value)
         #HEFTODO build user result directly
         result = l.search_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
+        backend = backends.PS1Backend()
         users = []
         for ldap_user in result:
-            users.append(backends.PS1Backend.get_user(user['ObjectGUID']))
+            guid = uuid.UUID(bytes_le=(ldap_user[1]['objectGUID'][0]))
+            users.append(backend.get_user(str(guid)))
         return users
 
 
@@ -79,3 +81,15 @@ class PS1User(AbstractBaseUser):
 
     def has_usable_password(self):
         raise NotImplementedError
+
+
+def gen_uuid():
+    return str(uuid.uuid4())
+
+class Token(models.Model):
+    key = models.CharField(max_length=36, default=gen_uuid, editable=False)
+    user = models.ForeignKey(PS1User)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+
+
