@@ -9,6 +9,12 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.contrib.auth.forms import SetPasswordForm
+#from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+
+from .tokens import default_token_generator
+from django.contrib.auth import get_user_model
+from django.contrib.auth.views import password_reset_complete
 
 def hello_world(request):
     t = get_template("hello_world.html")
@@ -42,8 +48,6 @@ def access_page(request):
     data = {}
     return render( request, "access_page.html", data )
 
-@sensitive_post_parameters()
-@never_cache
 def password_reset_confirm(request, uidb64=None, token=None,
                            template_name='registration/password_reset_confirm.html',
                            token_generator=default_token_generator,
@@ -55,10 +59,11 @@ def password_reset_confirm(request, uidb64=None, token=None,
     form for entering a new password.
     ripped from https://github.com/django/django/blob/d51b7794bfd1ddfd92f71f71d07daf931421c5f7/django/contrib/auth/views.py#L185-L229
     """
+    print("foo")
     UserModel = get_user_model()
     assert uidb64 is not None and token is not None # checked by URLconf
     if post_reset_redirect is None:
-        post_reset_redirect = reverse('password_reset_complete')
+        post_reset_redirect = reverse('django.contrib.auth.views.password_reset_complete')
     else:
         post_reset_redirect = resolve_url(post_reset_redirect)
     try:
