@@ -63,11 +63,11 @@ class SetPasswordForm(forms.Form):
     ripped from https://github.com/django/django/blob/6118d6d1c982e428cf398ac998eb9f0baba15bad/django/contrib/auth/forms.py#L253-L285
     """
     error_messages = {
-        'password_mismatch': _("The two password fields didn't match."),
+        'password_mismatch': "The two password fields didn't match.",
     }
-    new_password1 = forms.CharField(label=_("New password"),
+    new_password1 = forms.CharField(label="New password",
                                     widget=forms.PasswordInput)
-    new_password2 = forms.CharField(label=_("New password confirmation"),
+    new_password2 = forms.CharField(label="New password confirmation",
                                     widget=forms.PasswordInput)
 
     def __init__(self, user, *args, **kwargs):
