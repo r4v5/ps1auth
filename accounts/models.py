@@ -64,10 +64,6 @@ class PS1User(AbstractBaseUser):
             return False
 
     def set_password(self, raw_password):
-        """" HEFTODO: would prefer a non admin override
-        That means we need the current password and the new password.
-        Requiring those means that the change password form needs some
-        rework."""
         l = backends.get_ldap_connection()
         #unicode_pass = unicode('"' + raw_password + '"', 'iso-8859-1')
         unicode_pass = '"' + raw_password + '"'
@@ -87,8 +83,8 @@ def gen_uuid():
     return str(uuid.uuid4())
 
 class Token(models.Model):
+    user = models.ForeignKey('PS1User')
     key = models.CharField(max_length=36, default=gen_uuid, editable=False)
-    user = models.ForeignKey(PS1User)
     timestamp = models.DateTimeField(auto_now_add=True)
 
 

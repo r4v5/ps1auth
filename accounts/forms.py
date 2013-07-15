@@ -3,7 +3,8 @@ from django.template import loader
 from django import forms
 from django.contrib.auth import get_user_model
 from accounts.models import PS1User
-from .tokens import default_token_generator
+#from .tokens import default_token_generator
+from .tokens import *
 
 class PasswordResetForm(forms.Form):
     """ 
@@ -37,16 +38,15 @@ class PasswordResetForm(forms.Form):
                 domain = current_site.domain
             else:
                 site_name = domain = domain_override
+            # ignore the token_generator that was passed in
+            token = default_token_generator.make_token(user)
             c = {
                 'email': email,
                 'domain': domain,
                 'site_name': site_name,
-                #'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                # django's confirmation step calls urlsafe_base64_decode on the uid
-                # actually, head uses that, 1.5 uses int_to_base36
                 'uid': user.object_guid,
                 'user': user,
-                'token': token_generator.make_token(user),
+                'token': token,
                 'protocol': 'https' if use_https else 'http',
             }
             subject = loader.render_to_string(subject_template_name, c)
@@ -56,4 +56,37 @@ class PasswordResetForm(forms.Form):
             user_email = user.ldap_user['mail'][0]
             send_mail(subject, email, from_email, [user_email])
 
+class SetPasswordForm(forms.Form):
+    """
+    A form that lets a user change set his/her password without entering the
+    old password
+    ripped from https://github.com/django/django/blob/6118d6d1c982e428cf398ac998eb9f0baba15bad/django/contrib/auth/forms.py#L253-L285
+    """
+    error_messages = {
+        'password_mismatch': _("The two password fields didn't match."),
+    }
+    new_password1 = forms.CharField(label=_("New password"),
+                                    widget=forms.PasswordInput)
+    new_password2 = forms.CharField(label=_("New password confirmation"),
+                                    widget=forms.PasswordInput)
 
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(SetPasswordForm, self).__init__(*args, **kwargs)
+
+    def clean_new_password2(self):
+        password1 = self.cleaned_data.get('new_password1')
+        password2 = self.cleaned_data.get('new_password2')
+        if password1 and password2:
+            if password1 != password2:
+                raise forms.ValidationError(
+                    self.error_messages['password_mismatch'],
+                    code='password_mismatch',
+                )
+        return password2
+
+    def save(self, commit=True):
+        self.user.set_password(self.cleaned_data['new_password1'])
+        if commit:
+            self.user.save()
+        return self.user
