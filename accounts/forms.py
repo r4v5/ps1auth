@@ -6,6 +6,7 @@ from accounts.models import PS1User
 #from .tokens import default_token_generator
 from .tokens import *
 from .backends import PS1Backend
+import ldap
 
 
 class PasswordResetForm(forms.Form):
@@ -89,7 +90,12 @@ class SetPasswordForm(forms.Form):
 
     def save(self, commit=True):
         self.user = PS1Backend().get_user(self.user.object_guid)
-        self.user.set_password(self.cleaned_data['new_password1'])
+        try:
+            self.user.set_password(self.cleaned_data['new_password1'])
+        except ldap.CONSTRAINT_VIOLATION as e:
+            # HEFTODO make message a little more user friendly
+            # HEFTODO this doesn't work, validation error only word on is_valid
+            raise forms.ValidationError(e[0]['info'])
         if commit:
             self.user.save()
         return self.user

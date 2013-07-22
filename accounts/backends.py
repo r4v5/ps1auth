@@ -31,6 +31,8 @@ class PS1Backend(object):
             l.simple_bind_s(binddn, password)
             # would throw if bind fails
 
+            # HEFTODO see if username needs escaping, as it could be a hostile
+            # 
             #get user info
             filter_string ='(sAMAccountName={0})'.format(username)
             ldap_user = l.search_ext_s(settings.AD_BASEDN ,ldap.SCOPE_ONELEVEL, filterstr=filter_string)[0][1]
@@ -57,7 +59,6 @@ class PS1Backend(object):
         """
         guid = uuid.UUID(user_id)
         l = get_ldap_connection()
-        #filter_string = r'(objectGUID={0})'.format(guid.bytes_le)
         # certain byte sequences contain printable character that can
         # potentially be parseable by the query string.  Esxape each byte as
         # hex to make sure this doesn't happen.
