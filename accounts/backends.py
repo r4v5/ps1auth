@@ -36,7 +36,7 @@ class PS1Backend(object):
             ldap_user = l.search_ext_s(settings.AD_BASEDN ,ldap.SCOPE_ONELEVEL, filterstr=filter_string)[0][1]
             #search_guid = ''.join('\\%02x' % ord(x) for x in ldap_user['objectGUID'][0])
             guid = uuid.UUID(bytes_le=ldap_user['objectGUID'][0])
-            self.get_user(str(guid))
+            user = self.get_user(str(guid))
 #            try:
 #                user = models.PS1User.objects.get(object_guid=search_guid)
 #                user.ldap_user = ldap_user
@@ -57,7 +57,12 @@ class PS1Backend(object):
         """
         guid = uuid.UUID(user_id)
         l = get_ldap_connection()
-        filter_string = r'(objectGUID={0})'.format(guid.bytes_le)
+        #filter_string = r'(objectGUID={0})'.format(guid.bytes_le)
+        # certain byte sequences contain printable character that can
+        # potentially be parseable by the query string.  Esxape each byte as
+        # hex to make sure this doesn't happen.
+        restrung = ''.join(['\\%02x' % ord(x) for x in guid.bytes_le])
+        filter_string = r'(objectGUID={0})'.format(restrung)
         result = l.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
         try:
             user = models.PS1User.objects.get(object_guid=str(guid))

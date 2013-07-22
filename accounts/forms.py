@@ -5,6 +5,8 @@ from django.contrib.auth import get_user_model
 from accounts.models import PS1User
 #from .tokens import default_token_generator
 from .tokens import *
+from .backends import PS1Backend
+
 
 class PasswordResetForm(forms.Form):
     """ 
@@ -86,6 +88,7 @@ class SetPasswordForm(forms.Form):
         return password2
 
     def save(self, commit=True):
+        self.user = PS1Backend().get_user(self.user.object_guid)
         self.user.set_password(self.cleaned_data['new_password1'])
         if commit:
             self.user.save()
