@@ -6,14 +6,14 @@
     <meta charset="utf-8">
     <title>{% block title %} PS1 Auth {% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% bootstrap_stylesheet_tag %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css">
     <style type="text/css">
       body {
         padding-top: 60px;
       }
     </style>
-    {% bootstrap_stylesheet_tag "responsive" %}
-    <link href={% static "css/ps1auth.css" %} rel="stylesheet"></link>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-responsive.min.css">
+    <link href={% static "css/ps1auth.css" %} rel="stylesheet">
     {% block extra_head %}{% endblock %}
   </head>
   <body>
@@ -43,6 +43,6 @@
       </footer>
     </div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-    {% bootstrap_javascript_tag %}
+    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
   </body>
 </html>
