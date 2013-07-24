@@ -21,9 +21,6 @@ class Token(models.Model):
     zoho_contact = models.ForeignKey(Contact)
 
 class ContactChange(models.Model):
-    FIELD_CHOICES = (
-            ('membership status'),
-    )
     contact = models.ForeignKey(Contact)
     field = models.CharField(max_length=300)
     detected_on = models.DateTimeField()
@@ -45,5 +42,3 @@ class ContactChange(models.Model):
             contact.save()
             change.save()
         
-
-

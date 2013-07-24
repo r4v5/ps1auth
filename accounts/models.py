@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import backends
 import ldap
 from django.conf import settings
-from pprint import pprint
+import uuid
 
 class PS1UserManager(BaseUserManager):
         
@@ -13,7 +13,23 @@ class PS1UserManager(BaseUserManager):
     def create_superuser(self, username, email, password):
         self.create_user(username, email, password)
 
+    def get_users_by_field(self, field, value):
+        l = backends.get_ldap_connection()
+        filter_string = "({0}={1})".format(field, value)
+        #HEFTODO build user result directly
+        result = l.search_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
+        backend = backends.PS1Backend()
+        users = []
+        for ldap_user in result:
+            guid = uuid.UUID(bytes_le=(ldap_user[1]['objectGUID'][0]))
+            users.append(backend.get_user(str(guid)))
+        return users
+
+
 class PS1User(AbstractBaseUser):
+    """ Represents a User
+        TODO: add an ldapobject property
+    """
 
     objects = PS1UserManager()
     object_guid = models.CharField(
@@ -48,10 +64,6 @@ class PS1User(AbstractBaseUser):
             return False
 
     def set_password(self, raw_password):
-        """" HEFTODO: would prefer a non admin override
-        That means we need the current password and the new password.
-        Requiring those means that the change password form needs some
-        rework."""
         l = backends.get_ldap_connection()
         #unicode_pass = unicode('"' + raw_password + '"', 'iso-8859-1')
         unicode_pass = '"' + raw_password + '"'
@@ -61,9 +73,19 @@ class PS1User(AbstractBaseUser):
         l.modify_s(user_dn, add_pass)
         
     def set_unusable_password(self):
-        print("Set unusable password")
+        raise NotImplementedError
 
     def has_usable_password(self):
-        print("has unusable password")
-        return False
+        raise NotImplementedError
+
+
+def gen_uuid():
+    return str(uuid.uuid4())
+
+class Token(models.Model):
+    user = models.ForeignKey('PS1User')
+    key = models.CharField(max_length=36, default=gen_uuid, editable=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+
 
