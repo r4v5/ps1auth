@@ -11,6 +11,7 @@ from django.template.response import TemplateResponse
 
 from .tokens import default_token_generator
 from .forms import SetPasswordForm
+from .backends import PS1Backend
 
 def hello_world(request):
     t = get_template("hello_world.html")
@@ -81,6 +82,7 @@ def password_reset_confirm(request, uid=None, token=None,
         validlink = False
         form = None
     context = {
+        'User': PS1Backend().get_user(uid),
         'form': form,
         'validlink': validlink,
     }

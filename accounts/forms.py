@@ -8,7 +8,6 @@ from .tokens import *
 from .backends import PS1Backend
 import ldap
 
-
 class PasswordResetForm(forms.Form):
     """ 
     Form grabbed from https://github.com/django/django/blob/6118d6d1c982e428cf398ac998eb9f0baba15bad/django/contrib/auth/forms.py#L210-L250
@@ -88,14 +87,18 @@ class SetPasswordForm(forms.Form):
                 )
         return password2
 
-    def save(self, commit=True):
+    def clean(self):
+        """
+        Warning, this function does the actualy password resetting.
+        """
         self.user = PS1Backend().get_user(self.user.object_guid)
         try:
             self.user.set_password(self.cleaned_data['new_password1'])
         except ldap.CONSTRAINT_VIOLATION as e:
-            # HEFTODO make message a little more user friendly
-            # HEFTODO this doesn't work, validation error only word on is_valid
             raise forms.ValidationError(e[0]['info'])
-        if commit:
-            self.user.save()
+        return self.cleaned_data
+
+    def save(self, commit=True):
+        self.user = PS1Backend().get_user(self.user.object_guid)
         return self.user
+
