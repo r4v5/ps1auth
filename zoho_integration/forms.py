@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
-import accounts.backends
+from accounts.backends import PS1Backend, get_ldap_connection
 from accounts.models import PS1User
 from zoho_integration.models import Contact, Token
 
@@ -47,13 +47,13 @@ class account_register_form(forms.Form):
     first_name = forms.CharField()
     last_name = forms.CharField()
     preferred_email = forms.EmailField()
-    password1 = forms.CharField(widget = forms.PasswordInput)
-    password2 = forms.CharField(widget = forms.PasswordInput)
+    #password1 = forms.CharField(widget = forms.PasswordInput)
+    #password2 = forms.CharField(widget = forms.PasswordInput)
     token = forms.CharField(widget = forms.HiddenInput())
 
     def clean_preferred_username(self):
         username = self.cleaned_data['preferred_username']
-        l = accounts.backends.get_ldap_connection()
+        l = get_ldap_connection()
         filter_string = '(sAMAccountName={0})'.format(username)
         result = l.search_s(settings.AD_BASEDN, ldap.SCOPE_SUBTREE, filterstr=filter_string)
         if result:
@@ -80,15 +80,10 @@ class account_register_form(forms.Form):
         user_attrs['mail'] = str(self.cleaned_data['preferred_email']) 
         user_ldif = ldap.modlist.addModlist(user_attrs)
 
-        # Prep the password
-        unicode_pass = '\"' + self.cleaned_data['password1'] + '\"'
-        password_value = unicode_pass.encode('utf-16-le')
-        add_pass = [(ldap.MOD_REPLACE, 'unicodePwd', [password_value])]
-
         # prep account enable
         enable_account = [(ldap.MOD_REPLACE, 'userAccountControl', '512')]
 
-        ldap_connection = accounts.backends.get_ldap_connection()
+        ldap_connection = get_ldap_connection()
 
         # add the user to AD
         result = ldap_connection.add_s(user_dn, user_ldif)
@@ -98,15 +93,14 @@ class account_register_form(forms.Form):
         result = ldap_connection.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
         pprint(result)
         ldap_user = result[0][1]
-        guid = ''.join('\\%02x' % ord(x) for x in ldap_user['objectGUID'][0])
-        user = PS1User(object_guid=guid)
+        guid = uuid.UUID(bytes_le=ldap_user['objectGUID'][0])
+        user = PS1Backend().get_user(guid)
         user.save()
         token.zoho_contact.user = user
         token.zoho_contact.save()
         token.delete()
 
-
-        ldap_connection.modify_s(user_dn, add_pass)
+        #ldap_connection.modify_s(user_dn, add_pass)
         ldap_connection.modify_s(user_dn, enable_account)
 
         ldap_connection.unbind_s()

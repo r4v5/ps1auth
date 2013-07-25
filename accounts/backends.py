@@ -55,12 +55,15 @@ class PS1Backend(object):
     def get_user(self, user_id):
         """
         Get's The user object and attached ldap_user data.
-        Will create the database if required
+        Will create the database entry if required.
+
+        Keyword arguments:
+        user_id -- a string or UUID object of samba4 objectGUID of a user.
         """
-        guid = uuid.UUID(user_id)
+        guid = uuid.UUID(str(user_id))
         l = get_ldap_connection()
         # certain byte sequences contain printable character that can
-        # potentially be parseable by the query string.  Esxape each byte as
+        # potentially be parseable by the query string.  Escape each byte as
         # hex to make sure this doesn't happen.
         restrung = ''.join(['\\%02x' % ord(x) for x in guid.bytes_le])
         filter_string = r'(objectGUID={0})'.format(restrung)

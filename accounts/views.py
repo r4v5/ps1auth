@@ -12,6 +12,7 @@ from django.template.response import TemplateResponse
 from .tokens import default_token_generator
 from .forms import SetPasswordForm
 from .backends import PS1Backend
+from .models import Token
 
 def hello_world(request):
     t = get_template("hello_world.html")
@@ -45,6 +46,28 @@ def access_page(request):
     data = {}
     return render( request, "access_page.html", data )
 
+
+@login_required()
+def set_password(request):
+    if request.method == 'POST':
+        form = SetPasswordForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            #redirect?
+    else:
+        form = SetPasswordForm(request.user)
+
+
+    context = {
+            'user': user,
+            'form': form,
+    }
+
+    return render(request, 'account_register.html', context)
+        
+            
+
+
 def password_reset_confirm(request, uid=None, token=None,
                            template_name='registration/password_reset_confirm.html',
                            token_generator=default_token_generator,
@@ -63,7 +86,6 @@ def password_reset_confirm(request, uid=None, token=None,
     else:
         post_reset_redirect = resolve_url(post_reset_redirect)
     try:
-        #uid = urlsafe_base64_decode(uidb64)
         uid = uid
         user = UserModel._default_manager.get(pk=uid)
     except (TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
@@ -75,6 +97,10 @@ def password_reset_confirm(request, uid=None, token=None,
             form = set_password_form(user, request.POST)
             if form.is_valid():
                 form.save()
+                token_object = Token.objects.get(key=token)
+                token_object.delete()
+                # HEFTODO I really could just log the user in here.
+                # HEFTODO It would be smart to delete all the users tokens.
                 return HttpResponseRedirect(post_reset_redirect)
         else:
             form = set_password_form(None)
