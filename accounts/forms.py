@@ -26,8 +26,8 @@ class PasswordResetForm(forms.Form):
         """
         from django.core.mail import send_mail
         UserModel = get_user_model()
-        email = self.cleaned_data["email"]
-        users = PS1User.objects.get_users_by_field("mail", self.cleaned_data['email'])
+        email_address = self.cleaned_data["email"]
+        users = PS1User.objects.get_users_by_field("mail", email_address)
         for user in users:
             # Make sure that no email is sent to a user that actually has
             # a password marked as unusable
@@ -44,7 +44,7 @@ class PasswordResetForm(forms.Form):
             # ignore the token_generator that was passed in
             token = default_token_generator.make_token(user)
             c = {
-                'email': email,
+                'email': email_address,
                 'domain': domain,
                 'site_name': site_name,
                 'uid': user.object_guid,
@@ -57,9 +57,9 @@ class PasswordResetForm(forms.Form):
             subject = loader.render_to_string(subject_template_name, c)
             # Email subject *must not* contain newlines
             subject = ''.join(subject.splitlines())
-            email = loader.render_to_string(email_template_name, c)
+            email_body = loader.render_to_string(email_template_name, c)
             user_email = user.ldap_user['mail'][0]
-            send_mail(subject, email, from_email, [user_email])
+            send_mail(subject, email_body, from_email, [user_email])
 
 class SetPasswordForm(forms.Form):
     """
