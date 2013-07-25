@@ -2,6 +2,7 @@ from django.contrib.sites.models import get_current_site
 from django.template import loader
 from django import forms
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from accounts.models import PS1User
 #from .tokens import default_token_generator
 from .tokens import *
@@ -51,6 +52,8 @@ class PasswordResetForm(forms.Form):
                 'token': token,
                 'protocol': 'https' if use_https else 'http',
             }
+            if not from_email:
+                from_email = settings.SERVER_EMAIL
             subject = loader.render_to_string(subject_template_name, c)
             # Email subject *must not* contain newlines
             subject = ''.join(subject.splitlines())
