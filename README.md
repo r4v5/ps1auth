@@ -30,6 +30,9 @@ A good place for these is in $VIRTUAL_ENV/bin/postactivate
     export AD_BASEDN='CN=Users,DC=host'
     export AD_BINDDN='admin@DOMAIN'
     export AD_BINDDN_PASSWORD='admin_password'
+    export ZOHO_AUTHTOKEN='your_auth_token'
+    
+Get your zoho authtoken [here](https://accounts.zoho.com/apiauthtoken/create?SCOPE=ZohoCRM/crmapi)
 
 Database
 --------
