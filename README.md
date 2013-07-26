@@ -9,10 +9,10 @@ On Arch Linux
 
     sudo pacman -S base-devel python2-virtualenv
 
-On Ubuntu
----------
+On Ubuntu 12.04
+---------------
 
-    sudo apt-get install libldap-dev libpq-dev
+    sudo apt-get install libldap-dev libpq-dev python-dev libsasl2-dev
 
 On All Platforms
 ----------------
