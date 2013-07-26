@@ -12,7 +12,7 @@ On Arch Linux
 On Ubuntu
 ---------
 
-    sudo apt-get install libldap-dev
+    sudo apt-get install libldap-dev libpq-dev
 
 On All Platforms
 ----------------
