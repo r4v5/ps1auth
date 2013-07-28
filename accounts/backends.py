@@ -48,7 +48,11 @@ class PS1Backend(object):
         Keyword arguments:
         user_id -- a string or UUID object of samba4 objectGUID of a user.
         """
-        guid = uuid.UUID(str(user_id))
+        try:
+            guid = uuid.UUID(str(user_id))
+        except ValueError:
+            # Happens when we get passed an invalid or outdated user_id
+            return None
         try:
             user = models.PS1User.objects.get(object_guid=str(guid))
         except models.PS1User.DoesNotExist:
