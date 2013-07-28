@@ -37,7 +37,8 @@ class PS1Backend(object):
             user = self.get_user(str(guid))
             l.unbind_s()
         except ldap.INVALID_CREDENTIALS:
-            raise
+            # Swallow the exception and return a None object.  Django handles this gracefully
+            pass
         return user
 
     def get_user(self, user_id):
