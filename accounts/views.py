@@ -46,27 +46,23 @@ def access_page(request):
     data = {}
     return render( request, "access_page.html", data )
 
-
 @login_required()
 def set_password(request):
     if request.method == 'POST':
         form = SetPasswordForm(request.user, request.POST)
         if form.is_valid():
             form.save()
-            #redirect?
+            return HttpResponseRedirect(reverse('accounts.views.access_page'))
     else:
         form = SetPasswordForm(request.user)
-
-
     context = {
-            'user': user,
+            'user': request.user,
             'form': form,
     }
-
-    return render(request, 'account_register.html', context)
-        
-            
-
+    return render(
+            request,
+            'registration/password_reset_confirm.html',
+            context)
 
 def password_reset_confirm(request, uid=None, token=None,
                            template_name='registration/password_reset_confirm.html',
@@ -108,7 +104,7 @@ def password_reset_confirm(request, uid=None, token=None,
         validlink = False
         form = None
     context = {
-        'User': PS1Backend().get_user(uid),
+        'user': PS1Backend().get_user(uid),
         'form': form,
         'validlink': validlink,
     }

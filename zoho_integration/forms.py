@@ -1,6 +1,5 @@
 import ldap
 import ldap.modlist
-from pprint import pprint
 import uuid
 from django import forms
 from django.conf import settings
@@ -91,7 +90,6 @@ class account_register_form(forms.Form):
         #now get the user guid
         filter_string = r'sAMAccountName={0}'.format(str(self.cleaned_data['preferred_username']))
         result = ldap_connection.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
-        pprint(result)
         ldap_user = result[0][1]
         guid = uuid.UUID(bytes_le=ldap_user['objectGUID'][0])
         user = PS1Backend().get_user(guid)
@@ -105,4 +103,4 @@ class account_register_form(forms.Form):
 
         ldap_connection.unbind_s()
 
-        return True
+        return user
