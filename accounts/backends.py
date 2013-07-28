@@ -31,25 +31,13 @@ class PS1Backend(object):
             l.simple_bind_s(binddn, password)
             # would throw if bind fails
 
-            # HEFTODO see if username needs escaping, as it could be a hostile
-            # 
-            #get user info
             filter_string ='(sAMAccountName={0})'.format(username)
             ldap_user = l.search_ext_s(settings.AD_BASEDN ,ldap.SCOPE_ONELEVEL, filterstr=filter_string)[0][1]
-            #search_guid = ''.join('\\%02x' % ord(x) for x in ldap_user['objectGUID'][0])
             guid = uuid.UUID(bytes_le=ldap_user['objectGUID'][0])
             user = self.get_user(str(guid))
-#            try:
-#                user = models.PS1User.objects.get(object_guid=search_guid)
-#                user.ldap_user = ldap_user
-#            except models.PS1User.DoesNotExist:
-#                django_user = models.PS1User(object_guid=search_guid)
-#                django_user.ldap_user = ldap_user
-#                django_user.save()
-#                user = django_user
             l.unbind_s()
         except ldap.INVALID_CREDENTIALS:
-            pass
+            raise
         return user
 
     def get_user(self, user_id):
@@ -61,19 +49,18 @@ class PS1Backend(object):
         user_id -- a string or UUID object of samba4 objectGUID of a user.
         """
         guid = uuid.UUID(str(user_id))
-        l = get_ldap_connection()
-        # certain byte sequences contain printable character that can
-        # potentially be parseable by the query string.  Escape each byte as
-        # hex to make sure this doesn't happen.
-        restrung = ''.join(['\\%02x' % ord(x) for x in guid.bytes_le])
-        filter_string = r'(objectGUID={0})'.format(restrung)
-        result = l.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
         try:
             user = models.PS1User.objects.get(object_guid=str(guid))
         except models.PS1User.DoesNotExist:
+            l = get_ldap_connection()
+            # certain byte sequences contain printable character that can
+            # potentially be parseable by the query string.  Escape each byte as
+            # hex to make sure this doesn't happen.
+            restrung = ''.join(['\\%02x' % ord(x) for x in guid.bytes_le])
+            filter_string = r'(objectGUID={0})'.format(restrung)
+            result = l.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
             user = models.PS1User(object_guid=str(guid))
             user.save()
-        user.ldap_user = result[0][1]
         return user
 
     def get_group_permissions(self, user_obj, obj=None):
