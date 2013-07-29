@@ -85,9 +85,6 @@ STATICFILES_FINDERS = (
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = '=572(5dj4fgluccykivexvs)mu_86k(0wwqc8%pltdlzk*lzzr'
-
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     #'django.template.loaders.cached.Loader',
@@ -176,6 +173,7 @@ AUTH_USER_MODEL = 'accounts.PS1User'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 LOGIN_REDIRECT_URL = '/accounts/access/'
 
+SECRET_KEY = get_env_variable('SECRET_KEY')
 AD_URL = get_env_variable('AD_URL')
 AD_DOMAIN = get_env_variable('AD_DOMAIN')
 AD_BASEDN = get_env_variable('AD_BASEDN')

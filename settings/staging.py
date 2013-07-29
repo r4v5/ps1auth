@@ -20,6 +20,8 @@ ALLOWED_HOSTS = [
     'www.arbitrarion.com',
 ]
 
+SESSION_COOKIE_SECURE = True
+
 MIDDLEWARE_CLASSES += (
 )
 
