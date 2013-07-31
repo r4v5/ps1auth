@@ -3,7 +3,7 @@ from .base import *
 DEBUG = False
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-SERVER_EMAIL = 'no-reply@vm.pumpingstationone.org'
+SERVER_EMAIL = 'no-reply@members.pumpingstationone.org'
 
 ADMINS = (
     ('Hef', 'hef+ps1auth@pbrfrat.com'),
@@ -16,12 +16,12 @@ INTERNAL_IPS = (
 )
 
 ALLOWED_HOSTS = [
-    'vm.pumpingstationone.org',
-    'www.vm.pumpingstationone.org',
+    'members.pumpingstationone.org',
+    'www.members.pumpingstationone.org',
 ]
 
 MIDDLEWARE_CLASSES += (
 )
 
-STATIC_ROOT = "/srv/http/vm.pumpingstationone.org/static"
-MEDIA_ROOT = "/srv/http/vm.pumpingstationone.org/media"
+STATIC_ROOT = "/srv/http/members.pumpingstationone.org/static"
+MEDIA_ROOT = "/srv/http/members.pumpingstationone.org/media"
