@@ -12,7 +12,6 @@ class ZohoClient(object):
     api_key = settings.ZOHO_AUTHTOKEN
 
     def get_contacts(self, most_recent='1970-01-01%2012:00:00'):
-        print("fetching records")
         url = ("https://crm.zoho.com/crm/private/json/Contacts/getRecords?" 
                 "authtoken={0}&scope=crmapi&lastModifiedTime={1}&fromIndex=1&toIndex=200&"
                 "sortOrderString=asc&sortColumnString=Modified%20Time".format(self.api_key, most_recent))
@@ -68,11 +67,11 @@ class ZohoClient(object):
                 #c.email = contact[u'Email']
                 ContactChange.log(c, 'email', contact[u'Email'])
             except KeyError:
-                print(contact)
+                print("Email not set for {}".format(contact))
             try:
                 #c.membership_status = contact[u'Membership Status']
                 ContactChange.log(c, 'membership_status', contact[u'Membership Status'])
             except KeyError:
-                print(contact)
+                print("No membership status for {}".format(contact))
             c.save()
 
