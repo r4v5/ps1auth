@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-import backends
+from backends import PS1Backend, get_ldap_connection
 import ldap
 from django.conf import settings
 import uuid
@@ -14,11 +14,11 @@ class PS1UserManager(BaseUserManager):
         self.create_user(username, email, password)
 
     def get_users_by_field(self, field, value):
-        l = backends.get_ldap_connection()
+        l = get_ldap_connection()
         filter_string = "({0}={1})".format(field, value)
         #HEFTODO build user result directly
         result = l.search_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
-        backend = backends.PS1Backend()
+        backend = PS1Backend()
         users = []
         for ldap_user in result:
             guid = uuid.UUID(bytes_le=(ldap_user[1]['objectGUID'][0]))
@@ -64,7 +64,7 @@ class PS1User(AbstractBaseUser):
             return False
 
     def set_password(self, raw_password):
-        l = backends.get_ldap_connection()
+        l = get_ldap_connection()
         #unicode_pass = unicode('"' + raw_password + '"', 'iso-8859-1')
         unicode_pass = '"' + raw_password + '"'
         password_value = unicode_pass.encode('utf-16-le')
@@ -78,6 +78,20 @@ class PS1User(AbstractBaseUser):
     def has_usable_password(self):
         raise NotImplementedError
 
+    @property
+    def ldap_user(self):
+        if hasattr(self, '_ldap_user'):
+            return self._ldap_user
+        guid = uuid.UUID(self.object_guid)
+        # certain byte sequences contain printable character that can
+        # potentially be parseable by the query string.  Escape each byte as
+        # hex to make sure this doesn't happen.
+        restrung = ''.join(['\\%02x' % ord(x) for x in guid.bytes_le])
+        filter_string = r'(objectGUID={0})'.format(restrung)
+        l = get_ldap_connection()
+        result = l.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
+        self._ldap_user = result[0][1]
+        return self._ldap_user
 
 def gen_uuid():
     return str(uuid.uuid4())

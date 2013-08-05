@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from models import Token
 from django.contrib import messages
+from django.contrib.auth import login
 from django.contrib.sites.models import get_current_site
 
 
@@ -39,7 +40,9 @@ def account_activate_confirm(request, token):
         form = forms.account_register_form(request.POST)
         if form.is_valid():
             user = form.save()
-            return HttpResponseRedirect(reverse('accounts.views.access_page'))
+            user.backend = 'accounts.backends.PS1Backend'
+            login(request, user)
+            return HttpResponseRedirect(reverse('accounts.views.set_password'))
     else:
         data = {}
         #data['preferred_username']

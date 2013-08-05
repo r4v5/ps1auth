@@ -94,7 +94,6 @@ class SetPasswordForm(forms.Form):
         """
         Warning, this function does the actualy password resetting.
         """
-        self.user = PS1Backend().get_user(self.user.object_guid)
         try:
             self.user.set_password(self.cleaned_data['new_password1'])
         except ldap.CONSTRAINT_VIOLATION as e:
@@ -102,6 +101,8 @@ class SetPasswordForm(forms.Form):
         return self.cleaned_data
 
     def save(self, commit=True):
-        self.user = PS1Backend().get_user(self.user.object_guid)
+        """
+        Warning, this function Does no do work, the actual work is doen in clean()
+        """
         return self.user
 
