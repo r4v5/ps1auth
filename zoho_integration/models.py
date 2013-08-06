@@ -16,6 +16,13 @@ class Contact(models.Model):
     modified_time = models.DateTimeField()
     user = models.OneToOneField(accounts.models.PS1User, null=True)
 
+    def get_full_name(self):
+        if self.user:
+            return self.user.get_full_name()
+        else:
+            return "{} {}".format(self.first_name, self.last_name)
+
+
 class Token(models.Model):
     token = models.CharField(max_length=36)
     zoho_contact = models.ForeignKey(Contact)

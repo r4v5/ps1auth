@@ -6,17 +6,20 @@
 
 
 {% block content %}
+
 <h1>Full Members</h1>
 <div>
 {% for member in full_members %}
   <hr>
-  {{ member.first_name }} {{ member.last_name }}
+  {{ member.get_full_name }}
 {% endfor %}
 <hr>
+
+
 <h1>Starving Hackers</h1>
 {% for member in starving_hackers %}
   <hr>
-  {{ member.first_name }} {{ member.last_name }}
+  {{ member.get_full_name }}
 {% endfor %}
 <hr>
 </div>
