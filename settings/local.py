@@ -15,6 +15,8 @@ MIDDLEWARE_CLASSES += (
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 )
 
-AD_BINDDN = get_env_variable("AD_BINDDN")
-AD_BINDDN_PASSWORD = get_env_variable("AD_BINDDN_PASSWORD")
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS': False,
+}
+
 
