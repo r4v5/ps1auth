@@ -52,7 +52,7 @@ def set_password(request):
         form = SetPasswordForm(request.user, request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('accounts.views.access_page'))
+            return HttpResponseRedirect(reverse('zoho_integration.views.member_list'))
     else:
         form = SetPasswordForm(request.user)
     context = {

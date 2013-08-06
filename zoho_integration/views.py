@@ -1,14 +1,16 @@
 # Create your views here
-from django.template import RequestContext
-import forms
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
-from models import Token
 from django.contrib import messages
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import get_current_site
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.template import RequestContext
 
+import forms
+from models import Token
+from .models import Contact
 
 def fetch_contacts(request):
     pass
@@ -54,3 +56,10 @@ def account_activate_confirm(request, token):
     return render(request, 'account_register.html', {
         'form': form,
     })
+
+@login_required()
+def member_list(request):
+    data = {}
+    data['full_members'] = Contact.objects.filter(membership_status = u'Full Membership').order_by('last_name', 'first_name')
+    data['starving_hackers'] = Contact.objects.filter(membership_status = u'PS1 Starving Hacker Membership').order_by('last_name', 'first_name')
+    return render(request, 'member_list.html', data)
