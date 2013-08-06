@@ -171,7 +171,7 @@ AUTHENTICATION_BACKENDS = (
 AUTH_USER_MODEL = 'accounts.PS1User'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-LOGIN_REDIRECT_URL = '/accounts/access/'
+LOGIN_REDIRECT_URL = '/zoho/member_list'
 
 SECRET_KEY = get_env_variable('SECRET_KEY')
 AD_URL = get_env_variable('AD_URL')
