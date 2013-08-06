@@ -43,12 +43,12 @@ class PS1User(AbstractBaseUser):
     USERNAME_FIELD = 'object_guid'
 
     def get_full_name(self):
-        first_name = self.ldap_user['name'][0]
+        first_name = self.ldap_user['givenName'][0]
         last_name = self.ldap_user['sn'][0]
         return ("{0} {1}").format(first_name, last_name)
 
     def get_short_name(self):
-        return self.ldap_user['name'][0]
+        return self.ldap_user['cn'][0]
 
     def check_password(self, raw_password):
         # HEFTODO strict check
