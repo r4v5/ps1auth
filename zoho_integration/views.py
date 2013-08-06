@@ -1,4 +1,6 @@
 # Create your views here
+import re
+
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -47,7 +49,6 @@ def account_activate_confirm(request, token):
             return HttpResponseRedirect(reverse('accounts.views.set_password'))
     else:
         data = {}
-        #data['preferred_username']
         data['first_name'] = zoho_contact.first_name
         data['last_name'] = zoho_contact.last_name
         data['preferred_email'] = zoho_contact.email
