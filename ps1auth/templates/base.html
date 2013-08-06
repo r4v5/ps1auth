@@ -4,7 +4,7 @@
 <html lang=en>
   <head>
     <meta charset="utf-8">
-    <title>{% block title %} PS1 Auth {% endblock %}</title>
+    <title>{% block title %} PS:1 Member Site {% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css">
     <style type="text/css">
@@ -20,7 +20,7 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="brand" href="/"> PS1 Auth</a>
+          <a class="brand" href="/">PS:1 Member Site</a>
           {% if user.is_authenticated %}
           <a class="btn pull-right" href="/accounts/logout">Sign Out, {{ user.ldap_user.name.0 }}</a>
           {% else %}
