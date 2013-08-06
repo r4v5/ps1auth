@@ -1,5 +1,6 @@
 import ldap
 import ldap.modlist
+import re
 import uuid
 from django import forms
 from django.conf import settings
