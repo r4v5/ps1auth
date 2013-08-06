@@ -9,7 +9,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'auth.views.home', name='home'),
-    url(r'^$', RedirectView.as_view(permanent=False, url='/accounts/access')),
+    url(r'^$', RedirectView.as_view(permanent=False, url='/zoho/member_list')),
     url(r'^accounts/', include('accounts.urls')),
     url(r'^zoho/', include('zoho_integration.urls')),
     
