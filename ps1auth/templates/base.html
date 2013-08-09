@@ -29,7 +29,13 @@
           <div class="nav-collapse collapse">
             <ul class="nav pull-right">
               {% if user.is_authenticated %}
-              <li><div><a class="btn" href="/accounts/logout">Sign Out, {{ user.get_short_name }}</a></div></li>
+              <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.get_short_name }} <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="{% url 'accounts.views.set_password' %}">Reset Password</a></li>
+                  <li><a href="{% url 'django.contrib.auth.views.logout' %}">Logout</a></li>
+                </ul>
+              </li>
               {% else %}
               <li><div><a class="btn btn-primary" href="/accounts/login">Sign in</a></div></li>
               {% endif %}
