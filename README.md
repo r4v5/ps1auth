@@ -12,7 +12,7 @@ On Arch Linux
 On Ubuntu 12.04
 ---------------
 
-    sudo apt-get install libldap-dev libpq-dev python-dev libsasl2-dev
+    sudo apt-get install libldap-dev libpq-dev python-dev libsasl2-dev libgnutls-dev
 
 On All Platforms
 ----------------
