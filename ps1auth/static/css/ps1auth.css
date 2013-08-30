@@ -53,3 +53,19 @@
     }
 
 }
+
+footer {
+  background-color:#f5f5f5;
+  padding: 20px 0;
+  border-top-width:1px;
+  border-top-style:solid;
+  border-top-color:#CECECE;
+}
+
+.floatLeft {
+  float:left;
+}
+
+.floatRight {
+float:right;
+}

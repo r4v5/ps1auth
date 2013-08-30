@@ -1,0 +1,68 @@
+<!DOCTYPE html> 
+{% load bootstrap_toolkit %}
+{% load static from staticfiles %}
+<html lang=en>
+  <head>
+    <meta charset="utf-8">
+    <title>{% block title %} PS:1 Member Site {% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+      }
+    </style>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-responsive.min.css">
+    <link href={% static "css/ps1auth.css" %} rel="stylesheet">
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="/">PS:1 Member Site</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav pull-right">
+              {% if user.is_authenticated %}
+              <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.get_short_name }} <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="{% url 'accounts.views.set_password' %}">Reset Password</a></li>
+                  <li><a href="{% url 'django.contrib.auth.views.logout' %}">Logout</a></li>
+                </ul>
+              </li>
+              {% else %}
+              <li><div><a class="btn btn-primary" href="/accounts/login">Sign in</a></div></li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      {% bootstrap_messages %}
+      {% block content %}<h1>Empty page</h1><p>There doesn't seem to be anything here</p>{% endblock %}
+    </div>
+    <footer class="navbar navbar-fixed-bottom" >
+      <div class="container">
+        <div class="row">
+          <div class="span12">
+            <div class="floatLeft">
+              Pumping Station: One
+            </div>
+            <div class="floatRight"> 
+              3519 N. Elston Ave
+            </div>
+          </div>
+      </div>
+    </div>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+  </body>
+</html>

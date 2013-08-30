@@ -1,10 +1,15 @@
 import os
-# Django settings for auth project.
+from django.core.exceptions import ImproperlyConfigured
+
+
+def get_env_variable(var_name):
+    try:
+        return os.environ[var_name]
+    except KeyError:
+        error_msg = "Set the {0} environment variable.".format(var_name)
+        raise ImproperlyConfigured(error_msg)
 
 SITE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__),os.pardir))
-
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -14,13 +19,8 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'ps1auth',                      # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
-        #'USER': '',
-        #'PASSWORD': '',
-        #'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        #'PORT': '',                      # Set to empty string for default.
+        'ENGINE': 'django.db.backends.postgresql_psycopg2', 
+        'NAME': 'ps1auth',
     }
 }
 
@@ -64,7 +64,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = os.path.join(SITE_ROOT, "static")
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -72,7 +72,6 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    os.path.join(SITE_ROOT, "static"),
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -83,11 +82,8 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    #'django.contrib.staticfiles.finders.DefaultStorageFinder',
+#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
-
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = '=572(5dj4fgluccykivexvs)mu_86k(0wwqc8%pltdlzk*lzzr'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -107,19 +103,20 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'conf.urls'
+ROOT_URLCONF = 'ps1auth.urls'
 
 # Python dotted patH to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'conf.wsgi.application'
+WSGI_APPLICATION = 'ps1auth.wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(SITE_ROOT, "templates"),
+    #os.path.join(SITE_ROOT, "templates"),
 )
 
 INSTALLED_APPS = (
+    'ps1auth',
     'accounts',
     'zoho_integration',
     'bootstrap_toolkit',
@@ -154,7 +151,8 @@ LOGGING = {
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True,
         }
     },
     'loggers': {
@@ -166,11 +164,19 @@ LOGGING = {
     }
 }
 
+AUTHENTICATION_BACKENDS = (
+    'accounts.backends.PS1Backend',
+)
+
 AUTH_USER_MODEL = 'accounts.PS1User'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-LOGIN_REDIRECT_URL = '/accounts/access/'
-try:
-    from local_settings import *
-except ImportError:
-    pass
+LOGIN_REDIRECT_URL = '/zoho/member_list'
+
+SECRET_KEY = get_env_variable('SECRET_KEY')
+AD_URL = get_env_variable('AD_URL')
+AD_DOMAIN = get_env_variable('AD_DOMAIN')
+AD_BASEDN = get_env_variable('AD_BASEDN')
+AD_BINDDN = get_env_variable('AD_BINDDN')
+AD_BINDDN_PASSWORD = get_env_variable('AD_BINDDN_PASSWORD')
+ZOHO_AUTHTOKEN = get_env_variable('ZOHO_AUTHTOKEN')
