@@ -95,7 +95,8 @@ class SetPasswordForm(forms.Form):
         Warning, this function does the actualy password resetting.
         """
         try:
-            self.user.set_password(self.cleaned_data['new_password1'])
+            password = self.cleaned_data.get('new_password1') or ""
+            self.user.set_password(password)
         except ldap.CONSTRAINT_VIOLATION as e:
             raise forms.ValidationError(e[0]['info'])
         return self.cleaned_data
