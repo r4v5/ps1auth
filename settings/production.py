@@ -3,11 +3,18 @@ from .base import *
 DEBUG = False
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-SERVER_EMAIL = 'no-reply@members.pumpingstationone.org'
+SERVER_EMAIL = 'systems@members.pumpingstationone.org'
 
 ADMINS = (
     ('Hef', 'hef+ps1auth@pbrfrat.com'),
 )
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(SITE_ROOT, '..', 'cache'),
+    }
+}
 
 INSTALLED_APPS += (
 )

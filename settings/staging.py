@@ -9,6 +9,13 @@ ADMINS = (
     ('Hef', 'hef+arbitrairon@pbrfrat.com'),
 )
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(SITE_ROOT, '..', 'cache')
+    }
+}
+
 INSTALLED_APPS += (
 )
 

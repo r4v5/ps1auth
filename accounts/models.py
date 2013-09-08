@@ -4,6 +4,7 @@ from backends import PS1Backend, get_ldap_connection
 import ldap
 from django.conf import settings
 import uuid
+from django.core.cache import cache
 
 class PS1UserManager(BaseUserManager):
         
@@ -82,15 +83,18 @@ class PS1User(AbstractBaseUser):
     def ldap_user(self):
         if hasattr(self, '_ldap_user'):
             return self._ldap_user
-        guid = uuid.UUID(self.object_guid)
-        # certain byte sequences contain printable character that can
-        # potentially be parseable by the query string.  Escape each byte as
-        # hex to make sure this doesn't happen.
-        restrung = ''.join(['\\%02x' % ord(x) for x in guid.bytes_le])
-        filter_string = r'(objectGUID={0})'.format(restrung)
-        l = get_ldap_connection()
-        result = l.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
-        self._ldap_user = result[0][1]
+        self._ldap_user = cache.get(self.object_guid)
+        if not self._ldap_user:
+            guid = uuid.UUID(self.object_guid)
+            # certain byte sequences contain printable character that can
+            # potentially be parseable by the query string.  Escape each byte as
+            # hex to make sure this doesn't happen.
+            restrung = ''.join(['\\%02x' % ord(x) for x in guid.bytes_le])
+            filter_string = r'(objectGUID={0})'.format(restrung)
+            l = get_ldap_connection()
+            result = l.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
+            self._ldap_user = result[0][1]
+            cache.set(self.object_guid, self._ldap_user, 24 * 60 * 60)
         return self._ldap_user
 
 def gen_uuid():
