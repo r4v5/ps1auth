@@ -8,6 +8,12 @@ SERVER_EMAIL = 'no-reply@arbitrarion.com'
 ADMINS = (
     ('Hef', 'hef+arbitrairon@pbrfrat.com'),
 )
+MERCHANT_SETTINGS = {
+    'pay_pal': {
+        'RECEIVER_EMAIL': 'hef+paypalsandbox@pbrfrat.com',
+    }
+}
+PAYPAL_RECEIVER_EMAIL = MERCHANT_SETTINGS['pay_pal']['RECEIVER_EMAIL']
 
 CACHES = {
     'default': {

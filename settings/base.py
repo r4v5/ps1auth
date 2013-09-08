@@ -136,12 +136,6 @@ INSTALLED_APPS = (
     'billing',
 )
 
-MERCHANT_SETTINGS = {
-    'pay_pal': {
-        'RECEIVER_EMAIL': get_env_variable('PAYPAL_RECEIVER_EMAIL'),
-    }
-}
-PAYPAL_RECEIVER_EMAIL = MERCHANT_SETTINGS['pay_pal']['RECEIVER_EMAIL']
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

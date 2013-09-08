@@ -3,6 +3,13 @@ from .base import *
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+MERCHANT_SETTINGS = {
+    'pay_pal': {
+        'RECEIVER_EMAIL': 'hef+paypalsandbox@pbrfrat.com',
+    }
+}
+PAYPAL_RECEIVER_EMAIL = MERCHANT_SETTINGS['pay_pal']['RECEIVER_EMAIL']
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
