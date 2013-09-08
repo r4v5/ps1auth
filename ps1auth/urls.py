@@ -1,6 +1,8 @@
 from django.conf.urls import patterns, include, url
 from django.core.urlresolvers import reverse
 from django.views.generic import RedirectView
+from billing import get_integration
+pay_pal = get_integration('pay_pal')
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -12,6 +14,7 @@ urlpatterns = patterns('',
     url(r'^$', RedirectView.as_view(permanent=False, url='/zoho/member_list')),
     url(r'^accounts/', include('accounts.urls')),
     url(r'^zoho/', include('zoho_integration.urls')),
+    url( r'^paypal-ipn-handler/', include(pay_pal.urls) ),
     
     # url(r'^auth/', include('auth.foo.urls')),
 
