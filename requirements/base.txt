@@ -5,3 +5,6 @@ python-ldap==2.4.10
 pytz==2013b
 South==0.8.1
 psycopg2==2.5.1
+django-merchant==0.0.8a0
+django-paypal==0.1.2
+

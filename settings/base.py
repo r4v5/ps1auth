@@ -132,6 +132,8 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
     'south',
+    'paypal.standard.ipn',
+    'billing',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -180,3 +182,4 @@ AD_BASEDN = get_env_variable('AD_BASEDN')
 AD_BINDDN = get_env_variable('AD_BINDDN')
 AD_BINDDN_PASSWORD = get_env_variable('AD_BINDDN_PASSWORD')
 ZOHO_AUTHTOKEN = get_env_variable('ZOHO_AUTHTOKEN')
+PAYPAL_RECEIVER_EMAIL = get_env_variable('PAYPAL_RECIEVER_EMAIL')
