@@ -136,6 +136,13 @@ INSTALLED_APPS = (
     'billing',
 )
 
+MERCHANT_SETTINGS = {
+    'pay_pal': {
+        'RECEIVER_EMAIL': get_env_variable('PAYPAL_RECEIVER_EMAIL'),
+    }
+}
+PAYPAL_RECEIVER_EMAIL = MERCHANT_SETTINGS['pay_pal']['RECEIVER_EMAIL']
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
@@ -182,4 +189,3 @@ AD_BASEDN = get_env_variable('AD_BASEDN')
 AD_BINDDN = get_env_variable('AD_BINDDN')
 AD_BINDDN_PASSWORD = get_env_variable('AD_BINDDN_PASSWORD')
 ZOHO_AUTHTOKEN = get_env_variable('ZOHO_AUTHTOKEN')
-PAYPAL_RECEIVER_EMAIL = get_env_variable('PAYPAL_RECIEVER_EMAIL')
