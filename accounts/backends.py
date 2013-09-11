@@ -1,4 +1,3 @@
-from pprint import pprint
 import ldap
 from django.contrib.auth.models import User, BaseUserManager
 from django.conf import settings
@@ -69,18 +68,14 @@ class PS1Backend(object):
         return user
 
     def get_group_permissions(self, user_obj, obj=None):
-        pprint(user_ob)
-        pass
+        raise NotImplementedError
 
     def get_all_permissions(self, user_obj, obj=None):
-        pprint(user_ob)
-        pass
+        raise NotImplementedError
 
     def has_perm(self, user_obj, perm, obj=None):
-        pprint(user_ob)
-        print(perm)
-        pass
+        raise NotImplementedError
 
     def has_module_perms(self, user_obj, app_label):
-        print("has_module_perms({0} {1})".format(user_obj, app_label))
+        raise NotImplementedError
 

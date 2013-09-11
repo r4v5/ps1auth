@@ -29,7 +29,6 @@ class PS1UserManager(BaseUserManager):
 
 class PS1User(AbstractBaseUser):
     """ Represents a User
-        TODO: add an ldapobject property
     """
 
     objects = PS1UserManager()
@@ -40,6 +39,16 @@ class PS1User(AbstractBaseUser):
             unique=True,
             db_index=True,
             editable=False,
+        )
+    # hack to get around bug in django 1.5, fixed in 1.6
+    id = models.CharField(
+            verbose_name="Username",
+            max_length=48,
+            primary_key=False,
+            unique=True,
+            db_index=True,
+            editable=False,
+            db_column='object_guid'
         )
     USERNAME_FIELD = 'object_guid'
 
@@ -77,7 +86,34 @@ class PS1User(AbstractBaseUser):
         raise NotImplementedError
 
     def has_usable_password(self):
-        raise NotImplementedError
+        #HEFTODO fix
+        return True
+
+
+    #HEFTODO read source of PermissionsMixin, it might have a good default
+    # implementation
+    @property
+    def is_staff(self):
+        #HEFTODO fix this
+        return True
+
+    @property
+    def is_superuser(self):
+        #HEFTODO fix this
+        return True
+
+    def has_perm(self, perm, obj=None):
+        #HEFTODO fix this
+        return True
+
+    def has_perms(self, perm_list, obj=None):
+        #HEFTODO fix this
+        return True
+
+    def has_module_perms(self, package_name):
+        #HEFTODO fix this
+        return True
+
 
     @property
     def ldap_user(self):

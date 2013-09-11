@@ -5,7 +5,7 @@ TEMPLATE_DEBUG = DEBUG
 
 MERCHANT_SETTINGS = {
     'pay_pal': {
-        'RECEIVER_EMAIL': 'hef+paypalsandbox@pbrfrat.com',
+        'RECEIVER_EMAIL': 'money@pumpingstationone.org',
     }
 }
 PAYPAL_RECEIVER_EMAIL = MERCHANT_SETTINGS['pay_pal']['RECEIVER_EMAIL']
