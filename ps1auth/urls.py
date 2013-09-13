@@ -16,7 +16,9 @@ urlpatterns = patterns('',
     url(r'^$', RedirectView.as_view(permanent=False, url='/zoho/member_list')),
     url(r'^accounts/', include('accounts.urls')),
     url(r'^zoho/', include('zoho_integration.urls')),
-    url( r'^paypal-ipn-handler/', csrf_exempt(ipn), name='paypal-ipn'),
+    #url( r'^paypal-ipn-handler/', csrf_exempt(ipn), name='paypal-ipn'),
+    url( r'^paypal-ipn-handler/', include(pay_pal.urls)),
+
     
     # url(r'^auth/', include('auth.foo.urls')),
 
