@@ -10,6 +10,8 @@ from paypal.standard.ipn.views import ipn
 from django.contrib import admin
 admin.autodiscover()
 
+from money.models import *
+
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'auth.views.home', name='home'),
