@@ -1,12 +1,12 @@
 from django.db import models
-from django.dispatch import reciever
+from django.dispatch import receiver
 from billing.signals import transaction_was_successful, transaction_was_unsuccessful
 
-@reciever(transaction_was_successful)
+@receiver(transaction_was_successful)
 def handle_successful_transaction(sender, type, response):
     raise Exception
 
-@reiver(transaction_was_unsuccessful)
+@receiver(transaction_was_unsuccessful)
 def handle_unsuccessful_transaction(sender, type, response):
     raise Exception
 
