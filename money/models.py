@@ -10,7 +10,7 @@ def handle_successful_transaction(sender, type, response, **kwargs):
 def handle_unsuccessful_transaction(sender, type, response, **kwargs):
     pass
 
-tattransaction_was_successful.connect(handle_successful_transaction)
+#transaction_was_successful.connect(handle_successful_transaction)
 #transaction_was_unsuccessful.connect(handle_unsuccessful_transaction)
 
 # Create your models here.
