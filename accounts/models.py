@@ -97,6 +97,9 @@ class PS1User(AbstractBaseUser):
             cache.set(self.object_guid, self._ldap_user, 24 * 60 * 60)
         return self._ldap_user
 
+    def __unicode__(self):
+        return self.get_short_name()
+
 def gen_uuid():
     return str(uuid.uuid4())
 

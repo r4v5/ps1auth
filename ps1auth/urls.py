@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'auth.views.home', name='home'),
     url(r'^$', RedirectView.as_view(permanent=False, url='/zoho/member_list')),
     url(r'^accounts/', include('accounts.urls')),
+    url(r'^rfid/', include('rfid.urls')),
     url(r'^zoho/', include('zoho_integration.urls')),
     
     # url(r'^auth/', include('auth.foo.urls')),

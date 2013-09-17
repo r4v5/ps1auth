@@ -112,3 +112,5 @@ def password_reset_confirm(request, uid=None, token=None,
         context.update(extra_context)
     return TemplateResponse(request, template_name, context,
                             current_app=current_app)
+
+

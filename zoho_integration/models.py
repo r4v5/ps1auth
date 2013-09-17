@@ -22,6 +22,9 @@ class Contact(models.Model):
         else:
             return "{} {}".format(self.first_name, self.last_name)
 
+    def __unicode__(self):
+        return self.get_full_name()
+
 
 class Token(models.Model):
     token = models.CharField(max_length=36)
@@ -48,4 +51,5 @@ class ContactChange(models.Model):
             setattr(contact, field, new_value)
             contact.save()
             change.save()
+
         
