@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load webdesign %}
+
+{% block content %}
+<div class="row">
+  <div class="span12">
+  <pre>{{ debug|pprint }}</pre>
+  </div>
+  <div class="span12">
+    <h1>audits</h1>
+
+    <h2>Users</h2>
+    <table class='table table-striped'>
+      <thead>
+        <tr><th>Account</th><th>Enabled</th><th>pwdLastSet</th></tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr><td>{{ user.name }}</td><td>{{ user.enabled }}</td><td>{{ user.pwdLastSet }}<td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

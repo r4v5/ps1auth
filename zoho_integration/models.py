@@ -20,7 +20,10 @@ class Contact(models.Model):
         if self.user:
             return self.user.get_full_name()
         else:
-            return "{} {}".format(self.first_name, self.last_name)
+            return u"{} {}".format(self.first_name, self.last_name)
+
+    def __unicode__(self):
+        return self.get_full_name()
 
 
 class Token(models.Model):
