@@ -125,21 +125,22 @@ def audits(request):
     users_result = l.search_ext_s(settings.AD_BASEDN ,ldap.SCOPE_ONELEVEL, filterstr=filter_string)
     users = []
     for user_result in users_result:
-        account = PS1Backend().get_user( uuid.UUID( bytes_le=( user_result[1]['objectGUID'][0] ) ) )
+        account = PS1Backend().get_user( str( uuid.UUID( bytes_le=( user_result[1]['objectGUID'][0] ) ) ) )
         try:
             contact = account.contact
         except Contact.DoesNotExist:
             contact = None
+
         user = {
             'name':       user_result[1]['sAMAccountName'][0],
             'enabled':    (int(user_result[1]['userAccountControl'][0]) & 2) != 2,
             'pwdLastSet': win32_filetime(user_result[1]['pwdLastSet'][0]),
-            'contact': contact,
+            'contact':  contact,
+            'account': account
         }
         users.append(user)
     data = {}
-    data["debug"] = map(lambda x: x['contact'], users)
-    #data["debug"] = users_result
+    data["debug"] = map(lambda x: x['account'], users)
     data["users"] = users
     return render( request, "audits.html", data )
 
@@ -149,6 +150,4 @@ from datetime import datetime, timedelta
 def win32_filetime(filetime_timestamp):
     microseconds = int(filetime_timestamp) / 10.
     return datetime(1601,1,1) + timedelta(microseconds=microseconds)
-
-
 
