@@ -80,6 +80,14 @@ class PS1User(AbstractBaseUser):
         raise NotImplementedError
 
     @property
+    def is_active(self):
+        return (int(self.ldap_user['userAccountControl'][0]) & 2) != 2
+
+    @property
+    def is_staff(self):
+        return False
+
+    @property
     def ldap_user(self):
         if hasattr(self, '_ldap_user'):
             return self._ldap_user

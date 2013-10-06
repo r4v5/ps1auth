@@ -7,20 +7,46 @@
 
 {% block content %}
 
-<h1>Full Members</h1>
-<div>
-{% for member in full_members %}
-  <hr>
-  {{ member.get_full_name }}
-{% endfor %}
-<hr>
-
-
-<h1>Starving Hackers</h1>
-{% for member in starving_hackers %}
-  <hr>
-  {{ member.get_full_name }}
-{% endfor %}
-<hr>
+<div class="row">
+  <div class="span12">
+    <h1>Full Members</h1>
+    <table class='table table-striped'>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>UserName</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for member in full_members %}
+        <tr>
+          <td>{{ member.get_full_name }}</td>
+          <td>{{ member.user.ldap_user.sAMAccountName.0 }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
+
+<div class="row">
+  <div class="span12">
+    <h1>Starving Hackers</h1>
+    <table class='table table-striped'>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>UserName</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for member in starving_hackers %}
+        <tr>
+          <td>{{ member.get_full_name }}</td>
+          <td>{{ member.user.ldap_user.sAMAccountName.0 }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
 {% endblock %}
