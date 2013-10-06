@@ -118,6 +118,7 @@ def password_reset_confirm(request, uid=None, token=None,
 
 import uuid
 from zoho_integration.models import Contact
+from accounts.models import PS1User
 def audits(request):
     l = get_ldap_connection()
     filter_string ='(ObjectClass=Person)'
@@ -125,23 +126,37 @@ def audits(request):
     users_result = l.search_ext_s(settings.AD_BASEDN ,ldap.SCOPE_ONELEVEL, filterstr=filter_string)
     users = []
     for user_result in users_result:
-        account = PS1Backend().get_user( str( uuid.UUID( bytes_le=( user_result[1]['objectGUID'][0] ) ) ) )
+        guid = str( uuid.UUID( bytes_le=( user_result[1]['objectGUID'][0] ) ) )
         try:
-            contact = account.contact
-        except Contact.DoesNotExist:
+            account = PS1User.objects.get(object_guid=guid)
+            try:
+                contact = account.contact
+            except Contact.DoesNotExist:
+                contact = None
+        except PS1User.DoesNotExist:
+            account = None
             contact = None
+
+        end_date = None
+        if contact:
+            end_date = contact.membership_end_date
 
         user = {
             'name':       user_result[1]['sAMAccountName'][0],
             'enabled':    (int(user_result[1]['userAccountControl'][0]) & 2) != 2,
             'pwdLastSet': win32_filetime(user_result[1]['pwdLastSet'][0]),
             'contact':  contact,
-            'account': account
+            'account': account,
+            'guid': str(guid),
+            'end_date': end_date,
         }
         users.append(user)
+
     data = {}
-    data["debug"] = map(lambda x: x['account'], users)
+    #data["debug"] = users
     data["users"] = users
+
+    data["contacts"]
     return render( request, "audits.html", data )
 
 
