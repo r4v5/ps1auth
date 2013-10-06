@@ -119,6 +119,7 @@ def password_reset_confirm(request, uid=None, token=None,
 import uuid
 from zoho_integration.models import Contact
 from accounts.models import PS1User
+@login_required()
 def audits(request):
     l = get_ldap_connection()
     filter_string ='(ObjectClass=Person)'
@@ -155,8 +156,6 @@ def audits(request):
     data = {}
     #data["debug"] = users
     data["users"] = users
-
-    data["contacts"]
     return render( request, "audits.html", data )
 
 
