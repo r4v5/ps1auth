@@ -6,8 +6,10 @@ from django.conf import settings
 from accounts.models import PS1User
 #from .tokens import default_token_generator
 from .tokens import *
-from .backends import PS1Backend
+from .backends import PS1Backend, get_ldap_connection
 import ldap
+import ldap.modlist
+import re
 
 class PasswordResetForm(forms.Form):
     """ 
@@ -107,3 +109,63 @@ class SetPasswordForm(forms.Form):
         """
         return self.user
 
+
+class account_register_form(forms.Form):
+    preferred_username = forms.CharField()
+    first_name = forms.CharField()
+    last_name = forms.CharField()
+    preferred_email = forms.EmailField()
+
+    def clean_preferred_username(self):
+        username = self.cleaned_data['preferred_username']
+        l = get_ldap_connection()
+        filter_string = '(sAMAccountName={0})'.format(username)
+        result = l.search_s(settings.AD_BASEDN, ldap.SCOPE_SUBTREE, filterstr=filter_string)
+        if result:
+            error_string = "A member is already using '{0}' as his or her username.".format(username)
+            raise forms.ValidationError(error_string)
+
+        if not re.match(r"^[a-z][a-z0-9]{2,30}$", username):
+            error_string = """Username must be all lower case,
+            start with a letter,
+            contain only letters and numbers,
+            and be between 3 and 30 characters"""
+            raise(forms.ValidationError(error_string))
+
+        return username
+
+    def save(self):
+        """ Create the user
+        A lot of this functionality needs to be moved to PS1UserManager, and
+        some of the duplicate functionality needs with the accounts module
+        needs to be refactored.
+        """
+        user_dn = "CN={0},{1}".format(self.cleaned_data['preferred_username'], settings.AD_BASEDN)
+        user_attrs = {}
+        user_attrs['objectClass'] = ['top', 'person', 'organizationalPerson', 'user']
+        user_attrs['cn'] = str(self.cleaned_data['preferred_username'])
+        user_attrs['userPrincipalName'] = str(self.cleaned_data['preferred_username'] + '@' + settings.AD_DOMAIN)
+        user_attrs['sAMAccountName'] = str(self.cleaned_data['preferred_username'])
+        user_attrs['givenName'] = str(self.cleaned_data['first_name'])
+        user_attrs['sn'] = str(self.cleaned_data['last_name'])
+        # Create the account "Disabled"
+        user_attrs['userAccountControl'] = '514'
+        user_attrs['mail'] = str(self.cleaned_data['preferred_email']) 
+        user_ldif = ldap.modlist.addModlist(user_attrs)
+
+        ldap_connection = get_ldap_connection()
+
+        # add the user to AD
+        result = ldap_connection.add_s(user_dn, user_ldif)
+
+        #now get the user guid
+        filter_string = r'sAMAccountName={0}'.format(str(self.cleaned_data['preferred_username']))
+        result = ldap_connection.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
+        ldap_user = result[0][1]
+        guid = uuid.UUID(bytes_le=ldap_user['objectGUID'][0])
+        user = PS1Backend().get_user(guid)
+        user.save()
+
+        ldap_connection.unbind_s()
+
+        return user

@@ -43,6 +43,9 @@ class PS1User(AbstractBaseUser):
         )
     USERNAME_FIELD = 'object_guid'
 
+    def get_username():
+        return self.ldap_user['sAMAccountName'][0]
+
     def get_full_name(self):
         first_name = self.ldap_user['givenName'][0]
         last_name = self.ldap_user['sn'][0]
@@ -78,6 +81,22 @@ class PS1User(AbstractBaseUser):
 
     def has_usable_password(self):
         raise NotImplementedError
+
+    @property
+    def username(self):
+        return self.ldap_user['sAMAccountName'][0]
+
+    @property
+    def first_name(self):
+        return self.ldap_user['givenName'][0]
+
+    @property
+    def last_name(self):
+        return self.ldap_user['sn'][0]
+
+    @property
+    def email(self):
+        return self.ldap_user['mail'][0]
 
     @property
     def is_active(self):

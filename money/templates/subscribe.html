@@ -1,0 +1,43 @@
+
+{% extends "base.html" %}
+{% load bootstrap_toolkit %}
+
+{% block extra_head %}
+{{ form.media }}
+  <script src="https://js.braintreegateway.com/v1/braintree.js"></script>
+  <script>
+    var ajax_submit = function (e) {
+      form = $('#braintree-form');
+      e.preventDefault();
+      $("#submit").attr("disabled", "disabled");
+      $.post(form.attr('action'), form.serialize(), function (data) {
+        form.parent().replaceWith(data);
+      });
+    }
+    var braintree = Braintree.create("IIBCgKCAQEAqACaduHFJRsDAwwfd4fY8nAl+t5OqapBSh9aU/nkFE1YMhqi9ogy2TH9bD1DIWt973IvzuMUFm2Yph53t/i1TZaaT90uo4j+6a4bOpiTsvLpyjZYoEiYTSfw0hpMsdee+pD8BMKKJ8U3yoHbImUuVlDt552VQeFw5HMgLDfw+gRG2mEZvKDj5SbZxFG9OQW1PZLu9fOR284IYrLXL0zdWW5T9V3/jnviPvWW7egRzoars3Cf5S4H/+1TBblhVwvV9Lxpw3fRCh0/kOgGN0H2I9GP+XFuW6camY020F4C5/TfTG0Ui7w8upXZUNHJ0hws6Uagm0OY4uxJpaeUTL5dFQIDAQAB");
+    braintree.onSubmitEncryptForm('braintree-payment-form', ajax_submit);
+  </script>
+{% endblock %}
+
+
+{% block content %}
+<pre>{{ debug|pprint }}</pre>
+
+<ul>
+{%for card in cards %}
+
+<li>{{ card.masked_number }}<img src="{{ card.image_url }}"></li></li>
+
+{% endfor %}
+</ul>
+<div class="row">
+  <div class="span12">
+    <h1>Add Credit Card</h1>
+    <form class="" id="braintree-form" action="{{ form.action }}" method="post">
+    {% csrf_token %}
+      {{ form|as_bootstrap }}
+    <input id="submit" type="submit" value="Submit" class="btn btn-primary">
+    </form>
+  </div>
+</div>
+{% endblock %}
