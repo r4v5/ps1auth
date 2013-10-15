@@ -22,4 +22,21 @@
     </table>
   </div>
 </div>
+
+
+<div class="row">
+  <div class="span12">
+    <h2>Paypal</h2>
+    <table class='table table-striped'>
+      <thead>
+        <tr><th>email</th><th>date</th></tr>
+      </thead>
+      <tbody>
+        {% for payer in payers %}
+        <tr><td>{{ payer.payer_email }}</td><td>{{ payer.created_at }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 {% endblock %}
