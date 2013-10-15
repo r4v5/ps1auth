@@ -9,6 +9,13 @@ ADMINS = (
     ('Hef', 'hef+ps1auth@pbrfrat.com'),
 )
 
+MERCHANT_SETTINGS = {
+    'pay_pal': {
+        'RECEIVER_EMAIL': 'money@pumpingstationone.org',
+    }
+}
+PAYPAL_RECEIVER_EMAIL = MERCHANT_SETTINGS['pay_pal']['RECEIVER_EMAIL']
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',

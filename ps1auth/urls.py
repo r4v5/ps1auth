@@ -1,10 +1,16 @@
 from django.conf.urls import patterns, include, url
 from django.core.urlresolvers import reverse
 from django.views.generic import RedirectView
+from billing import get_integration
+pay_pal = get_integration('pay_pal')
+from django.views.decorators.csrf import csrf_exempt
+from paypal.standard.ipn.views import ipn
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
+
+from money.models import *
 
 urlpatterns = patterns('',
     # Examples:
@@ -12,6 +18,9 @@ urlpatterns = patterns('',
     url(r'^$', RedirectView.as_view(permanent=False, url='/zoho/member_list')),
     url(r'^accounts/', include('accounts.urls')),
     url(r'^zoho/', include('zoho_integration.urls')),
+    #url( r'^paypal-ipn-handler/', csrf_exempt(ipn), name='paypal-ipn'),
+    url( r'^paypal-ipn-handler/', include(pay_pal.urls)),
+
     
     # url(r'^auth/', include('auth.foo.urls')),
 
@@ -19,5 +28,5 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 )
