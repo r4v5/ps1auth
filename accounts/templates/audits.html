@@ -29,11 +29,11 @@
     <h2>Paypal</h2>
     <table class='table table-striped'>
       <thead>
-        <tr><th>email</th><th>date</th></tr>
+        <tr><th>email</th><th>date</th><td>amount?</td></tr>
       </thead>
       <tbody>
         {% for payer in payers %}
-        <tr><td>{{ payer.payer_email }}</td><td>{{ payer.created_at }}</td></tr>
+        <tr><td>{{ payer.payer_email }}</td><td>{{ payer.created_at }}</td><td>{{payer.amount3}}</td></tr>
         {% endfor %}
       </tbody>
     </table>
