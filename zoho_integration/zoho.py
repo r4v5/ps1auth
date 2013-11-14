@@ -59,19 +59,38 @@ class ZohoClient(object):
             c.modified_time = modified_time
             c.save()
 
-            #c.first_name = contact[u'First Name']
             ContactChange.log(c, 'first_name', contact[u'First Name'])
-            #c.last_name = contact['Last Name']
             ContactChange.log(c, 'last_name', contact[u'Last Name'])
             try:
-                #c.email = contact[u'Email']
                 ContactChange.log(c, 'email', contact[u'Email'])
             except KeyError:
                 print("Email not set for {}".format(contact))
             try:
-                #c.membership_status = contact[u'Membership Status']
                 ContactChange.log(c, 'membership_status', contact[u'Membership Status'])
             except KeyError:
                 print("No membership status for {}".format(contact))
+
+            # Not all records will have this "Membership End Date"
+            try:
+                ends_on = datetime.strptime(contact[u'Membership End Date'], '%Y-%m-%d')
+                ContactChange.log(c, 'membership_end_date', ends_on)
+            except KeyError:
+                pass
             c.save()
 
+    def get_record(self, contact_id):
+        url= ("https://crm.zoho.com/crm/private/json/Contacts/getRecordById?"
+        "authtoken={0}&scope=crmapi&id={1}".format(self.api_key, contact_id))
+
+        result = urllib2.urlopen(url)
+        raw_output = result.read()                                                                                     
+        response = json.loads(raw_output)
+        return response
+
+if __name__ == '__main__':
+    from pprint import pprint
+    import sys
+    if len(sys.argv) > 1:
+        zc = ZohoClient()
+        record = zc.get_record(sys.argv[1])
+        pprint(record)

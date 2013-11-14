@@ -14,13 +14,17 @@ class Contact(models.Model):
     email = models.CharField(max_length=300)
     membership_status = models.CharField(max_length=300, choices=MEMBERSHIP_STATUS_CHOICES)
     modified_time = models.DateTimeField()
+    membership_end_date = models.DateField(null=True, blank=True)
     user = models.OneToOneField(accounts.models.PS1User, null=True)
 
     def get_full_name(self):
         if self.user:
             return self.user.get_full_name()
         else:
-            return "{} {}".format(self.first_name, self.last_name)
+            return u"{} {}".format(self.first_name, self.last_name)
+
+    def __unicode__(self):
+        return self.get_full_name()
 
 
 class Token(models.Model):
@@ -31,8 +35,8 @@ class ContactChange(models.Model):
     contact = models.ForeignKey(Contact)
     field = models.CharField(max_length=300)
     detected_on = models.DateTimeField()
-    old_value = models.CharField(max_length=300)
-    new_value = models.CharField(max_length=300)
+    old_value = models.CharField(null=True, default="None", max_length=300)
+    new_value = models.CharField(null=True, default="None", max_length=300)
 
     @staticmethod
     def log(contact, field, new_value):

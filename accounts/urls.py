@@ -15,5 +15,6 @@ urlpatterns = patterns('',
     url(r'password_reset_confirm/(?P<uid>[0-9A-Za-z\-]+)/(?P<token>[0-9A-Za-z\-]+)$', 'accounts.views.password_reset_confirm', {}),
     url(r'password_reset_complete/$', 'django.contrib.auth.views.password_reset_complete', {}),
     url(r'set_password/$', 'accounts.views.set_password', {}),
-    url(r'access/$', 'accounts.views.access_page', {}),
+#    url(r'access/$', 'accounts.views.access_page', {}),
+#    url(r'audits/$', 'accounts.views.audits', {}),
 )

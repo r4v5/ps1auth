@@ -119,6 +119,7 @@ INSTALLED_APPS = (
     'ps1auth',
     'accounts',
     'zoho_integration',
+    'money',
     'bootstrap_toolkit',
     'django.contrib.webdesign',
     'django.contrib.auth',
@@ -132,7 +133,10 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
     'south',
+    'paypal.standard.ipn',
+    'billing',
 )
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
