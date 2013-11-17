@@ -89,11 +89,9 @@ class PS1User(AbstractBaseUser):
 
     @property
     def is_superuser(self):
-        #HEFTODO fix this
         return True
 
     def has_perm(self, perm, obj=None):
-        #HEFTODO fix this
         return True
 
     def has_perms(self, perm_list, obj=None):
@@ -104,14 +102,14 @@ class PS1User(AbstractBaseUser):
         #HEFTODO fix this
         return True
 
-
     @property
     def is_active(self):
         return (int(self.ldap_user['userAccountControl'][0]) & 2) != 2
 
     @property
     def is_staff(self):
-        return False
+        domain_admins_dn = "CN=Domain Admins,{}".format(settings.AD_BASEDN)
+        return domain_admins_dn in self.ldap_user['memberOf']
 
     @property
     def ldap_user(self):
