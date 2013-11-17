@@ -40,7 +40,6 @@ class PS1User(AbstractBaseUser):
             db_index=True,
             editable=False,
         )
-    # hack to get around bug in django 1.5, fixed in 1.6
     USERNAME_FIELD = 'object_guid'
 
     def get_full_name(self):
