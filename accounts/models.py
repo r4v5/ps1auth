@@ -40,7 +40,6 @@ class PS1User(AbstractBaseUser):
             db_index=True,
             editable=False,
         )
-    # hack to get around bug in django 1.5, fixed in 1.6
     USERNAME_FIELD = 'object_guid'
 
     def get_full_name(self):
@@ -80,21 +79,11 @@ class PS1User(AbstractBaseUser):
         #HEFTODO fix
         return True
 
-
-    #HEFTODO read source of PermissionsMixin, it might have a good default
-    # implementation
-    @property
-    def is_staff(self):
-        #HEFTODO fix this
-        return True
-
     @property
     def is_superuser(self):
-        #HEFTODO fix this
         return True
 
     def has_perm(self, perm, obj=None):
-        #HEFTODO fix this
         return True
 
     def has_perms(self, perm_list, obj=None):
@@ -105,14 +94,17 @@ class PS1User(AbstractBaseUser):
         #HEFTODO fix this
         return True
 
-
     @property
     def is_active(self):
         return (int(self.ldap_user['userAccountControl'][0]) & 2) != 2
 
     @property
     def is_staff(self):
-        return False
+        domain_admins_dn = "CN=Domain Admins,{}".format(settings.AD_BASEDN)
+        try:
+            return domain_admins_dn in self.ldap_user['memberOf']
+        except KeyError:
+            return False
 
     @property
     def ldap_user(self):
