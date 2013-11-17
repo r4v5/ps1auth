@@ -79,14 +79,6 @@ class PS1User(AbstractBaseUser):
         #HEFTODO fix
         return True
 
-
-    #HEFTODO read source of PermissionsMixin, it might have a good default
-    # implementation
-    @property
-    def is_staff(self):
-        #HEFTODO fix this
-        return True
-
     @property
     def is_superuser(self):
         return True
@@ -109,7 +101,10 @@ class PS1User(AbstractBaseUser):
     @property
     def is_staff(self):
         domain_admins_dn = "CN=Domain Admins,{}".format(settings.AD_BASEDN)
-        return domain_admins_dn in self.ldap_user['memberOf']
+        try:
+            return domain_admins_dn in self.ldap_user['memberOf']
+        except KeyError:
+            return False
 
     @property
     def ldap_user(self):
