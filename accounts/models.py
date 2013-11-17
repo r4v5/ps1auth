@@ -41,15 +41,6 @@ class PS1User(AbstractBaseUser):
             editable=False,
         )
     # hack to get around bug in django 1.5, fixed in 1.6
-    id = models.CharField(
-            verbose_name="Username",
-            max_length=48,
-            primary_key=False,
-            unique=True,
-            db_index=True,
-            editable=False,
-            db_column='object_guid'
-        )
     USERNAME_FIELD = 'object_guid'
 
     def get_full_name(self):
