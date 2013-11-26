@@ -32,8 +32,9 @@ echo "export AD_URL=ldap://localhost" >> .bashrc
 echo "export AD_DOMAIN=VAGRANT" >> .bashrc
 echo "export AD_BASEDN=CN=Users,DC=vagrant,DC=lan" >> .bashrc
 echo "export AD_BINDDN=Administrator@VAGRANT" >> .bashrc
-echo "export AD_BINDDN_PASSWORD=aeng30og" >> .bashrc
-echo "export ZOHO_AUTHTOKEN=deesohshoayie6PiGoGaghi6thiecaingai2quab2aoheequ8vahsu1phu8ahJio" >> .bashrc
+echo "export AD_BINDDN_PASSWORD=aeng30og >> .bashrc
+echo "export SECRET_KEY=deesohshoayie6PiGoGaghi6thiecaingai2quab2aoheequ8vahsu1phu8ahJio" >> .bashrc
+echo "export ZOHO_AUTHTOKEN=add=your-auth-token" >> .bashrc
 echo "export PAYPAL_RECEIVER_EMAIL=money@vagrant.lan" >> .bashrc
 SCRIPT
 
