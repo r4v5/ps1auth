@@ -27,14 +27,18 @@ cd ..
 #install python packages
 sudo pip install -r /vagrant/requirements/local.txt
 
+#setup database
+sudo -u postgres createuser --superuser vagrant
+sudo -u vagrant createdb ps1auth
+
 # environment variables
 echo "export AD_URL=ldap://localhost" >> .bashrc
 echo "export AD_DOMAIN=VAGRANT" >> .bashrc
 echo "export AD_BASEDN=CN=Users,DC=vagrant,DC=lan" >> .bashrc
 echo "export AD_BINDDN=Administrator@VAGRANT" >> .bashrc
-echo "export AD_BINDDN_PASSWORD=aeng30og >> .bashrc
+echo "export AD_BINDDN_PASSWORD=aeng30og" >> .bashrc
 echo "export SECRET_KEY=deesohshoayie6PiGoGaghi6thiecaingai2quab2aoheequ8vahsu1phu8ahJio" >> .bashrc
-echo "export ZOHO_AUTHTOKEN=add=your-auth-token" >> .bashrc
+echo "export ZOHO_AUTHTOKEN=add-your-auth-token" >> .bashrc
 echo "export PAYPAL_RECEIVER_EMAIL=money@vagrant.lan" >> .bashrc
 SCRIPT
 
@@ -43,4 +47,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "precise64"
   config.vm.box_url = "http://files.vagrantup.com/precise64.box"
   config.vm.provision "shell", inline: $script
+  config.vm.network "forwarded_port", guest: 8000, host: 8000,
+      auto_correct: true
 end
