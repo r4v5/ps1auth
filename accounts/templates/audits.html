@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load webdesign %}
+
+{% block content %}
+<div class="row">
+  <div class="span12">
+  <pre>{{ debug|pprint }}</pre>
+  </div>
+  <div class="span12">
+    <h1>audits</h1>
+
+    <h2>Users</h2>
+    <table class='table table-striped'>
+      <thead>
+        <tr><th>Account</th><th>Enabled</th><th>pwdLastSet</th><th>Contact</th><th>Membership Status</th><th>end date</th></tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr><td>{{ user.name }}</td><td>{{ user.enabled }}</td><td>{{ user.pwdLastSet }}</td><td>{{ user.contact|escape }}</td><td>{{ user.contact.membership_status }}</td><td>{{ user.end_date }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="span12">
+    <h2>Paypal</h2>
+    <table class='table table-striped'>
+      <thead>
+        <tr><th>email</th><th>date</th><td>amount?</td></tr>
+      </thead>
+      <tbody>
+        {% for payer in payers %}
+        <tr><td>{{ payer.payer_email }}</td><td>{{ payer.created_at }}</td><td>{{payer.amount3}}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

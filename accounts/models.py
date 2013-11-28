@@ -29,7 +29,6 @@ class PS1UserManager(BaseUserManager):
 
 class PS1User(AbstractBaseUser):
     """ Represents a User
-        TODO: add an ldapobject property
     """
 
     objects = PS1UserManager()
@@ -77,7 +76,35 @@ class PS1User(AbstractBaseUser):
         raise NotImplementedError
 
     def has_usable_password(self):
-        raise NotImplementedError
+        #HEFTODO fix
+        return True
+
+    @property
+    def is_superuser(self):
+        return True
+
+    def has_perm(self, perm, obj=None):
+        return True
+
+    def has_perms(self, perm_list, obj=None):
+        #HEFTODO fix this
+        return True
+
+    def has_module_perms(self, package_name):
+        #HEFTODO fix this
+        return True
+
+    @property
+    def is_active(self):
+        return (int(self.ldap_user['userAccountControl'][0]) & 2) != 2
+
+    @property
+    def is_staff(self):
+        domain_admins_dn = "CN=Domain Admins,{}".format(settings.AD_BASEDN)
+        try:
+            return domain_admins_dn in self.ldap_user['memberOf']
+        except KeyError:
+            return False
 
     @property
     def ldap_user(self):
