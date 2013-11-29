@@ -118,6 +118,7 @@ TEMPLATE_DIRS = (
 INSTALLED_APPS = (
     'ps1auth',
     'accounts',
+    'rfid',
     'zoho_integration',
     'money',
     'bootstrap_toolkit',
