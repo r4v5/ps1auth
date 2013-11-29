@@ -7,13 +7,16 @@ from django.template.loader import get_template
 from django.template import RequestContext
 
 
-def validate(request, resource, tag_number):
-    tag = RFIDNumber.objects.get(number=tag)
-    resource = Resource.objects.get(name)
+def check(request, resource_name, tag_number):
+    try:
+        tag = RFIDNumber.objects.get(number=tag_number)
+        resource = Resource.objects.get(name=resource_name)
+    except (RFIDNumber.DoesNotExist, Resource.DoesNotExist):
+        return HttpResponse(content="No", status=404, reason="Resource or Tag not Found")
     if resource.is_allowed(tag):
-        return HttpResponse(status_code=200)
+        return HttpResponse(content="Yes", status=200, reason="Access Allowed")
     else:
-        return HttpResposne(status_code=403)
+        return HttpResposne(content="No", status=403, reason="Access Denied")
 
 
 @login_required()
