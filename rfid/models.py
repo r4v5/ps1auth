@@ -1,8 +1,6 @@
 from django.db import models
-from django.contrib import admin
 from django.contrib.auth.models import User
 from django.conf import settings
-
 
 
 class Resource(models.Model):
@@ -18,6 +16,9 @@ class Resource(models.Model):
         except RFIDNumber.DoesNotExist:
             return False
 
+    def __unicode__(self):
+        return self.name
+
 
 class RFIDNumber(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
@@ -26,4 +27,3 @@ class RFIDNumber(models.Model):
     def __unicode__(self):
         return u'user={}, number={}'.format(self.user, self.number)
 
-admin.site.register(Resource)
