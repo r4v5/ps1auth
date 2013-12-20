@@ -20,5 +20,4 @@ urlpatterns = patterns('',
     url(r'password_reset_complete/$', 'django.contrib.auth.views.password_reset_complete', {}),
     url(r'set_password/$', 'accounts.views.set_password', {}),
 #    url(r'access/$', 'accounts.views.access_page', {}),
-#    url(r'audits/$', 'accounts.views.audits', {}),
 )

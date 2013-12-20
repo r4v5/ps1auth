@@ -21,6 +21,7 @@ urlpatterns = patterns('',
     url(r'^zoho/', include('zoho_integration.urls')),
     url( r'^paypal-ipn-handler/', include(pay_pal.urls)),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^audit/', include('audit.urls')),
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     # Uncomment the next line to enable the admin:
