@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load bootstrap_toolkit %}
+
+{% block extra_head %}
+{{ wizard.form.media }}
+{% endblock %}
+
+{% block content %}
+<p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
+<form action="" method="post" class="form-horizontal well">{% csrf_token %}
+  <table>
+{{ wizard.management_form }}
+{% if wizard.form.forms %}
+    {{ wizard.form.management_form }}
+    {% for form in wizard.form.forms %}
+        {{ form|as_bootstrap }}
+    {% endfor %}
+{% else %}
+  {{ wizard.form|as_bootstrap }}
+{% endif %}
+  </table>
+{% if wizard.steps.prev %}
+  <button name="wizard_goto_step" type="submit" class="btn" value="{{ wizard.steps.first }}">First step</button>
+  <button name="wizard_goto_step" type="submit" class="btn" value="{{ wizard.steps.prev }}">Prev step</button>
+{% endif %}
+  <input type="submit" value="Submit" class="btn btn-primary"/>
+</form>
+{% endblock %}
+:

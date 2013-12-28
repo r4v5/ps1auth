@@ -1,10 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permission
 from backends import PS1Backend, get_ldap_connection
 import ldap
 from django.conf import settings
 import uuid
 from django.core.cache import cache
+from localflavor.us.models import PhoneNumberField, USPostalCodeField, USStateField
 
 class PS1UserManager(BaseUserManager):
         
@@ -26,6 +27,15 @@ class PS1UserManager(BaseUserManager):
             users.append(backend.get_user(str(guid)))
         return users
 
+    def get_all_permissions(user, obj):
+        pass
+
+    def has_perm(user, perm, obj):
+        pass
+
+    def has_module_perms(user, app_label):
+        pass
+
 
 class PS1User(AbstractBaseUser):
     """ Represents a User
@@ -41,6 +51,10 @@ class PS1User(AbstractBaseUser):
             editable=False,
         )
     USERNAME_FIELD = 'object_guid'
+
+    class Meta:
+        verbose_name = 'PS1 Member'
+        verbose_name_plural = 'PS1 Members'
 
     def get_full_name(self):
         first_name = self.ldap_user['givenName'][0]
@@ -127,6 +141,20 @@ class PS1User(AbstractBaseUser):
     def __unicode__(self):
         return self.get_short_name()
 
+class PS1Group(models.Model):
+    object_guid = models.CharField(
+            verbose_name="group",
+            max_length=48,
+            primary_key=True,
+            unique=True,
+            db_index=True,
+            editable=False,
+        )
+    permissions = models.ManyToManyField(Permission)
+    class Meta:
+        verbose_name = 'PS1 Group'
+        verbose_name_plural = 'PS1 Groups'
+
 def gen_uuid():
     return str(uuid.uuid4())
 
@@ -135,5 +163,34 @@ class Token(models.Model):
     key = models.CharField(max_length=36, default=gen_uuid, editable=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 
+class PendingMember(models.Model):
+    first_name = models.CharField(max_length=255)
+    middle_name = models.CharField(max_length=255, blank=True)
+    last_name = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255)
+    phone_number = PhoneNumberField()
+    street_address = models.CharField(max_length=255)
+    second_address_line = models.CharField(max_length=255, blank=True)
+    city = models.CharField(max_length=255, default='Chicago')
+    state = USPostalCodeField(default='IL')
+    zip_code = models.CharField(max_length=255)
+    gender = models.CharField(max_length=255, choices=( ('Female','Female'), ('Male', 'Male'), ('Other', 'Other/Prefer not to respond') ))
+    date_of_birth = models.DateField(max_length=255)
 
+    def __str__(self):
+        return "{0.first_name} {0.last_name} ({0.email})".format( self )
+
+class Member(PendingMember):
+    object_guid = models.OneToOneField(PS1User)
+
+
+class EmergencyContact(models.Model):
+    member = models.ForeignKey(PendingMember)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    phone_number = PhoneNumberField()
+    relationship = models.CharField(max_length=255)
+    
+    def __str__(self):
+        return "{0.first_name} {0.last_name} (phone_number)".format( self )
 

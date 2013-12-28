@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
+from accounts.models import PS1User
 
 
 class Resource(models.Model):
@@ -21,7 +22,7 @@ class Resource(models.Model):
 
 
 class RFIDNumber(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    user = models.OneToOneField(PS1User)
     number = models.BigIntegerField(unique=True)
 
     def __unicode__(self):

@@ -5,9 +5,12 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from accounts.models import PS1User
 #from .tokens import default_token_generator
+from .models import PendingMember, EmergencyContact
 from .tokens import *
 from .backends import PS1Backend
 import ldap
+from bootstrap_toolkit.widgets import BootstrapDateInput
+from  localflavor.us.forms import USZipCodeField
 
 class PasswordResetForm(forms.Form):
     """ 
@@ -106,4 +109,28 @@ class SetPasswordForm(forms.Form):
         Warning, this function Does no do work, the actual work is doen in clean()
         """
         return self.user
+
+
+class PersonalInfoForm(forms.ModelForm):
+    zip_code = USZipCodeField(initial=606)
+    class Meta:
+        model = PendingMember
+        widgets = {
+            'date_of_birth': BootstrapDateInput(),
+        }
+
+class EmergencyContactForm(forms.ModelForm):
+    class Meta:
+        exclude = ['member']
+        model = EmergencyContact
+
+
+class verifyID(forms.Form):
+    member = forms.CharField()
+    name = forms.BooleanField()
+    address = forms.BooleanField()
+    date_of_birth = forms.BooleanField()
+
+    def __init__():
+        pass
 

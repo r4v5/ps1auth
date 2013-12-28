@@ -1,6 +1,9 @@
 from django.conf.urls import patterns, include, url
 import accounts.views
 import accounts.forms
+from .views import RegistrationWizard
+from .forms import PersonalInfoForm, EmergencyContactForm
+
 #import django.contrib.auth.views.password_reset_done
 
 urlpatterns = patterns('',
@@ -20,5 +23,5 @@ urlpatterns = patterns('',
     url(r'password_reset_complete/$', 'django.contrib.auth.views.password_reset_complete', {}),
     url(r'set_password/$', 'accounts.views.set_password', {}),
 #    url(r'access/$', 'accounts.views.access_page', {}),
-#    url(r'audits/$', 'accounts.views.audits', {}),
+    url(r'register/$', RegistrationWizard.as_view(), {}),
 )

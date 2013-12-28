@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import password_reset_complete
+from django.contrib.formtools.wizard.views import SessionWizardView
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -11,9 +12,10 @@ from django.template.loader import get_template
 from django.template.response import TemplateResponse
 
 import ldap
+from pprint import pprint
 
 from .tokens import default_token_generator
-from .forms import SetPasswordForm
+from .forms import SetPasswordForm, PersonalInfoForm, EmergencyContactForm
 from .backends import PS1Backend, get_ldap_connection
 from .models import Token
 
@@ -170,3 +172,12 @@ from paypal.standard.ipn.models import PayPalIPN
 def paypal_payers():
     return PayPalIPN.objects.order_by('payer_email', '-created_at').distinct('payer_email')
 
+
+class RegistrationWizard(SessionWizardView):
+    form_list = [PersonalInfoForm, EmergencyContactForm]
+    def done(self, form_list, **kwargs):
+        member = form_list[0].save()
+        emergency_contact = form_list[1].save(commit=False)
+        emergency_contact.member = member
+        emergency_contact.save()
+        return HttpResponseRedirect('/')
