@@ -142,13 +142,13 @@ class PS1User(AbstractBaseUser):
         return self.get_short_name()
 
 class PS1Group(models.Model):
-    object_guid = models.CharField(
+    group_dn = models.CharField(
             verbose_name="group",
-            max_length=48,
+            max_length=255,
             primary_key=True,
             unique=True,
             db_index=True,
-            editable=False,
+            #editable=False,
         )
     permissions = models.ManyToManyField(Permission)
     class Meta:
