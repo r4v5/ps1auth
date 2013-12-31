@@ -9,6 +9,7 @@ from .forms import PersonalInfoForm, EmergencyContactForm
 urlpatterns = patterns('',
     url(r'login/$', 'django.contrib.auth.views.login', {}),
     url(r'logout/$', 'django.contrib.auth.views.logout', {}),
+    url(r'register/$', 'accounts.views.register', {}),
     url(r'password_change/$', 'django.contrib.auth.views.password_change', {}),
     url(r'password_change_done/$', 'django.contrib.auth.views.password_change_done', {}),
     url(r'password_reset/$', 'django.contrib.auth.views.password_reset',

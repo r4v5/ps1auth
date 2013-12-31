@@ -7,4 +7,5 @@ South==0.8.4
 psycopg2==2.5.1
 django-merchant==0.0.8a0
 git+https://github.com/hef/django-paypal.git@e9ff9169570f030a09d16dae454a051792159c3f#egg=django_paypal-master
-
+django-braintree==1.3.4
+braintree==2.25.1

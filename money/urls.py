@@ -2,7 +2,9 @@ from django.conf.urls import patterns, include, url
 from billing import get_integration
 pay_pal = get_integration("pay_pal")
 
-urlpatterns = patterns('',
-# moved to top level
-# ( r'^paypal-ipn-handler/', include(pay_pal.urls) ),
+
+urlpatterns = patterns('money.views',
+    url(r'^create/$', 'create_customer', {}),
+    url(r'^add_credit_card/$', 'add_credit_card', {}),
+    url(r'^subscribe/$', 'subscribe', {}),
 )

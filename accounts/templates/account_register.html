@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load bootstrap_toolkit %}
+
+{% block extra_head %}
+{{ form.media }}
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <div class="span12">
+    <h1>New User Registration</h1>
+    <form class="form-horizontal" action="" method="post">
+    {% csrf_token %}
+    {{ form|as_bootstrap }}
+    <p class="form-actions">
+      <input type="submit" value="Submit" class="btn btn-primary">
+    </p>
+    </form>
+    <p>
+      All information needs to match a valid ID.  Your Identity will be
+      verified by a human before your account will be activated.
+    </p>
+  </div>
+</div>
+{% endblock %}

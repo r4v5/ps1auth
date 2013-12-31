@@ -16,6 +16,7 @@ from pprint import pprint
 
 from .tokens import default_token_generator
 from .forms import SetPasswordForm, PersonalInfoForm, EmergencyContactForm
+from .forms import SetPasswordForm, account_register_form
 from .backends import PS1Backend, get_ldap_connection
 from .models import Token
 
@@ -25,7 +26,7 @@ def hello_world(request):
     html = t.render(context)
     return HttpResponse(html)
 
-def login(request):
+def account_login(request):
     if request.method == 'POST':
         form = AutenticationForm(request.POST)
         if form.is_valid():
@@ -45,6 +46,22 @@ def login(request):
 
 def logout(request):
     logout(request)
+
+def register(request):
+    if request.method == 'POST':
+        form = account_register_form(request.POST)
+        if form.is_valid():
+            user = form.save()
+            user.backend = 'accounts.backends.PS1Backend'
+            login(request, user)
+            return HttpResponseRedirect(reverse('accounts.views.set_password'))
+    else:
+        data = {}
+        form = account_register_form(initial=data)
+    return render(request, 'account_register.html', {
+        'form': form,
+    })
+
 
 @login_required()
 def access_page(request):

@@ -35,4 +35,3 @@ class MoneyTransaction(Transaction):
 class MemberPointTransaction(Transaction):
     amount = models.IntegerField()
 
-
