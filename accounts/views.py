@@ -189,6 +189,8 @@ from paypal.standard.ipn.models import PayPalIPN
 def paypal_payers():
     return PayPalIPN.objects.order_by('payer_email', '-created_at').distinct('payer_email')
 
+from django_braintree.forms import BraintreeForm, CustomerForm
+from money.forms import SignupForm
 
 class RegistrationWizard(SessionWizardView):
     form_list = [PersonalInfoForm, EmergencyContactForm]
@@ -197,4 +199,41 @@ class RegistrationWizard(SessionWizardView):
         emergency_contact = form_list[1].save(commit=False)
         emergency_contact.member = member
         emergency_contact.save()
+        print("DONE")
         return HttpResponseRedirect('/')
+
+    def get_form_kwargs(self, step=None):
+        kwargs = {}
+        return kwargs
+
+    def get_form(self, step=None, data=None, files=None):
+        form = super(RegistrationWizard, self).get_form(step, data, files)
+
+#        if step == u'2':
+#            form.remove_section("customer[first_name]")
+#            form.remove_section("customer[last_name]")
+#            form.remove_section("customer[company]")
+#            form.remove_section("customer[email]")
+#            form.remove_section("customer[phone]")
+#            form.remove_section("customer[fax]")
+#            form.remove_section("customer[website]")
+#            clean_data = self.get_cleaned_data_for_step('0')
+#            full_name = "{first_name} {last_name}".format(**clean_data)
+#            form.fields['customer[credit_card][cardholder_name]'].initial = full_name
+#            form.fields['customer[credit_card][billing_address][first_name]'].initial = clean_data['first_name']
+#            form.fields['customer[credit_card][billing_address][last_name]'].initial = clean_data['last_name']
+#            form.fields['customer[credit_card][billing_address][street_address]'].initial = clean_data['street_address']
+#            form.fields['customer[credit_card][billing_address][extended_address]'].initial = clean_data['second_address_line']
+#            form.fields['customer[credit_card][billing_address][locality]'].initial = clean_data['state']
+#            form.fields['customer[credit_card][billing_address][region]'].initial = clean_data['city']
+#            form.fields['customer[credit_card][billing_address][postal_code]'].initial = clean_data['zip_code']
+#            form.fields['customer[credit_card][billing_address][country_name]'].initial = "United States of America"
+#            form.generate_tr_data()
+        return form
+
+    def get_form_prefix(self, step=None, form=None):
+        prefix = super(RegistrationWizard, self).get_form_prefix(step, form)
+        return prefix
+
+
+

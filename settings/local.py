@@ -33,4 +33,8 @@ DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
 }
 
-
+import braintree
+BRAINTREE_ENV = braintree.Environment.Sandbox
+BRAINTREE_MERCHANT = 'jzs9b7ghq589qwwn'
+BRAINTREE_PUBLIC_KEY = 'bs5m4pfk4m729358'
+BRAINTREE_PRIVATE_KEY = 'da748a94e099bd3c2ca129bf61262db0'

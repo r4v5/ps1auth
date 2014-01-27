@@ -10,7 +10,6 @@ import braintree
 @login_required()
 def create_customer(request):
     result = CustomerForm.get_result(request)
-    pprint(result)
     if result and result.is_success:
         return HttpResponseRedirect("/")
 
@@ -28,7 +27,6 @@ def create_customer(request):
 @login_required()
 def add_credit_card(request):
     result = CreditCardForm.get_result(request)
-    pprint(result)
     if result and result.is_success:
         return HttpResponseRedirect("/")
 

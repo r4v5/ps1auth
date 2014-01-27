@@ -138,6 +138,7 @@ INSTALLED_APPS = (
     'south',
     'paypal.standard.ipn',
     'billing',
+    'django_braintree',
 )
 
 
