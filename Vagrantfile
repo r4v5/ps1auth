@@ -27,10 +27,6 @@ cd ..
 #install python packages
 sudo pip install -r /vagrant/requirements/local.txt
 
-#setup database
-sudo -u postgres createuser --superuser vagrant
-sudo -u vagrant createdb ps1auth
-
 # environment variables
 echo "export AD_URL=ldap://localhost" >> .bashrc
 echo "export AD_DOMAIN=VAGRANT" >> .bashrc
@@ -40,6 +36,26 @@ echo "export AD_BINDDN_PASSWORD=aeng30og" >> .bashrc
 echo "export SECRET_KEY=deesohshoayie6PiGoGaghi6thiecaingai2quab2aoheequ8vahsu1phu8ahJio" >> .bashrc
 echo "export ZOHO_AUTHTOKEN=add-your-auth-token" >> .bashrc
 echo "export PAYPAL_RECEIVER_EMAIL=money@vagrant.lan" >> .bashrc
+source ~/.bashrc
+
+#setup database
+sudo -u postgres createuser --superuser vagrant
+sudo -u vagrant createdb ps1auth
+/usr/bin/python /vagrant/manage.py syncdb
+/usr/bin/python /vagrant/manage.py migrate
+
+#setup database
+
+#supervisor
+sudo apt-get install -y supervisor
+echo "[program:ps1auth]" > /etc/supervisor/conf.d/ps1auth.conf
+echo "command = /usr/bin/python /vagrant/manage.py runserver 0.0.0.0:8000" >> /etc/supervisor/conf.d/ps1auth.conf
+echo "user = vagrant" >> /etc/supervisor/conf.d/ps1auth.conf
+echo "redirect_stderr = true" >> /etc/supervisor/conf.d/ps1auth.conf
+echo "stdout_logfile=/vagrant/vagrant.log" >> /etc/supervisor/conf.d/ps1auth.log
+echo "environment=AD_URL='ldap://localhost',AD_BASEDN='CN=Users,DC=vagrant,DC=lan',AD_BINDDN='Administrator@VAGRANT',AD_BINDDN_PASSWORD='aeng30og',SECRET_KEY='deesohshoayie6PiGoGaghi6thiecaingai2quab2aoheequ8vahsu1phu8ahJio',ZOHO_AUTHTOKEN='add-your-auth-token',PAYPAL_RECEIVER_EMAIL='money@vagrant.lan',AD_DOMAIN='VAGRANT'" >> /etc/supervisor/conf.d/ps1auth.conf
+sudo supervisorctl reread
+sudo supervisorctl update
 SCRIPT
 
 VAGRANTFILE_API_VERSION = "2"
