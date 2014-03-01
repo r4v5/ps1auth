@@ -43,8 +43,11 @@ class PS1User(AbstractBaseUser):
     USERNAME_FIELD = 'object_guid'
 
     def get_full_name(self):
-        first_name = self.ldap_user['givenName'][0]
-        last_name = self.ldap_user['sn'][0]
+        try:
+            first_name = self.ldap_user['givenName'][0]
+            last_name = self.ldap_user['sn'][0]
+        except KeyError:
+            return repr(self)
         return ("{0} {1}").format(first_name, last_name)
 
     def get_short_name(self):

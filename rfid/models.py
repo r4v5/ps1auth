@@ -7,7 +7,8 @@ class Resource(models.Model):
     name = models.CharField(max_length=160)
 
     def is_allowed(self, tag):
-        """ The default implementation just returns if the user is valid or not
+        """
+        The default implementation just returns if the user is valid or not
         """
 
         try:
