@@ -1,7 +1,12 @@
 P1 Member Access System
 ========================
 
-Getting Started
+Getting Started with Vagrant
+===============
+
+    sudo vagrant up
+    
+Getting Started with Everything Else
 ===============
 
 On Arch Linux
