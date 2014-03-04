@@ -37,5 +37,5 @@ class RFIDNumber(models.Model):
     weigand26_125khz = models.CharField(default = "", max_length=7, unique=True, verbose_name="RFID")
 
     def __unicode__(self):
-        return u'user={}, number={}'.format(self.user, self.number)
+        return u'user={}, RFID={}'.format(self.user, self.weigand26_125khz)
 
