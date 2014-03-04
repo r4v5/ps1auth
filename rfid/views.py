@@ -9,14 +9,14 @@ from django.template import RequestContext
 
 def check(request, resource_name, tag_number):
     try:
-        tag = RFIDNumber.objects.get(number=tag_number)
+        tag = RFIDNumber.objects.get(weigand26_125khz=tag_number)
         resource = Resource.objects.get(name=resource_name)
     except (RFIDNumber.DoesNotExist, Resource.DoesNotExist):
         return HttpResponse(content="No", status=404, reason="Resource or Tag not Found")
     if resource.is_allowed(tag):
         return HttpResponse(content="Yes", status=200, reason="Access Allowed")
     else:
-        return HttpResposne(content="No", status=403, reason="Access Denied")
+        return HttpResponse(content="No", status=403, reason="Access Denied")
 
 
 @login_required()

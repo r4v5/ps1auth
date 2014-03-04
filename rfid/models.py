@@ -13,7 +13,7 @@ class Resource(models.Model):
 
         try:
             rfid = RFIDNumber.objects.get(pk=tag.pk)
-            return rfid.user.is_active()
+            return rfid.user.is_active
         except RFIDNumber.DoesNotExist:
             return False
 
@@ -34,7 +34,7 @@ class AdGroupResource(Resource):
 
 class RFIDNumber(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
-    number = models.BigIntegerField(unique=True)
+    weigand26_125khz = models.CharField(default = "", max_length=7, unique=True, verbose_name="RFID")
 
     def __unicode__(self):
         return u'user={}, number={}'.format(self.user, self.number)
