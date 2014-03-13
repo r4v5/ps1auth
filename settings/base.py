@@ -120,7 +120,6 @@ INSTALLED_APPS = (
     'accounts',
     'rfid',
     'zoho_integration',
-    'money',
     'bootstrap_toolkit',
     'django.contrib.webdesign',
     'django.contrib.auth',
