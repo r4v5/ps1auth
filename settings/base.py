@@ -115,11 +115,14 @@ TEMPLATE_DIRS = (
     #os.path.join(SITE_ROOT, "templates"),
 )
 
-INSTALLED_APPS = (
+PROJECT_APPS = (
     'ps1auth',
     'accounts',
     'rfid',
     'zoho_integration',
+)
+
+INSTALLED_APPS = (
     'bootstrap_toolkit',
     'django.contrib.webdesign',
     'django.contrib.auth',
@@ -136,6 +139,8 @@ INSTALLED_APPS = (
     #'paypal.standard.ipn',
     #'billing',
 )
+
+INSTALLED_APPS = INSTALLED_APPS + PROJECT_APPS
 
 
 # A sample logging configuration. The only tangible logging
