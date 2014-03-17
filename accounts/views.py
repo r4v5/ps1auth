@@ -166,7 +166,3 @@ def win32_filetime(filetime_timestamp):
     microseconds = int(filetime_timestamp) / 10.
     return datetime(1601,1,1) + timedelta(microseconds=microseconds)
 
-from paypal.standard.ipn.models import PayPalIPN
-def paypal_payers():
-    return PayPalIPN.objects.order_by('payer_email', '-created_at').distinct('payer_email')
-

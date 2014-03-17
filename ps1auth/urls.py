@@ -7,8 +7,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import admin
 admin.autodiscover()
 
-from money.models import *
-
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'auth.views.home', name='home'),
