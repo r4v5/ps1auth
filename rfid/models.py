@@ -34,7 +34,8 @@ class AdGroupResource(Resource):
 
 class RFIDNumber(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
-    weigand26_125khz = models.CharField(default = "", max_length=7, unique=True, verbose_name="RFID")
+    ASCII_125khz = models.CharField(default = "", max_length=12, unique=True, verbose_name="RFID")
+    #weigand26_125khz = models.CharField(default = "", max_length=7, unique=True, verbose_name="shortform RFID")
 
     def __unicode__(self):
         return u'user={}, RFID={}'.format(self.user, self.weigand26_125khz)
