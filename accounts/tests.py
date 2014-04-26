@@ -18,4 +18,5 @@ class AccountTest(TestCase):
         self.assertTrue(user.has_usable_password())
         self.assertTrue(user.check_password('Garbage1'))
         self.assertFalse(user.check_password('wrong_password'))
+        PS1User.objects.delete_user(user)
         

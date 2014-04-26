@@ -51,6 +51,12 @@ class PS1UserManager(BaseUserManager):
             user._ldap_user['userAccountControl'] = ['512']
 
         return user
+    
+    def delete_user(self, user):
+        l = get_ldap_connection()
+        user_dn = user.ldap_user['distinguishedName'][0]
+        result = l.delete_s(user_dn)
+        user.delete()
         
     def create_superuser(self, username, email, password):
         self.create_user(username, email, password)
