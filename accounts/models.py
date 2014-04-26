@@ -47,9 +47,7 @@ class PS1UserManager(BaseUserManager):
             
         #turn the account on
         result = ldap_connection.modify_s(user_dn, enable_account)
-        if result:
-            user._ldap_user['userAccountControl'] = ['512']
-
+        user._expire_ldap_data()
         return user
     
     def delete_user(self, user):
@@ -59,7 +57,13 @@ class PS1UserManager(BaseUserManager):
         user.delete()
         
     def create_superuser(self, username, email, password):
-        self.create_user(username, email, password)
+        user = self.create_user(username, email, password)
+        admins_dn = "CN={0},{1}".format("Domain Admins", settings.AD_BASEDN)
+        user_dn = user.ldap_user['distinguishedName'][0]
+        add_member = [(ldap.MOD_ADD, 'member', user_dn)]
+        l = get_ldap_connection()
+        l.modify_s(admins_dn, add_member)
+        return user
 
     def get_users_by_field(self, field, value):
         l = get_ldap_connection()
@@ -172,6 +176,11 @@ class PS1User(AbstractBaseUser):
             self._ldap_user = result[0][1]
             cache.set(self.object_guid, self._ldap_user, 24 * 60 * 60)
         return self._ldap_user
+    
+    def _expire_ldap_data(self):
+        if hasattr(self, '_ldap_user'):
+            del(self._ldap_user)
+        cache.delete(self.object_guid)
 
     def __unicode__(self):
         return self.get_short_name()
