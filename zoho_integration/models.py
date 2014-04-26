@@ -26,9 +26,6 @@ class Contact(models.Model):
     def __unicode__(self):
         return self.get_full_name()
 
-    def __unicode__(self):
-        return self.get_full_name()
-
 
 class Token(models.Model):
     token = models.CharField(max_length=36)

@@ -11,3 +11,6 @@ cache
 .vagrant
 *.orig
 reports/
+.project
+.pydevproject
+.settings/

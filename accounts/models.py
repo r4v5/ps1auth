@@ -1,16 +1,57 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from backends import PS1Backend, get_ldap_connection
+from .backends import PS1Backend, get_ldap_connection
 import ldap
 from django.conf import settings
 import uuid
 from django.core.cache import cache
+import ldap.modlist
 
 class PS1UserManager(BaseUserManager):
         
-    def create_user(self, username, email, password):
-        pass
+    def create_user(self, username, email, first_name = None, last_name = None, password = None):
+        user_dn = "CN={0},{1}".format(username, settings.AD_BASEDN)
+        user_attrs = {}
+        user_attrs['objectClass'] = ['top', 'person', 'organizationalPerson', 'user']
+        user_attrs['cn'] = username
+        user_attrs['userPrincipalName'] = username + '@' + settings.AD_DOMAIN
+        user_attrs['sAMAccountName'] = username
+        if first_name:
+            user_attrs['givenName'] = first_name
+        if last_name:
+            user_attrs['sn'] = last_name
+        user_attrs['userAccountControl'] = '514'
+        if email:
+            user_attrs['mail'] = email
+        user_ldif = ldap.modlist.addModlist(user_attrs)
 
+        # prep account enable
+        enable_account = [(ldap.MOD_REPLACE, 'userAccountControl', '512')]
+
+        ldap_connection = get_ldap_connection()
+
+        # add the user to AD
+        result = ldap_connection.add_s(user_dn, user_ldif)
+
+        #now get the user guid
+        filter_string = r'sAMAccountName={0}'.format(username)
+        result = ldap_connection.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
+        ldap_user = result[0][1]
+        guid = uuid.UUID(bytes_le=ldap_user['objectGUID'][0])
+        user = PS1Backend().get_user(guid)
+        user.save()
+        
+        #set password
+        if password:
+            user.set_password(password)
+            
+        #turn the account on
+        result = ldap_connection.modify_s(user_dn, enable_account)
+        if result:
+            user._ldap_user['userAccountControl'] = ['512']
+
+        return user
+        
     def create_superuser(self, username, email, password):
         self.create_user(username, email, password)
 
@@ -79,8 +120,7 @@ class PS1User(AbstractBaseUser):
         raise NotImplementedError
 
     def has_usable_password(self):
-        #HEFTODO fix
-        return True
+       return self.is_active
 
     @property
     def is_superuser(self):

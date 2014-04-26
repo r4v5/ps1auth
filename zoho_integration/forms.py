@@ -107,6 +107,7 @@ class account_register_form(forms.Form):
 
         #ldap_connection.modify_s(user_dn, add_pass)
         ldap_connection.modify_s(user_dn, enable_account)
+        user._ldap_user['userAccountControl'] = [512]
 
         ldap_connection.unbind_s()
 
