@@ -56,8 +56,12 @@ class PS1UserManager(BaseUserManager):
         result = l.delete_s(user_dn)
         user.delete()
         
-    def create_superuser(self, username, email, password):
-        user = self.create_user(username, email, password)
+    def create_superuser(self, object_guid, password, email = None):
+        """
+        object_guid is actually a username. calling it object_guid gets around
+        a bug in ./manage.py createsuperuser
+        """
+        user = self.create_user(object_guid, password, email)
         admins_dn = "CN={0},{1}".format("Domain Admins", settings.AD_BASEDN)
         user_dn = user.ldap_user['distinguishedName'][0]
         add_member = [(ldap.MOD_ADD, 'member', user_dn)]
