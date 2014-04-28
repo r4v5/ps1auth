@@ -40,7 +40,7 @@ class activate_account_form(forms.Form):
         subject = render_to_string("activation_email_subject.txt", c)
         subject = ''.join(subject.splitlines())
         body = render_to_string("activation_email_body.html", c)
-        send_mail(subject, body, "hef@pbrfrat.com", [email_address])
+        send_mail(subject, body, "noreply@pumpingstationone.org", [email_address])
 
 class account_register_form(forms.Form):
     preferred_username = forms.CharField()
@@ -107,7 +107,7 @@ class account_register_form(forms.Form):
 
         #ldap_connection.modify_s(user_dn, add_pass)
         ldap_connection.modify_s(user_dn, enable_account)
-        user._ldap_user['userAccountControl'] = [512]
+        user._expire_ldap_data()
 
         ldap_connection.unbind_s()
 
