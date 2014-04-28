@@ -74,41 +74,15 @@ class account_register_form(forms.Form):
         needs to be refactored.
         """
         token = Token.objects.get(token=self.cleaned_data['token'])
-        user_dn = "CN={0},{1}".format(self.cleaned_data['preferred_username'], settings.AD_BASEDN)
-        user_attrs = {}
-        user_attrs['objectClass'] = ['top', 'person', 'organizationalPerson', 'user']
-        user_attrs['cn'] = str(self.cleaned_data['preferred_username'])
-        user_attrs['userPrincipalName'] = str(self.cleaned_data['preferred_username'] + '@' + settings.AD_DOMAIN)
-        user_attrs['sAMAccountName'] = str(self.cleaned_data['preferred_username'])
-        user_attrs['givenName'] = str(self.cleaned_data['first_name'])
-        user_attrs['sn'] = str(self.cleaned_data['last_name'])
-        user_attrs['userAccountControl'] = '514'
-        user_attrs['mail'] = str(self.cleaned_data['preferred_email']) 
-        user_ldif = ldap.modlist.addModlist(user_attrs)
-
-        # prep account enable
-        enable_account = [(ldap.MOD_REPLACE, 'userAccountControl', '512')]
-
-        ldap_connection = get_ldap_connection()
-
-        # add the user to AD
-        result = ldap_connection.add_s(user_dn, user_ldif)
-
-        #now get the user guid
-        filter_string = r'sAMAccountName={0}'.format(str(self.cleaned_data['preferred_username']))
-        result = ldap_connection.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
-        ldap_user = result[0][1]
-        guid = uuid.UUID(bytes_le=ldap_user['objectGUID'][0])
-        user = PS1Backend().get_user(guid)
-        user.save()
+                
+        username = str(self.cleaned_data['preferred_username'])
+        first_name = str(self.cleaned_data['first_name'])
+        last_name = str(self.cleaned_data['last_name'])
+        email = str(self.cleaned_data['preferred_email'])
+        
+        user = PS1User.objects.create_user(username, email=email, first_name=first_name, last_name=last_name)
         token.zoho_contact.user = user
         token.zoho_contact.save()
         token.delete()
-
-        #ldap_connection.modify_s(user_dn, add_pass)
-        ldap_connection.modify_s(user_dn, enable_account)
-        user._expire_ldap_data()
-
-        ldap_connection.unbind_s()
 
         return user

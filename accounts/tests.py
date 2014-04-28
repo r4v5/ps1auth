@@ -17,6 +17,7 @@ class AccountTest(TestCase):
         self.assertTrue(user.has_usable_password())
         self.assertTrue(user.check_password('Garbage1'))
         self.assertFalse(user.check_password('wrong_password'))
+        self.assertEqual("foo@bar.com", user.ldap_user['mail'][0])
         PS1User.objects.delete_user(user)
         
     def test_create_superuser(self):

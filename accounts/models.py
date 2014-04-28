@@ -9,7 +9,7 @@ import ldap.modlist
 
 class PS1UserManager(BaseUserManager):
         
-    def create_user(self, username, email, first_name = None, last_name = None, password = None):
+    def create_user(self, username, email = None, first_name = None, last_name = None, password = None):
         user_dn = "CN={0},{1}".format(username, settings.AD_BASEDN)
         user_attrs = {}
         user_attrs['objectClass'] = ['top', 'person', 'organizationalPerson', 'user']
@@ -61,7 +61,7 @@ class PS1UserManager(BaseUserManager):
         object_guid is actually a username. calling it object_guid gets around
         a bug in ./manage.py createsuperuser
         """
-        user = self.create_user(object_guid, password, email)
+        user = self.create_user(object_guid, email=email, password=password)
         admins_dn = "CN={0},{1}".format("Domain Admins", settings.AD_BASEDN)
         user_dn = user.ldap_user['distinguishedName'][0]
         add_member = [(ldap.MOD_ADD, 'member', user_dn)]

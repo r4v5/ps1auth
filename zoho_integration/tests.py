@@ -12,6 +12,9 @@ from accounts.models import PS1UserManager
 
 class SimpleTest(TestCase):
     def test_activation(self):
+        """
+        This tests most of the zoho activation path.
+        """
         c = Contact(
                     contact_id="1",
                     first_name = "Jay",
@@ -37,11 +40,15 @@ class SimpleTest(TestCase):
         register_data['preferred_username'] = 'jrhacker'
         register_data['first_name'] = 'Jay'
         register_data['last_name'] = 'Hacker'
-        register_data['preferred_email'] = "J.R.Hacker@example.com"
+        register_data['preferred_email'] = 'J.R.Hacker@example.com'
         register_form = account_register_form(data=register_data)
         self.assertTrue(register_form.is_valid())
         user = register_form.save()
         self.assertIsNotNone(user)
+        
+        with self.assertRaises(Token.DoesNotExist):
+            Token.objects.get(zoho_contact = c)
+        
         PS1UserManager().delete_user(user)
         
         
