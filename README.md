@@ -4,7 +4,7 @@ P1 Member Access System
 Getting Started with Vagrant
 ===============
 
-    sudo vagrant up
+    vagrant up
     
 Getting Started with Everything Else
 ===============
