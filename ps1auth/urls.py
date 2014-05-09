@@ -10,10 +10,10 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'auth.views.home', name='home'),
-    url(r'^$', RedirectView.as_view(permanent=False, url='/zoho/member_list')),
+    url(r'^$', RedirectView.as_view(permanent=False, url='/zinc/member_list')),
     url(r'^accounts/', include('accounts.urls')),
     url(r'^rfid/', include('rfid.urls')),
-    url(r'^zoho/', include('zoho_integration.urls')),
+    url(r'^zinc/', include('zoho_integration.urls')),
     url(r'^admin/', include(admin.site.urls)),
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
