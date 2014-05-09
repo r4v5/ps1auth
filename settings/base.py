@@ -131,16 +131,17 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Uncomment the next line to enable the admin:
-    'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    'django.contrib.admindocs',
     'south',
     #'paypal.standard.ipn',
     #'billing',
 )
 
-INSTALLED_APPS = INSTALLED_APPS + PROJECT_APPS
+POST_INSTALLED_APPS = (
+    'django.contrib.admin',
+    'django.contrib.admindocs',
+)
+
+INSTALLED_APPS = INSTALLED_APPS + PROJECT_APPS + POST_INSTALLED_APPS
 
 
 # A sample logging configuration. The only tangible logging
@@ -180,7 +181,7 @@ AUTHENTICATION_BACKENDS = (
 AUTH_USER_MODEL = 'accounts.PS1User'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-LOGIN_REDIRECT_URL = '/zoho/member_list'
+LOGIN_REDIRECT_URL = '/zinc/member_list'
 
 SECRET_KEY = get_env_variable('SECRET_KEY')
 AD_URL = get_env_variable('AD_URL')

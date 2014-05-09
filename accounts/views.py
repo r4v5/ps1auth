@@ -41,9 +41,6 @@ def login(request):
                 pass
                 #return an 'invalid login' error message
 
-def logout(request):
-    logout(request)
-
 @login_required()
 def access_page(request):
     data = {}
