@@ -6,6 +6,7 @@ from django.core.cache import cache
 from zoho_integration.models import Contact, ContactChange
 from datetime import datetime
 import pytz
+from pprint import pprint
 
 class ZohoClient(object):
     """ work in progress, Builds up a list of zoho users """
@@ -16,6 +17,7 @@ class ZohoClient(object):
                 "authtoken={0}&scope=crmapi&lastModifiedTime={1}&fromIndex=1&toIndex=200&"
                 "sortOrderString=asc&sortColumnString=Modified%20Time".format(self.api_key, most_recent))
         response = cache.get(url)
+	pprint(response)
         if not response:
             result = urllib2.urlopen(url)
             raw_output = result.read()
@@ -76,6 +78,7 @@ class ZohoClient(object):
                 ContactChange.log(c, 'membership_end_date', ends_on)
             except KeyError:
                 pass
+            pprint(c)
             c.save()
 
     def get_record(self, contact_id):

@@ -6,6 +6,7 @@ from django.conf import settings
 import uuid
 from django.core.cache import cache
 import ldap.modlist
+from pprint import pprint
 
 class PS1UserManager(BaseUserManager):
         
@@ -98,6 +99,8 @@ class PS1User(AbstractBaseUser):
     USERNAME_FIELD = 'object_guid'
 
     def get_full_name(self):
+	if not self.ldap_user:
+	     return repr(self)
         try:
             first_name = self.ldap_user['givenName'][0]
             last_name = self.ldap_user['sn'][0]
@@ -106,7 +109,10 @@ class PS1User(AbstractBaseUser):
         return ("{0} {1}").format(first_name, last_name)
 
     def get_short_name(self):
-        return self.ldap_user['cn'][0]
+	if self.ldap_user:
+		return self.ldap_user['cn'][0]
+	else:
+		return "AD User Set, but not found"
 
     def check_password(self, raw_password):
         # HEFTODO strict check
@@ -177,8 +183,9 @@ class PS1User(AbstractBaseUser):
             filter_string = r'(objectGUID={0})'.format(restrung)
             l = get_ldap_connection()
             result = l.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
-            self._ldap_user = result[0][1]
-            cache.set(self.object_guid, self._ldap_user, 24 * 60 * 60)
+            if len(result) > 0:
+		    self._ldap_user = result[0][1]
+		    cache.set(self.object_guid, self._ldap_user, 24 * 60 * 60)
         return self._ldap_user
     
     def _expire_ldap_data(self):
