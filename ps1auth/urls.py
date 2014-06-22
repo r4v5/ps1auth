@@ -13,7 +13,8 @@ urlpatterns = patterns('',
     url(r'^accounts/', include('accounts.urls')),
     url(r'^rfid/', include('rfid.urls')),
     url(r'^zinc/', include('zoho_integration.urls')),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^pod/', include('paypal_integration.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    url(r'^admin/', include(admin.site.urls)),
 )
 
