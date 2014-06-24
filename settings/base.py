@@ -19,7 +19,7 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', 
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'ps1auth',
     }
 }
@@ -120,6 +120,7 @@ PROJECT_APPS = (
     'accounts',
     'rfid',
     'zoho_integration',
+    'memberpoint',
 )
 
 INSTALLED_APPS = (
