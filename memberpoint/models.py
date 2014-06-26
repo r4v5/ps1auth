@@ -7,8 +7,27 @@ class PointAccount(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
             related_name='member_point')
 
+    @property
+    def balance(self):
+        """
+        The point balance of this account.
+        """
+        if not getattr(self, '_balance', None):
+            balance = 0
+            for entry in self.entries:
+                balance += entry.points
+            self._balance = balance
+        return self._balance
+
+    @property
+    def entries(self):
+        """
+        Return the queryset of point transactions for this account.
+        """
+        return self.transaction.all().order_by('-date',)
+
     def __unicode__(self):
-        return u'{}'.format(self.user)
+        return u'{}: {}'.format(self.user, self.balance)
 
 class PointTransaction(models.Model):
     account = models.ForeignKey(PointAccount,
