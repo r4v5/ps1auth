@@ -99,7 +99,9 @@ ListenStream=0.0.0.0:8000
 WantedBy=sockets.target
 EOF
 
-
+# Configure App to Start Automatically
+sudo systemctl start ps1auth.socket
+sudo systemctl enable ps1auth.socket
 
 SCRIPT
 
@@ -108,6 +110,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "archlinux-x86_64"
   config.vm.box_url = "http://cloud.terry.im/vagrant/archlinux-x86_64.box"
   config.vm.provision "shell", inline: $script
-  #config.vm.network "forwarded_port", guest: 8000, host: 8000, auto_correct: true
-  #config.vm.network "private_network", ip: "192.168.50.4"
+  config.vm.network "forwarded_port", guest: 8000, host: 8000, auto_correct: true
 end
