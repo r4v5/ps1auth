@@ -13,7 +13,8 @@ export ZOHO_AUTHTOKEN="add-your-auth-token"
 export PAYPAL_RECEIVER_EMAIL="money@vagrant.lan"
 
 # Update the System
-sudo pacman -Syu --noconfirm
+#sudo pacman -Syu --noconfirm
+sudo pacman -Syy
 
 # Setup locale.gen
 cat << EOF > /etc/locale.gen
@@ -40,6 +41,7 @@ export AD_BINDDN_PASSWORD=${AD_BINDDN_PASSWORD}
 export SECRET_KEY=${SECRET_KEY}
 export ZOHO_AUTHTOKEN=${ZOHO_AUTHTOKEN}
 export PAYPAL_RECEIVER_EMAIL=${PAYPAL_RECEIVER_EMAIL}
+source venv/bin/activate
 EOF
 
 #  Setup Database
@@ -80,7 +82,8 @@ Description=PS1 Auth (Member's site)
 [Service]
 User=vagrant
 WorkingDirectory=/vagrant
-ExecStart=/home/vagrant/venv/bin/gunicorn --debug --log-level debug ps1auth.wsgi:application
+#ExecStart=/home/vagrant/venv/bin/gunicorn --debug --log-level debug ps1auth.wsgi:application
+ExecStart=/home/vagrant/venv/bin/python manage.py 0.0.0.0:8001
 EnvironmentFile=-/home/vagrant/ps1auth.conf
 
 [Install]
@@ -93,15 +96,17 @@ cat << EOF > /etc/systemd/system/ps1auth.socket
 Description=PS1Auth (Member's Site) Socket
 
 [Socket]
-ListenStream=0.0.0.0:8000
+ListenStream=0.0.0.0:8001
 
 [Install]
 WantedBy=sockets.target
 EOF
 
 # Configure App to Start Automatically
-sudo systemctl start ps1auth.socket
-sudo systemctl enable ps1auth.socket
+#sudo systemctl start ps1auth.socket
+#sudo systemctl enable ps1auth.socket
+systemctl start ps1auth
+systemctl enable ps1auth
 
 SCRIPT
 
@@ -110,5 +115,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "archlinux-x86_64"
   config.vm.box_url = "http://cloud.terry.im/vagrant/archlinux-x86_64.box"
   config.vm.provision "shell", inline: $script
-  config.vm.network "forwarded_port", guest: 8000, host: 8000, auto_correct: true
+  config.vm.network "forwarded_port", guest: 8001, host: 8001, auto_correct: true
 end
