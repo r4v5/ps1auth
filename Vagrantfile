@@ -82,29 +82,14 @@ Description=PS1 Auth (Member's site)
 [Service]
 User=vagrant
 WorkingDirectory=/vagrant
-#ExecStart=/home/vagrant/venv/bin/gunicorn --debug --log-level debug ps1auth.wsgi:application
-ExecStart=/home/vagrant/venv/bin/python manage.py 0.0.0.0:8001
+ExecStart=/home/vagrant/venv/bin/python manage.py runserver 0.0.0.0:8001
 EnvironmentFile=-/home/vagrant/ps1auth.conf
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-# Systemd Socket File
-cat << EOF > /etc/systemd/system/ps1auth.socket
-[Unit]
-Description=PS1Auth (Member's Site) Socket
-
-[Socket]
-ListenStream=0.0.0.0:8001
-
-[Install]
-WantedBy=sockets.target
-EOF
-
 # Configure App to Start Automatically
-#sudo systemctl start ps1auth.socket
-#sudo systemctl enable ps1auth.socket
 systemctl start ps1auth
 systemctl enable ps1auth
 

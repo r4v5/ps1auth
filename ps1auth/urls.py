@@ -3,7 +3,6 @@ from django.core.urlresolvers import reverse
 from django.views.generic import RedirectView
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import admin
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 admin.autodiscover()
 
@@ -17,6 +16,4 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 )
-
-#urlpatterns += staticfiles_urlpatterns()
 
