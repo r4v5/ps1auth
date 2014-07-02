@@ -12,13 +12,13 @@ add the account to "Domain Admins", otherwise you won't be able to log in to the
     vagrant ssh
     cd /vagrant
     python manage.py createsuperuser
-    sudo /usr/local/samba/bin/samba-tool group addmembers "Domain Admins" <username>
+    sudo samba-tool group addmembers "Domain Admins" <username>
     
 To add normal user accounts, just add them with samba-tool. Those accounts will then be
 able to log in to the main site.
 
     vagrant ssh
-    sudo /usr/local/samba/bin/samba-tool user add <username>
+    sudo samba-tool user add <username>
     
 Getting Started with Everything Else
 ===============
