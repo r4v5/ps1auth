@@ -6,7 +6,6 @@ Getting Started with Vagrant
 
     vagrant up
     
-To create an admin account, you need 
 Getting Started with Everything Else
 ===============
 
