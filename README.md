@@ -6,20 +6,7 @@ Getting Started with Vagrant
 
     vagrant up
     
-To create an admin account, you need to createsuperuser, then use samba-tool to
-add the account to "Domain Admins", otherwise you won't be able to log in to the admin site.
-
-    vagrant ssh
-    cd /vagrant
-    python manage.py createsuperuser
-    sudo samba-tool group addmembers "Domain Admins" <username>
-    
-To add normal user accounts, just add them with samba-tool. Those accounts will then be
-able to log in to the main site.
-
-    vagrant ssh
-    sudo samba-tool user add <username>
-    
+To create an admin account, you need 
 Getting Started with Everything Else
 ===============
 
@@ -90,4 +77,17 @@ Running
 -------
 
     ./manage.py runserver
+    
+    
+Creating a User
+---------------
+
+    sudo samba-tool user add <username>
+
+To add a user to the Admins group, use the Domain Admins in samba.
+
+    sudo samba-tool group addmembers "Domain Admins" <username>
+    
+
+    
 
