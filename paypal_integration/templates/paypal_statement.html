@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load bootstrap_toolkit %}
+{% load money %}
 
 {% block content %}
 
@@ -31,36 +32,36 @@
 
 <table class="table table-striped">
   <tr><th></th><th>Debit</th><th>Credit</th></tr>
-  <tr><th>Sales Activity</th><th></th><th>{{total_payments}}</th></tr>
-  <tr><td>Payments Recieved</td><td></td><td>{{payments_received}}</td></tr>
-  <tr><td>Disbursements Received</td><td></td><td>{{disbursements_received}}</td></tr>
-  <tr><td>Refunds Sent</td><td>{{refunds_sent}}</td><td></td></tr>
-  <tr><th>Fees</th><th>{{total_fees}}</th><th></th></tr>
-  <tr><td>Payment Fees</td><td>{{payment_fees}}</td><td></td></tr>
+  <tr><th>Sales Activity</th><th></th><th>{{total_payments|currency}}</th></tr>
+  <tr><td>Payments Recieved</td><td></td><td>{{payments_received|currency}}</td></tr>
+  <tr><td>Disbursements Received</td><td></td><td>{{disbursements_received|currency}}</td></tr>
+  <tr><td>Refunds Sent</td><td>{{refunds_sent|currency}}</td><td></td></tr>
+  <tr><th>Fees</th><th>{{total_fees|currency}}</th><th></th></tr>
+  <tr><td>Payment Fees</td><td>{{payment_fees|currency}}</td><td></td></tr>
   {% if refunded_fees <= 0 %}
-  <tr><td>Refunded Fees</td><td>{{refunded_fees}}</td><td></td></tr>
+  <tr><td>Refunded Fees</td><td>{{refunded_fees|currency}}</td><td></td></tr>
   {% else %}
-  <tr><td>Refunded Fees</td><td></td><td>{{refunded_fees}}</td></tr>
+  <tr><td>Refunded Fees</td><td></td><td>{{refunded_fees|currency}}</td></tr>
   {% endif %}
-  <tr><td>Chargeback fees</td><td>{{chargeback_fees}}</td><td></td></tr>
-  <tr><td>Account Fees Invoice</td><td>{{account_fees_invoice}}</td><td></td></tr>
+  <tr><td>Chargeback fees</td><td>{{chargeback_fees|currency}}</td><td></td></tr>
+  <tr><td>Account Fees Invoice</td><td>{{account_fees_invoice|currency}}</td><td></td></tr>
   {% if other_fees <= 0 %}
-  <tr><td>Other Fees</td><td>{{other_fees}}</td><td></td></tr>
+  <tr><td>Other Fees</td><td>{{other_fees|currency}}</td><td></td></tr>
   {% else %}
-  <tr><td>Other Fees</td><td></td><td>{{other_fees}}</td></tr>
+  <tr><td>Other Fees</td><td></td><td>{{other_fees|currency}}</td></tr>
   {% endif %}
-  <tr><th>Dispute Activity</th><th>{{dispute_total}}</th><th></th></tr>
-  <tr><td>Cargeback &amp Disputes</td><td>{{chargeback_and_disputes}}</td><td></td></tr>
-  <tr><td>Dispute reimbursements</td><td></td><td>{{dispute_reimbursements}}</td></tr>
-  <tr><th>Transfers &amp withdrawals</th><th>{{total_transfer}}</th><th></th></tr>
-  <tr><td>Currency transfers</td><td>{{currency_transfers}}</td><td></td></tr>
-  <tr><td>Transfers to PayPal account</td><td></td><td>{{transfer_to_paypal}}</td></tr>
-  <tr><td>Transfers from PayPal account</td><td>{{transfer_from_paypal}}</td><td></td></tr>
-  <tr><th>Purchase activity</th><th>{{total_purchases}}</th><th></th></tr>
-  <tr><td>Online payments Sent</td><td>{{payments_sent}}</td><td></td></tr>
-  <tr><td>Refunds received</td><td></td><td>{{refunds_received}}</td></tr>
-  <tr><td>Debit card purchases</td><td>{{debit_card_purchases}}</td><td></td></tr>
-  <tr><td>Debit card returns</td><td></td><td>{{debit_card_returns}}</td></tr>
+  <tr><th>Dispute Activity</th><th>{{dispute_total|currency}}</th><th></th></tr>
+  <tr><td>Cargeback &amp Disputes</td><td>{{chargeback_and_disputes|currency}}</td><td></td></tr>
+  <tr><td>Dispute reimbursements</td><td></td><td>{{dispute_reimbursements|currency}}</td></tr>
+  <tr><th>Transfers &amp withdrawals</th><th>{{total_transfer|currency}}</th><th></th></tr>
+  <tr><td>Currency transfers</td><td>{{currency_transfers|currency}}</td><td></td></tr>
+  <tr><td>Transfers to PayPal account</td><td></td><td>{{transfer_to_paypal|currency}}</td></tr>
+  <tr><td>Transfers from PayPal account</td><td>{{transfer_from_paypal|currency}}</td><td></td></tr>
+  <tr><th>Purchase activity</th><th>{{total_purchases|currency}}</th><th></th></tr>
+  <tr><td>Online payments Sent</td><td>{{payments_sent|currency}}</td><td></td></tr>
+  <tr><td>Refunds received</td><td></td><td>{{refunds_received|currency}}</td></tr>
+  <tr><td>Debit card purchases</td><td>{{debit_card_purchases|currency}}</td><td></td></tr>
+  <tr><td>Debit card returns</td><td></td><td>{{debit_card_returns|currency}}</td></tr>
 </table>
 
 {% endblock %}
