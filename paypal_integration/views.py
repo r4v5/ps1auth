@@ -4,24 +4,21 @@ import calendar
 from django.db.models import Sum, Count, Q
 from django.db import connection
 from moneyed import Money
+from django.contrib.auth.decorators import login_required
+from datetime import timedelta
+from dateutil import tz
 
-# Create your views here.
-
-
-def report(request):
-    data = {}
-
-
-    transactions = Transaction.objects.all()
-    data['transactions'] = transactions
-    return render(request, 'paypal_report.html', data)
-
+@login_required
 def statements(request):
     data = {}
-    truncate_date = connection.ops.date_trunc_sql('month','timestamp')
-    data['months'] = Transaction.objects.extra(select={'month': truncate_date}).values('month').annotate(Count('id')).order_by('-month')
+    truncate_date = connection.ops.date_trunc_sql('month','timestamp - interval \'6 hours\'')
+    months = Transaction.objects.extra(select={'month': truncate_date}).values('month').annotate(Count('id')).order_by('-month')
+    for month in months:
+        month['month'] = (month['month'] + timedelta(hours = 6 )).replace(tzinfo=tz.gettz('CST'))
+    data['months'] = months 
     return render(request, 'paypal_statements.html', data)
 
+@login_required
 def statement(request, year, month):
     data = {}
     data['year'] = year
@@ -41,7 +38,6 @@ def statement(request, year, month):
     data['total_ending_balance'] = data['ending_balance'] + data['payables_ending_balance']
 
     # Payments
-
     received = q.filter(
             Q(type='Recurring Payment Received')|
             Q(type='Recurring Payment')|
@@ -120,12 +116,12 @@ def statement(request, year, month):
     data['total_purchases'] = data['payments_sent'] + data['refunds_received'] + data['debit_card_purchases'] + data['debit_card_returns']
 
     # Debug Table
-    data['helper_data'] = {}
-    data['helper_data']['To Pumping Station: One'] = q.filter(to_email='money@pumpingstationone.org').values('type').annotate(gross=Sum('amount'), fee=Sum('fee_amount'), net=Sum('net_amount'), count=Count('id')).order_by()
-    data['helper_data']['From Pumping Station: One'] = q.filter(from_email='money@pumpingstationone.org').values('type').annotate(gross=Sum('amount'), fee=Sum('fee_amount'), net=Sum('net_amount'), count=Count('id')).order_by()
-    data['helper_data']['Unlisted'] = q.filter(~Q(from_email='money@pumpingstationone.org')).filter(~Q(to_email='money@pumpingstationone.org')).values('type').annotate(gross=Sum('amount'), fee=Sum('fee_amount'), net=Sum('net_amount'), count=Count('id')).order_by()
+    #data['helper_data'] = {}
+    #data['helper_data']['To Pumping Station: One'] = q.filter(to_email='money@pumpingstationone.org').values('type').annotate(gross=Sum('amount'), fee=Sum('fee_amount'), net=Sum('net_amount'), count=Count('id')).order_by()
+    #data['helper_data']['From Pumping Station: One'] = q.filter(from_email='money@pumpingstationone.org').values('type').annotate(gross=Sum('amount'), fee=Sum('fee_amount'), net=Sum('net_amount'), count=Count('id')).order_by()
+    #data['helper_data']['Unlisted'] = q.filter(~Q(from_email='money@pumpingstationone.org')).filter(~Q(to_email='money@pumpingstationone.org')).values('type').annotate(gross=Sum('amount'), fee=Sum('fee_amount'), net=Sum('net_amount'), count=Count('id')).order_by()
 
-    data['debug'] = { 'modded': list(modified_transaction_ids), 'received': list(received), 'size': len(received), 'failed_updates': failed_update_ids}
+    #data['debug'] = { 'modded': list(modified_transaction_ids), 'received': list(received), 'size': len(received), 'failed_updates': failed_update_ids}
     
     return render(request, 'paypal_statement.html', data)
 

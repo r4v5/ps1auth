@@ -3,7 +3,7 @@
 
 {% block content %}
 
-  <h2>Available Statements</h2>
+  <h2>Available Reports</h2>
   <ul>
 {% for entry in months %}
   <li><a href="{% url 'paypal_integration.views.statement' year=entry.month|date:"Y" month=entry.month|date:"m" %}">{{ entry.month|date:"F, Y"  }}</a></li>
