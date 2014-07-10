@@ -16,7 +16,7 @@ def reports(request):
     for month in months:
         month['month'] = (month['month'] + timedelta(hours = 6 )).replace(tzinfo=tz.gettz('CST'))
     data['months'] = months 
-    return render(request, 'paypal_statements.html', data)
+    return render(request, 'paypal_reports.html', data)
 
 @login_required
 def report(request, year, month):
@@ -123,5 +123,5 @@ def report(request, year, month):
 
     #data['debug'] = { 'modded': list(modified_transaction_ids), 'received': list(received), 'size': len(received), 'failed_updates': failed_update_ids}
     
-    return render(request, 'paypal_statement.html', data)
+    return render(request, 'paypal_report.html', data)
 
