@@ -9,7 +9,7 @@ from datetime import timedelta
 from dateutil import tz
 
 @login_required
-def statements(request):
+def reports(request):
     data = {}
     truncate_date = connection.ops.date_trunc_sql('month','timestamp - interval \'6 hours\'')
     months = Transaction.objects.extra(select={'month': truncate_date}).values('month').annotate(Count('id')).order_by('-month')
@@ -19,7 +19,7 @@ def statements(request):
     return render(request, 'paypal_statements.html', data)
 
 @login_required
-def statement(request, year, month):
+def report(request, year, month):
     data = {}
     data['year'] = year
     data['month'] = calendar.month_name[int(month)]
