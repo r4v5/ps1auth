@@ -13,82 +13,92 @@ export ZOHO_AUTHTOKEN="add-your-auth-token"
 export PAYPAL_RECEIVER_EMAIL="money@vagrant.lan"
 
 # Update the System
-sudo apt-get update
-#sudo apt-get -y upgrade
+#sudo pacman -Syu --noconfirm
+sudo pacman -Syy
+
+# Setup locale.gen
+cat << EOF > /etc/locale.gen
+en_US.UTF-8 UTF-8  
+en_US ISO-8859-1  
+EOF
+locale-gen
 
 # Install Dependencies 
-sudo apt-get -y install build-essential python-dev postgresql git postgresql-server-dev-all libldap2-dev libsasl2-dev python-pip libacl1-dev
+sudo pacman -S --noconfirm --needed postgresql python2-virtualenv samba
 
-# Build Samba
-wget -c 'http://ftp.samba.org/pub/samba/samba-latest.tar.gz'
-tar -xvzf samba-latest.tar.gz
-cd samba-*
-./configure
-make
-sudo make install
-
-# Download Samba Upstart Script
-sudo wget -O /etc/init/samba-ad-dc.conf 'http://anonscm.debian.org/gitweb/?p=pkg-samba/samba.git;a=blob_plain;f=debian/samba-ad-dc.upstart;hb=HEAD'
-## patch startup script
-sudo sed -i 's|exec samba -D|exec /usr/local/samba/sbin/samba -D|g' /etc/init/samba-ad-dc.conf
-sudo /usr/local/samba/bin/samba-tool domain provision --realm=vagrant.lan --domain=${AD_DOMAIN} --server-role=dc --use-rfc2307 --adminpass=${AD_BINDDN_PASSWORD}
-sudo service samba-ad-dc start
-cd ..
-
-# Install Python Packages
-sudo pip install -r /vagrant/requirements/local.txt
+# Setup Samba
+sudo samba-tool domain provision --realm=vagrant.lan --domain=${AD_DOMAIN} --server-role=dc --use-rfc2307 --adminpass=${AD_BINDDN_PASSWORD}
+sudo systemctl start samba
+sudo systemctl enable samba
 
 # Set Shell Environment Variables
-echo "export AD_URL=${AD_URL}" >> .bashrc
-echo "export AD_DOMAIN=${AD_DOMAIN}" >> .bashrc
-echo "export AD_BASEDN=${AD_BASEDN}" >> .bashrc
-echo "export AD_BINDDN=${AD_BINDDN}" >> .bashrc
-echo "export AD_BINDDN_PASSWORD=${AD_BINDDN_PASSWORD}" >> .bashrc
-echo "export SECRET_KEY=${SECRET_KEY}" >> .bashrc
-echo "export ZOHO_AUTHTOKEN=${ZOHO_AUTHTOKEN}" >> .bashrc
-echo "export PAYPAL_RECEIVER_EMAIL=${PAYPAL_RECEIVER_EMAIL}" >> .bashrc
+cat << EOF >> .bashrc
+export AD_URL=${AD_URL}
+export AD_DOMAIN=${AD_DOMAIN}
+export AD_BASEDN=${AD_BASEDN}
+export AD_BINDDN=${AD_BINDDN}
+export AD_BINDDN_PASSWORD=${AD_BINDDN_PASSWORD}
+export SECRET_KEY=${SECRET_KEY}
+export ZOHO_AUTHTOKEN=${ZOHO_AUTHTOKEN}
+export PAYPAL_RECEIVER_EMAIL=${PAYPAL_RECEIVER_EMAIL}
+source venv/bin/activate
+EOF
 
-# Setup Database
+#  Setup Database
+chmod 755 /home/vagrant
+sudo -u postgres initdb --locale en_US.UTF-8 -D '/var/lib/postgres/data'
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
 sudo -u postgres createuser --superuser vagrant
 sudo -u vagrant createdb ps1auth
-sudo -u vagrant -E /usr/bin/python /vagrant/manage.py syncdb
-sudo -u vagrant -E /usr/bin/python /vagrant/manage.py migrate
 
-# Upstart
-echo "author 'vagrant'" > /etc/init/ps1auth.conf
-echo "description 'vagrant development ps1 authentication server'" >> /etc/init/ps1auth.conf
-echo "start on vagrant-mounted" >> /etc/init/ps1auth.conf
-echo "stop on shutdown" >> /etc/init/ps1auth.conf
-echo "console log" >> /etc/init/ps1auth.conf
-echo "respawn" >> /etc/init/ps1auth.conf
-echo "respawn limit 10 5" >> /etc/init/ps1auth.conf
-echo "setuid vagrant" >> /etc/init/ps1auth.conf
-echo "setgid vagrant" >> /etc/init/ps1auth.conf
-echo "env AD_URL='${AD_URL}'" >> /etc/init/ps1auth.conf
-echo "export AD_URL" >> /etc/init/ps1auth.conf
-echo "env AD_BASEDN='${AD_BASEDN}'" >> /etc/init/ps1auth.conf
-echo "export AD_BASEDN" >> /etc/init/ps1auth.conf
-echo "env AD_BINDDN='${AD_BINDDN}'" >> /etc/init/ps1auth.conf
-echo "export AD_BINDDN" >> /etc/init/ps1auth.conf
-echo "env AD_BINDDN_PASSWORD='${AD_BINDDN_PASSWORD}'" >> /etc/init/ps1auth.conf
-echo "export AD_BINDDN_PASSWORD" >> /etc/init/ps1auth.conf
-echo "env SECRET_KEY='${SECRET_KEY}'" >> /etc/init/ps1auth.conf
-echo "export SECRET_KEY" >> /etc/init/ps1auth.conf
-echo "env ZOHO_AUTHTOKEN='${ZOHO_AUTHTOKEN}'" >> /etc/init/ps1auth.conf
-echo "export ZOHO_AUTHTOKEN" >> /etc/init/ps1auth.conf
-echo "env PAYPAL_RECEIVER_EMAIL='${PAYPAL_RECEIVER_EMAIL}'" >> /etc/init/ps1auth.conf
-echo "export PAYPAL_RECIEVER_EMAIL" >> /etc/init/ps1auth.conf
-echo "env AD_DOMAIN='${AD_DOMAIN}'" >> /etc/init/ps1auth.conf
-echo "export AD_DOMAIN" >> /etc/init/ps1auth.conf
-echo "exec /usr/bin/python /vagrant/manage.py runserver 0.0.0.0:8000" >> /etc/init/ps1auth.conf
-sudo service ps1auth start
+# Bootstrap App
+
+sudo -u vagrant virtualenv2 venv
+sudo -u vagrant venv/bin/pip install -r /vagrant/requirements/local.txt
+sudo -u vagrant venv/bin/pip install gunicorn
+sudo -u vagrant -E venv/bin/python /vagrant/manage.py syncdb
+sudo -u vagrant -E venv/bin/python /vagrant/manage.py migrate
+
+
+# Setup systemd environment file
+cat << EOF > /home/vagrant/ps1auth.conf
+AD_URL=${AD_URL}
+AD_DOMAIN=${AD_DOMAIN}
+AD_BASEDN=${AD_BASEDN}
+AD_BINDDN=${AD_BINDDN}
+AD_BINDDN_PASSWORD=${AD_BINDDN_PASSWORD}
+SECRET_KEY=${SECRET_KEY}
+ZOHO_AUTHTOKEN=${ZOHO_AUTHTOKEN}
+PAYPAL_RECEIVER_EMAIL=${PAYPAL_RECEIVER_EMAIL}
+EOF
+
+
+# Systemd Service File
+cat << EOF > /etc/systemd/system/ps1auth.service
+[Unit]
+Description=PS1 Auth (Member's site)
+
+[Service]
+User=vagrant
+WorkingDirectory=/vagrant
+ExecStart=/home/vagrant/venv/bin/python manage.py runserver 0.0.0.0:8001
+EnvironmentFile=-/home/vagrant/ps1auth.conf
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Configure App to Start Automatically
+systemctl start ps1auth
+systemctl enable ps1auth
+
 SCRIPT
 
 VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "precise64"
-  config.vm.box_url = "http://files.vagrantup.com/precise64.box"
+  config.vm.box = "archlinux-x86_64"
+  config.vm.box_url = "http://cloud.terry.im/vagrant/archlinux-x86_64.box"
   config.vm.provision "shell", inline: $script
-  config.vm.network "forwarded_port", guest: 8000, host: 8000, auto_correct: true
-  config.vm.network "private_network", ip: "192.168.50.4"
+  config.vm.network "forwarded_port", guest: 8001, host: 8001, auto_correct: true
 end

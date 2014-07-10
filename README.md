@@ -76,4 +76,17 @@ Running
 -------
 
     ./manage.py runserver
+    
+    
+Creating a User
+---------------
+
+    sudo samba-tool user add <username>
+
+To add a user to the Admins group, use the Domain Admins in samba.
+
+    sudo samba-tool group addmembers "Domain Admins" <username>
+    
+
+    
 
