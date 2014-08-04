@@ -121,6 +121,7 @@ PROJECT_APPS = (
     'rfid',
     'zoho_integration',
     'memberpoint',
+    'paypal_integration',
 )
 
 INSTALLED_APPS = (
