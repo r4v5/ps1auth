@@ -24,18 +24,21 @@ class PointAccount(models.Model):
         """
         Return the queryset of point transactions for this account.
         """
-        return self.transaction.all().order_by('-date',)
+        return self.point_transactions.all().order_by('-date',)
 
     def __unicode__(self):
         return u'{}: {}'.format(self.user, self.balance)
 
 class PointTransaction(models.Model):
     account = models.ForeignKey(PointAccount,
-            related_name='transaction', null=False, blank=False)
-    date = models.DateTimeField(default=datetime.now)
+            related_name='point_transactions', null=False, blank=False)
     points = models.IntegerField(default=0)
     reason = models.CharField(max_length=512,
             help_text="Reason the points were added or deducted.")
+    date = models.DateTimeField(default=datetime.now)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+            related_name='created_point_transactions', null=False,
+            blank=False)
 
     def __unicode__(self):
         return u'User={}, Date={}, Points={}, Reason={}'.format(
