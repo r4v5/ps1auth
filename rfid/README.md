@@ -18,8 +18,12 @@ The tag value should be 12 hex characters. If the tag is valid (assigned to a me
 
     Yes
 
-and if the tag is not valid, the server will return
+in addition to an HTTP 200 status code.
+
+And if the tag is not valid, the server will return
 
     No
+
+in addition to an HTTP 403 (for a valid code associated with a lapsed member account) or an HTTP 404 (for a non-valid code).
 
 Easy peasy.
