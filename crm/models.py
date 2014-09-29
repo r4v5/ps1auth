@@ -1,6 +1,12 @@
 from django.db import models
 from django.conf import settings
+from django.template.loader import render_to_string
+from django.template import TemplateDoesNotExist
+from django.core.mail import EmailMultiAlternatives
 from datetime import date
+from email.mime.image import MIMEImage
+import os
+from smtplib import SMTPException
 
 
 # Create your models here.
@@ -30,7 +36,8 @@ class CRMPerson(models.Model):
 
 class CRMPaymentMethod(models.Model):
     person = models.OneToOneField('CRMPerson', null=True)
-    pass
+    class Meta:
+        abstract = True
 
 class PayPal(CRMPaymentMethod):
     email = models.EmailField()
@@ -54,8 +61,71 @@ class Note(models.Model):
     class Meta:
         ordering = ['-created_at']
 
-class EmailTemplate(models.Model):
-    subject = models.CharField(max_length=256)
-    body = models.TextField()
+class EmailRecordManager(models.Manager):
+    
+    def send_recorded_email(self, user, from_email, to_person, subject, body_template_prefix, attachments = [], inline_image_files = []):
+        text_content = render_to_string("{}.txt".format(body_template_prefix), {})
+        email_message = EmailMultiAlternatives(subject, text_content, from_email, [to_person.email])
+        try:
+            html_content = render_to_string("{}.html".format(body_template_prefix), {})
+            email_message.attach_alternative(html_content, "text/html")
+            email_message.mixed_subtype = 'related'
+        except TemplateDoesNotExist:
+            pass
+
+        # inline images
+        for image_file in inline_image_files: 
+            file = open(image_file, 'rb')
+            image = MIMEImage(file.read())
+            file.close()
+            image.add_header('Content-ID', "<{}>".format(os.path.basename(image_file)))
+
+        # regular attachments
+        for attachment in attachments:
+            email_message.attach_file(attachment)
+
+        # Record the email
+        email_record = EmailRecord(
+            subject=subject,
+            message = email_message.message(),
+            from_email = from_email,
+            to_email = to_person.email,
+            recipient = to_person,
+        )
+        email_record.save()
+        reason = UserSentEmail.objects.get_or_create(email_record=email_record, user=user)[0]
+        reason.save()
+
+        # Send
+        try:
+            email_message.send(fail_silently=False)
+            email_record.status = 'sent'
+            email_record.save()
+            return 1
+        except SMTPException:
+            email_record.statis = 'failed'
+            email_record.save()
+            return 0
+
+class EmailRecord(models.Model):
+    subject = models.CharField(max_length=128)
+    message = models.TextField()
+    from_email = models.EmailField()
+    reply_to_email = models.EmailField(null=True, blank=True)
+    to_email = models.EmailField()
+    recipient = models.ForeignKey('CRMPerson')
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    objects = EmailRecordManager()
+    status = models.CharField(default='pending', max_length=30)
+
+class EmailReason(models.Model):
+    email_record = models.OneToOneField('EmailRecord')
+    class Meta:
+        abstract = True
+
+class UserSentEmail(EmailReason):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+
+    def __unicode__(self):
+        return "email sent by {}".format(self.user.get_full_name())
+
