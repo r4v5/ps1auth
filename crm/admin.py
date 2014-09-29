@@ -27,11 +27,10 @@ class NoteInline(admin.StackedInline):
 class EmailRecordAdminInline(admin.TabularInline):
     model = EmailRecord
     exclude = ['message', 'reply_to_email']
-    readonly_fields = ['subject', 'from_email', 'to_email', 'created_at', 'status']
+    readonly_fields = ['subject', 'from_email', 'to_email', 'created_at', 'sender', 'status', ]
     can_delete = False
     extra = 0
     max_num = 0
-    # todo add EmailReason
 
 class CRMPersonAdmin(admin.ModelAdmin):
     inlines = [

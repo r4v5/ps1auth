@@ -91,10 +91,9 @@ class EmailRecordManager(models.Manager):
             from_email = from_email,
             to_email = to_person.email,
             recipient = to_person,
+            sender = user,
         )
         email_record.save()
-        reason = UserSentEmail.objects.get_or_create(email_record=email_record, user=user)[0]
-        reason.save()
 
         # Send
         try:
@@ -113,19 +112,9 @@ class EmailRecord(models.Model):
     from_email = models.EmailField()
     reply_to_email = models.EmailField(null=True, blank=True)
     to_email = models.EmailField()
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL)
     recipient = models.ForeignKey('CRMPerson')
     created_at = models.DateTimeField(auto_now_add=True)
     objects = EmailRecordManager()
     status = models.CharField(default='pending', max_length=30)
-
-class EmailReason(models.Model):
-    email_record = models.OneToOneField('EmailRecord')
-    class Meta:
-        abstract = True
-
-class UserSentEmail(EmailReason):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
-
-    def __unicode__(self):
-        return "email sent by {}".format(self.user.get_full_name())
 
