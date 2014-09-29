@@ -118,3 +118,6 @@ class EmailRecord(models.Model):
     objects = EmailRecordManager()
     status = models.CharField(default='pending', max_length=30)
 
+    class Meta:
+        ordering = ['-created_at']
+

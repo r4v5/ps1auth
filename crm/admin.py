@@ -3,11 +3,6 @@ from django.forms import Textarea
 from django.db import models
 from .models import CRMPerson, PayPal, Cash, Note, EmailRecord
 
-#Register your models here.
-#admin.site.register(CRMPerson)
-#admin.site.register(PayPal)
-#admin.site.register(Cash)
-
 class PayPalInline(admin.StackedInline):
     model = PayPal
 
