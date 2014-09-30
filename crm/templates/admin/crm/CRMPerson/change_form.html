@@ -1,0 +1,7 @@
+{% extends "admin/change_form.html" %}
+{% block object-tools-items %}
+  {{ block.super }}
+  <li><a href="{% url 'crm.views.send_welcome_email' original.id %}" class="historylink" >Send Welcome Email</a></li>
+  <li><a href="{% url 'crm.views.send_doorcode_email' original.id %}" class="historylink" >Send Door Code</a></li>
+</ul>
+{% endblock %}

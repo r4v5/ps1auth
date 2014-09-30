@@ -80,18 +80,42 @@ cat << EOF > /etc/systemd/system/ps1auth.service
 Description=PS1 Auth (Member's site)
 
 [Service]
+Type=simple
 User=vagrant
 WorkingDirectory=/vagrant
-ExecStart=/home/vagrant/venv/bin/python manage.py runserver 0.0.0.0:8001
+ExecStart=/home/vagrant/venv/bin/python manage.py runserver 0.0.0.0:8000
 EnvironmentFile=-/home/vagrant/ps1auth.conf
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
+
+# Systemd proxy service, allows for socket based restart
+cat << EOF > /etc/systemd/system/proxy_to_ps1auth.service
+[Unit]
+Requires=ps1auth.service
+After=ps1auth.service
+JoinsNamespaceOf=ps1auth.service
+
+[Service]
+ExecStart=/usr/lib/systemd/systemd-socket-proxyd 127.0.0.1:8000
+EOF
+
+# Systemd proxy service socket activation
+cat << EOF > /etc/systemd/system/proxy_to_ps1auth.socket
+[Socket]
+ListenStream=8001
+
+[Install]
+WantedBy=sockets.target
+EOF
+
 # Configure App to Start Automatically
 systemctl start ps1auth
 systemctl enable ps1auth
+systemctl start proxy_to_ps1auth.socket
+systemctl enable proxy_to_ps1auth.socket
 
 SCRIPT
 
