@@ -28,8 +28,8 @@ class CRMPerson(models.Model):
     street_address = models.CharField(max_length=128)
     city = models.CharField(max_length=128)
     zip_code = models.CharField(max_length=128)
-    id_check_1 = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='id_checker_1', null=True)
-    id_check_2 = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='id_checker_2', null=True)
+    id_check_1 = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='id_checker_1', null=True, blank=True)
+    id_check_2 = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='id_checker_2', null=True, blank=True)
 
     def __unicode__(self):
         return u'{0} {1}'.format(self.first_name, self.last_name)
