@@ -67,7 +67,7 @@ class EmailRecordManager(models.Manager):
         text_content = render_to_string("{}.txt".format(body_template_prefix), {})
         email_message = EmailMultiAlternatives(subject, text_content, from_email, [to_person.email])
         try:
-            html_content = render_to_string("{}.html".format(body_template_prefix), {})
+            html_content = render_to_string("{}.html".format(body_template_prefix), {'recipient':to_person})
             email_message.attach_alternative(html_content, "text/html")
             email_message.mixed_subtype = 'related'
         except TemplateDoesNotExist:
