@@ -1,4 +1,4 @@
-   Way to go Steven,
+   Way to go {{ recipient.first_name }},
    You've just joined Chicago's oldest and fastest growing hackerspace!
    Whether you're transferring in from another or a brand new member, we're
    glad to have you here.
