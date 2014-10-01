@@ -44,3 +44,6 @@ def send_doorcode_email(request, person_id):
         messages.success(request, 'Door Code Email Sent.')
     return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
 
+
+def massmail(request):
+    return render(request, 'crm/form.html', {})
