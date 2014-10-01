@@ -79,6 +79,7 @@ class EmailRecordManager(models.Manager):
             image = MIMEImage(file.read())
             file.close()
             image.add_header('Content-ID', "<{}>".format(os.path.basename(image_file)))
+            email_message.attach(image)
 
         # regular attachments
         for attachment in attachments:
