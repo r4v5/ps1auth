@@ -18,7 +18,7 @@ CACHES = {
 }
 
 INSTALLED_APPS += (
-    "debug_toolbar",
+#    "debug_toolbar",
     "django_jenkins",
 )
 
@@ -27,7 +27,7 @@ INTERNAL_IPS = (
 )
 
 MIDDLEWARE_CLASSES += (
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
+#    "debug_toolbar.middleware.DebugToolbarMiddleware",
 )
 
 DEBUG_TOOLBAR_CONFIG = {

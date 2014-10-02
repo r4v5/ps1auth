@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load bootstrap_toolkit %}
 
+
 {% block extra_head %}
 {{ form.media }}
 {% endblock %}
@@ -9,10 +10,12 @@
 {% block content %}
 
 <div class="row">
-  <div class="span5 offset4">
+  <div class="span12">
     <form class="form-horizontal well" action="" method="post">
       {% csrf_token %}
-      {{ form|as_bootstrap }}
+      <table>
+        {{ form|as_bootstrap }}
+      </table>
       <div class="form-actions">
         <input type="submit" value="Submit" class="btn btn-primary">
       </div>

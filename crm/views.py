@@ -8,6 +8,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from .models import EmailRecord, CRMPerson
+from .forms import wysiwyg
+
 
 @staff_member_required
 def send_welcome_email(request, person_id):
@@ -46,4 +48,8 @@ def send_doorcode_email(request, person_id):
 
 
 def massmail(request):
-    return render(request, 'crm/form.html', {})
+    form = wysiwyg()
+    context = {}
+    context['form'] = form
+    return render(request, 'crm/form.html', context)
+

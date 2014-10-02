@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     url(r'^zinc/', include('zoho_integration.urls')),
     url(r'^pp/', include('paypal_integration.urls')),
     url(r'^crm/', include('crm.urls')),
+    url(r'^ckeditor/', include('ckeditor.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )
