@@ -30,6 +30,9 @@ MIDDLEWARE_CLASSES += (
 #    "debug_toolbar.middleware.DebugToolbarMiddleware",
 )
 
+MEDIA_ROOT = os.path.join(SITE_ROOT,'media')
+MEDIA_URL = '/media/'
+
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
 }
