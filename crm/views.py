@@ -10,6 +10,7 @@ from django.http import HttpResponseRedirect
 from .models import EmailRecord, CRMPerson
 from .forms import mailform
 from html2text import html2text
+from django.template import Context, Template
 
 
 @staff_member_required
@@ -53,9 +54,17 @@ def massmail(request):
         form = mailform(request.POST)
         if form.is_valid():
             for person in CRMPerson.objects.all():
-                rendered_html = render_to_string(form.content, {'recipient': person})
+                template = Template(form.cleaned_data['content'])
+                context = Context({'recipient':person})
+                rendered_html = template.render(context)
                 rendered_txt = html2text(rendered_html)
-                EmailRecord.objects.send_email(request.user, form.from_email, [person.email], form.subject, rendered_html, rendered_txt)
+                result = EmailRecord.objects.send_email(request.user, form.cleaned_data['from_email'], [person], form.cleaned_data['subject'], rendered_html, rendered_txt)
+                if result == 0:
+                    message.error(request, 'Failed to send email to {}.'.format(person.email))
+                elif result == 1:
+                    messages.success(request, 'Email sent to {}.'.format(person.email))
+                else:
+                    messages.info(request, 'sent some emails')
     else:
         form = mailform()
     context = {}

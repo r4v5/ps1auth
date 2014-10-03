@@ -63,17 +63,14 @@ class Note(models.Model):
 
 class EmailRecordManager(models.Manager):
 
-    def send_email(self, user, from_email, to_people, subject, html_content = None, text_content = None, attachements = [], inline_image_files = []):
+    def send_email(self, user, from_email, to_people, subject, html_content = None, text_content = None, attachments = [], inline_image_files = []):
         total_emails_sent  = 0
         total_emails_failed = 0
         for to_person in to_people:
             email_message = EmailMultiAlternatives(subject, text_content, from_email, [to_person.email])
-            try:
-                html_content = render_to_string("{}.html".format(body_template_prefix), {'recipient':to_person})
+            if html_content:
                 email_message.attach_alternative(html_content, "text/html")
                 email_message.mixed_subtype = 'related'
-            except TemplateDoesNotExist:
-                pass
 
             # inline images
             for image_file in inline_image_files: 
@@ -109,22 +106,6 @@ class EmailRecordManager(models.Manager):
                 email_record.save()
                 total_emails_failed += 1
         return total_emails_sent
-
-class EmailRecord(models.Model):
-    subject = models.CharField(max_length=128)
-    message = models.TextField()
-    from_email = models.EmailField()
-    reply_to_email = models.EmailField(null=True, blank=True)
-    to_email = models.EmailField()
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL)
-    recipient = models.ForeignKey('CRMPerson')
-    created_at = models.DateTimeField(auto_now_add=True)
-    objects = EmailRecordManager()
-    status = models.CharField(default='pending', max_length=30)
-
-    class Meta:
-        ordering = ['-created_at']
-
 
     def send_recorded_email(self, user, from_email, to_person, subject, body_template_prefix, attachments = [], inline_image_files = []):
         text_content = render_to_string("{}.txt".format(body_template_prefix), {})
