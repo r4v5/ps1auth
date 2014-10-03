@@ -8,7 +8,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from .models import EmailRecord, CRMPerson
-from .forms import wysiwyg
+from .forms import mailform
+from html2text import html2text
 
 
 @staff_member_required
@@ -48,7 +49,15 @@ def send_doorcode_email(request, person_id):
 
 
 def massmail(request):
-    form = wysiwyg()
+    if request.method == 'POST':
+        form = mailform(request.POST)
+        if form.is_valid():
+            for person in CRMPerson.objects.all():
+                rendered_html = render_to_string(form.content, {'recipient': person})
+                rendered_txt = html2text(rendered_html)
+                EmailRecord.objects.send_email(request.user, form.from_email, [person.email], form.subject, rendered_html, rendered_txt)
+    else:
+        form = mailform()
     context = {}
     context['form'] = form
     return render(request, 'crm/form.html', context)
