@@ -8,7 +8,6 @@ class TransactionInline(admin.TabularInline):
 class PointAdmin(admin.ModelAdmin):
     fields = ['user']
     inlines = [TransactionInline]
-    #search_fields = ['user']
 
 admin.site.register(PointAccount, PointAdmin)
 

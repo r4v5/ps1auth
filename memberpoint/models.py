@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum
 from django.conf import settings
 
 from datetime import datetime
@@ -12,12 +13,8 @@ class PointAccount(models.Model):
         """
         The point balance of this account.
         """
-        if not getattr(self, '_balance', None):
-            balance = 0
-            for entry in self.entries:
-                balance += entry.points
-            self._balance = balance
-        return self._balance
+        agg = self.point_transactions.aggregate(Sum('points'))
+        return agg['points__sum']
 
     @property
     def entries(self):
