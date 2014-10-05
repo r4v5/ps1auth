@@ -36,5 +36,3 @@ MEDIA_URL = '/media/'
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
 }
-
-

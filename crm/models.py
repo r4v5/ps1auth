@@ -7,6 +7,7 @@ from datetime import date
 from email.mime.image import MIMEImage
 import os
 from smtplib import SMTPException
+from ckeditor.fields import RichTextField
 
 
 # Create your models here.
@@ -23,7 +24,7 @@ class CRMPerson(models.Model):
     last_name = models.CharField(max_length=128)
     email = models.EmailField()
     birthday = models.DateField()
-    membership_status = models.CharField(max_length=128, choices=MEMBERSHIP_LEVEL, default='Discontinued')
+    membership_status = models.CharField(max_length=128, choices=MEMBERSHIP_LEVEL, default='discontinued')
     membership_start_date = models.DateField(default=date.today)
     street_address = models.CharField(max_length=128)
     city = models.CharField(max_length=128)
@@ -155,7 +156,7 @@ class EmailRecord(models.Model):
     subject = models.CharField(max_length=128)
     message = models.TextField()
     from_email = models.EmailField()
-    reply_to_email = models.EmailField(null=True, blank=True)
+    reply_to_email = models.EmailField(blank=True)
     to_email = models.EmailField()
     sender = models.ForeignKey(settings.AUTH_USER_MODEL)
     recipient = models.ForeignKey('CRMPerson')
@@ -166,3 +167,24 @@ class EmailRecord(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+class EmailTemplate(models.Model):
+    RECIPIENTS = (
+            ('all_members', 'All Members'),
+            ('full_members', 'Full Members'),
+            ('individual', 'Individual'),
+    )
+    from_email = models.EmailField(verbose_name = 'From')
+    reply_to_email = models.EmailField(verbose_name = 'Reply-To', blank=True)
+    recipients = models.CharField(max_length=128, choices=RECIPIENTS, default='full_members')
+    subject = models.CharField(max_length=128)
+    message = RichTextField()
+
+    def __unicode__(self):
+        return u'{}'.format(self.subject)
+
+class EmailAttachement(models.Model):
+    email = models.ForeignKey('EmailTemplate', related_name='attachements')
+    attachement = models.FileField(upload_to="email_attachements")
+
+
+    

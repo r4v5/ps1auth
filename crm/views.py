@@ -49,6 +49,7 @@ def send_doorcode_email(request, person_id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
 
 
+@staff_member_required
 def massmail(request):
     if request.method == 'POST':
         form = mailform(request.POST)
