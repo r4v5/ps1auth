@@ -34,6 +34,10 @@ class CRMPersonAdmin(admin.ModelAdmin):
         NoteInline,
         EmailRecordAdminInline,
     ]
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        extra_context['email_templates'] = EmailTemplate.objects.individual_recipient()
+        return super(CRMPersonAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
     
 
 class EmailAttachementInline(admin.StackedInline):
