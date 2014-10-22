@@ -11,3 +11,4 @@ dateutils==0.6.6
 django-ckeditor==4.4.6
 html2text==2014.9.25
 beautifulsoup4==4.3.2
+Pillow==2.6.0
