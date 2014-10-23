@@ -134,6 +134,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'south',
+    'ckeditor',
     #'paypal.standard.ipn',
     #'billing',
 )
@@ -173,6 +174,41 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
+    }
+}
+
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar_full':[
+            ["Source","Save","NewPage","DocProps","Preview","Print","Templates","document"],
+            ["Cut","Copy","Paste","PasteText","PasteFromWord","Undo","Redo"],
+            ["Find","Replace","SelectAll","Scayt"],
+            ["Form","Checkbox","Radio","TextField","Textarea","Select","Button","ImageButton","HiddenField"],
+            ["Bold","Italic","Underline","Strike","Subscript","Superscript","RemoveFormat"],
+            ["NumberedList","BulletedList","Outdent","Indent","Blockquote","CreateDiv","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","BidiLtr","BidiRtl"],
+            ["Link","Unlink","Anchor"],
+            ["CreatePlaceholder","Image","Flash","Table","HorizontalRule","Smiley","SpecialChar","PageBreak","Iframe","InsertPre"],
+            ["Styles","Format","Font","FontSize"],
+            ["TextColor","BGColor"],
+            ["UIColor","Maximize","ShowBlocks"],
+            ["button1","button2","button3","oembed","MediaEmbed"],
+            ["About"],
+        ],
+        'toolbar_standard':[
+            ["Cut","Copy","Paste","PasteText","PasteFromWord",'-',"Undo","Redo"],
+            ["Scayt"],
+            ["Link","Unlink","Anchor"],
+            ["Image","Table","HorizontalRule","SpecialChar"],
+            ["Maximize"],
+            ["Source"],
+            ["Bold","Italic","Underline","-","RemoveFormat"],
+            ["NumberedList","BulletedList","-","Outdent","Indent","-","Blockquote"],
+            ["Styles","Format"],
+            ["About"],
+        ],
+        'width': 704,
+        'toolbar': 'standard',
     }
 }
 
