@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.db.models import Q
+from django.template import Context, Template
 from datetime import date
 from email.mime.application import MIMEApplication
 from email.mime.image import MIMEImage
@@ -169,24 +170,27 @@ class EmailTemplate(models.Model):
             tag['src'] = "cid:{}".format(basename)
         return (str(soup), attachments)
 
-    def _send(self, user, target):
-        html_content, attachments = self._convert_inline_images(self.message)
+    def _send(self, user, target, extra_context):
+        extra_context['recipient'] = target
+        t = Template(self.message)
+        message = t.render(Context(extra_context))
+        html_content, attachments = self._convert_inline_images(message)
         txt_content = html2text(html_content)
         for attachment in self.attachments.all():
             file_data = MIMEApplication(attachment.file.read())
             attachments.append(file_data)
         return EmailRecord.objects.send_email(user, self.from_email, target, self.subject, html_content, txt_content, attachments);
 
-    def send(self, user, target = None):
+    def send(self, user, target = None, extra_context = {}):
         total = 0
         if target:
-            total += self._send(user, target)
+            total += self._send(user, target, extra_context)
         elif self.recipients == 'all_members':
             for member in CRMPerson.objects.members():
-                total += self._send(user, member)
+                total += self._send(user, member, extra_context)
         elif self.recipients == 'full_members':
             for member in CRMPerson.objects.full_members():
-                total += self._send(user, member)
+                total += self._send(user, member, extra_context)
         return total
 
 class EmailAttachement(models.Model):
