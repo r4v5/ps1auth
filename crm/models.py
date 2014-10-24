@@ -83,7 +83,8 @@ class EmailRecordManager(models.Manager):
         """
         total_emails_sent  = 0
         total_emails_failed = 0
-        email_message = EmailMultiAlternatives(subject, text_content, from_email, [to_person.email])
+        to_email = "{} {} <{}>".format(to_person.first_name, to_person.last_name, to_person.email)
+        email_message = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
         if html_content:
             email_message.attach_alternative(html_content, "text/html")
             email_message.mixed_subtype = 'related'
@@ -141,7 +142,9 @@ class EmailTemplate(models.Model):
             ('full_members', 'Full Members'),
             ('individual', 'Individual'),
     )
+    from_name = models.CharField(max_length=255, blank=True)
     from_email = models.EmailField(verbose_name = 'From')
+    reply_to_name = models.CharField(max_length=255, blank=True)
     reply_to_email = models.EmailField(verbose_name = 'Reply-To', blank=True)
     recipients = models.CharField(max_length=128, choices=RECIPIENTS, default='full_members')
     subject = models.CharField(max_length=128)
@@ -180,7 +183,14 @@ class EmailTemplate(models.Model):
             file_data = MIMEApplication(attachment.file.read())
             file_data.add_header('Content-Disposition', 'attachment', filename=attachment.name)
             attachments.append(file_data)
-        return EmailRecord.objects.send_email(user, self.from_email, target, self.subject, html_content, txt_content, attachments);
+
+        # Setup From email string.
+        if(self.from_name):
+            from_email = "{} <{}>".format(self.from_name, self.from_email)
+        else:
+            from_email = self.from_email
+
+        return EmailRecord.objects.send_email(user, from_email, target, self.subject, html_content, txt_content, attachments);
 
     def send(self, user, target = None, extra_context = {}):
         total = 0
