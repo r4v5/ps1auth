@@ -79,7 +79,7 @@ class EmailRecordManager(models.Manager):
 
     def send_email(self, user, from_email, to_person, subject, html_content = None, text_content = None, attachments = []):
         """
-        @param attachements a list of MIMEBase objects
+        @param attachments a list of MIMEBase objects
         """
         total_emails_sent  = 0
         total_emails_failed = 0
@@ -178,6 +178,7 @@ class EmailTemplate(models.Model):
         txt_content = html2text(html_content)
         for attachment in self.attachments.all():
             file_data = MIMEApplication(attachment.file.read())
+            file_data.add_header('Content-Disposition', 'attachment', filename=attachment.name)
             attachments.append(file_data)
         return EmailRecord.objects.send_email(user, self.from_email, target, self.subject, html_content, txt_content, attachments);
 
@@ -194,6 +195,7 @@ class EmailTemplate(models.Model):
         return total
 
 class EmailAttachement(models.Model):
+    name = models.CharField(max_length=255)
     email = models.ForeignKey('EmailTemplate', related_name='attachments')
     file = models.FileField(upload_to="email_attachements")
 
