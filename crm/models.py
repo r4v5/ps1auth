@@ -77,14 +77,17 @@ class Note(models.Model):
 
 class EmailRecordManager(models.Manager):
 
-    def send_email(self, user, from_email, to_person, subject, html_content = None, text_content = None, attachments = []):
+    def send_email(self, user, from_email, reply_to_email, to_person, subject, html_content = None, text_content = None, attachments = []):
         """
         @param attachments a list of MIMEBase objects
         """
         total_emails_sent  = 0
         total_emails_failed = 0
         to_email = "{} {} <{}>".format(to_person.first_name, to_person.last_name, to_person.email)
-        email_message = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
+        headers = {}
+        if reply_to_email:
+            headers['Reply-To'] = reply_to_email
+        email_message = EmailMultiAlternatives(subject, text_content, from_email, [to_email], headers=headers)
         if html_content:
             email_message.attach_alternative(html_content, "text/html")
             email_message.mixed_subtype = 'related'
@@ -190,7 +193,14 @@ class EmailTemplate(models.Model):
         else:
             from_email = self.from_email
 
-        return EmailRecord.objects.send_email(user, from_email, target, self.subject, html_content, txt_content, attachments);
+        reply_to_email= None
+        if self.reply_to_email:
+            if self.reply_to_name:
+                reply_to_email = "{} <{}>".format(self.reply_to_name, self.reply_to_email)
+            else:
+                reply_to_email = self.reply_to_email
+
+        return EmailRecord.objects.send_email(user, from_email, reply_to_email, target, self.subject, html_content, txt_content, attachments);
 
     def send(self, user, target = None, extra_context = {}):
         total = 0
