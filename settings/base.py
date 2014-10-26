@@ -120,6 +120,7 @@ PROJECT_APPS = (
     'accounts',
     'rfid',
     'zoho_integration',
+    'memberpoint',
     'paypal_integration',
     'crm',
 )
