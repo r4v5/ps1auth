@@ -12,3 +12,8 @@ Creating a user
     vagrant ssh
     cd /vagrant
     ./manage.py createsuperuser
+
+Viewing the site
+================
+
+open a browser to http://127.0.0.1:8001 on the host machine
