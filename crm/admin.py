@@ -28,6 +28,10 @@ class EmailRecordAdminInline(admin.TabularInline):
     max_num = 0
 
 class CRMPersonAdmin(admin.ModelAdmin):
+    search_fields = ['first_name', 'last_name', 'email', 'note__content']
+    list_display = ['user', 'last_name', 'first_name', 'email',
+            'membership_status']
+    list_filter = ['membership_status']
     inlines = [
         PayPalInline,
         CashInline,
