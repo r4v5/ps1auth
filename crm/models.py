@@ -34,19 +34,25 @@ class CRMPerson(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, blank=True)
     first_name = models.CharField(max_length=128)
     last_name = models.CharField(max_length=128)
-    email = models.EmailField()
-    birthday = models.DateField()
+    email = models.EmailField(blank=True, null=True)
+    birthday = models.DateField(blank=True, null=True)
     membership_status = models.CharField(max_length=128, choices=MEMBERSHIP_LEVEL, default='discontinued')
     membership_start_date = models.DateField(default=date.today)
-    street_address = models.CharField(max_length=128)
-    city = models.CharField(max_length=128)
-    zip_code = models.CharField(max_length=128)
-    id_check_1 = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='id_checker_1', null=True, blank=True)
-    id_check_2 = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='id_checker_2', null=True, blank=True)
+    street_address = models.CharField(max_length=128, blank=True, null=True)
+    city = models.CharField(max_length=128, blank=True, null=True)
+    zip_code = models.CharField(max_length=128, blank=True, null=True)
+    country = models.CharField(max_length=128, blank=True, null=True)
     objects = CRMPersonManager()
 
     def __unicode__(self):
         return u'{0} {1}'.format(self.first_name, self.last_name)
+
+class IDCheck(models.Model):
+    person = models.ForeignKey('CRMPerson')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    note = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 class CRMPaymentMethod(models.Model):
     person = models.OneToOneField('CRMPerson', null=True)
@@ -93,7 +99,7 @@ class EmailRecordManager(models.Manager):
             email_message.mixed_subtype = 'related'
 
             # attachements
-            for attachment in attachments: 
+            for attachment in attachments:
                 email_message.attach(attachment)
 
             # Record the email

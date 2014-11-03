@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.forms import Textarea
 from django.db import models
-from .models import CRMPerson, PayPal, Cash, Note, EmailRecord, EmailTemplate, EmailAttachement
+from .models import CRMPerson, PayPal, Cash, Note, EmailRecord, EmailTemplate, EmailAttachement, IDCheck
 
 class PayPalInline(admin.StackedInline):
     model = PayPal
@@ -19,6 +19,14 @@ class NoteInline(admin.StackedInline):
     }
     save_on_top = True
 
+class IDCheckInline(admin.TabularInline):
+    model = IDCheck
+    formfield_overrides = {
+        models.TextField: {
+            'widget': Textarea(attrs={'rows': 1})
+        }
+    }
+
 class EmailRecordAdminInline(admin.TabularInline):
     model = EmailRecord
     exclude = ['message', 'reply_to_email']
@@ -28,7 +36,12 @@ class EmailRecordAdminInline(admin.TabularInline):
     max_num = 0
 
 class CRMPersonAdmin(admin.ModelAdmin):
+    search_fields = ['first_name', 'last_name', 'email', 'note__content']
+    list_display = ['user', 'last_name', 'first_name', 'email',
+            'membership_status']
+    list_filter = ['membership_status']
     inlines = [
+        IDCheckInline,
         PayPalInline,
         CashInline,
         NoteInline,
