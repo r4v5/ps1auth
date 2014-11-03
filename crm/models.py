@@ -42,12 +42,17 @@ class CRMPerson(models.Model):
     city = models.CharField(max_length=128, blank=True, null=True)
     zip_code = models.CharField(max_length=128, blank=True, null=True)
     country = models.CharField(max_length=128, blank=True, null=True)
-    id_check_1 = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='id_checker_1', null=True, blank=True)
-    id_check_2 = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='id_checker_2', null=True, blank=True)
     objects = CRMPersonManager()
 
     def __unicode__(self):
         return u'{0} {1}'.format(self.first_name, self.last_name)
+
+class IDCheck(models.Model):
+    person = models.ForeignKey('CRMPerson')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    note = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 class CRMPaymentMethod(models.Model):
     person = models.OneToOneField('CRMPerson', null=True)
