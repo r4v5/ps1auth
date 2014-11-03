@@ -186,7 +186,7 @@ class PS1User(AbstractBaseUser):
             result = l.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
             if len(result) > 0:
 		    self._ldap_user = result[0][1]
-		    cache.set(self.object_guid, self._ldap_user, 24 * 60 * 60)
+		    cache.set(self.object_guid, self._ldap_user, 24 * 60 * 60 * 70)
         return self._ldap_user
     
     def _expire_ldap_data(self):
