@@ -15,3 +15,4 @@ reports/
 .pydevproject
 .settings/
 *.csv
+media/

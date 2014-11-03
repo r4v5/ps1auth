@@ -68,6 +68,7 @@ class PS1UserManager(BaseUserManager):
         add_member = [(ldap.MOD_ADD, 'member', user_dn)]
         l = get_ldap_connection()
         l.modify_s(admins_dn, add_member)
+        user._expire_ldap_data()
         return user
 
     def get_users_by_field(self, field, value):
