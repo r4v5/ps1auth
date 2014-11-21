@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from pprint import pprint
 import json
 from crm.models import CRMPerson, Note, EmailRecord, PayPal, Cash, IDCheck
+from zoho_integration.models import Contact
 import dateutil.parser
 from django.conf import settings
 from accounts.models import PS1User
@@ -132,6 +133,11 @@ class Command(BaseCommand):
 
                 crm_person.membership_status = membership_status_map[entry['membership_status']]
                 crm_person.save()
+
+                # Port
+                existing_contact = Contact.objects.get(contact_id=entry['contact_id'])
+	        crm_person.user = existing_contact.user
+		crm_person.save()
 
                 if (entry['payment_type'] == 'Paypal' and entry['primary_email']) or entry['secondary_email']:
                     paypal = PayPal()

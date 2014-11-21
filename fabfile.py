@@ -9,7 +9,7 @@ def staging():
 
 def production():
     env.root = '/srv/http/members.pumpingstationone.org/app'
-    env.hosts = ['ps1auth.ad.pumpingstationone.org']
+    env.hosts = ['10.100.0.114']
     env.mode = 'production'
     env.restart = lambda : run('killall /home/PS1/hef/.virtualenvs/ps1auth/bin/python2', warn_only=True)
 
