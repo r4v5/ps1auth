@@ -25,6 +25,7 @@ locale-gen
 
 # Install Dependencies 
 sudo pacman -S --noconfirm --needed postgresql python2-virtualenv samba nginx
+yaourt -Sy --noconfirm --aur rabbitmq
 
 # Setup Samba
 sudo samba-tool domain provision --realm=vagrant.lan --domain=${AD_DOMAIN} --server-role=dc --use-rfc2307 --adminpass=${AD_BINDDN_PASSWORD}
@@ -78,6 +79,7 @@ EOF
 cat << EOF > /etc/systemd/system/ps1auth.service
 [Unit]
 Description=PS1 Auth (Member's site)
+After=vboxservice.service
 
 [Service]
 Type=simple
@@ -136,11 +138,36 @@ http {
 }
 EOF
 
+# PS1Auth Celery Worker Systemd Service File
+cat << EOF > /etc/systemd/system/celery.service
+[Unit]
+Description=PS1 Auth Celery Worker
+After=vboxservice.service
+
+[Service]
+Type=simple
+User=vagrant
+WorkingDirectory=/vagrant
+ExecStart=/home/vagrant/venv/bin/celery -A ps1auth worker -l info
+EnvironmentFile=-/home/vagrant/ps1auth.conf
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 # Configure App to Start Automatically
 systemctl start ps1auth.socket
 systemctl enable ps1auth.socket
 systemctl start nginx
 systemctl enable nginx
+systemctl start rabbitmq
+systemctl enable rabbitmq
+systemctl start celery
+systemctl enable celery
+sudo systemctl start systemd-journal-gatewayd.socket
+sudo systemctl enable systemd-journal-gatewayd.socket
 
 SCRIPT
 
@@ -149,5 +176,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "archlinux-x86_64"
   config.vm.box_url = "http://cloud.terry.im/vagrant/archlinux-x86_64.box"
   config.vm.provision "shell", inline: $script
+  config.vm.network "forwarded_port", guest: 5555, host: 5555, auto_correct: true
   config.vm.network "forwarded_port", guest: 8001, host: 8001, auto_correct: true
+  config.vm.network "forwarded_port", guest: 19531, host: 8002, auto_correct: true
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 2048
+    v.cpus = 2
+  end
 end

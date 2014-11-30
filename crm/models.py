@@ -12,9 +12,11 @@ from ckeditor.fields import RichTextField
 import re
 from html2text import html2text
 from bs4 import BeautifulSoup
+from ps1auth.celery import app
+from celery.contrib.methods import task_method
+from accounts.models import PS1User
 
 
-# Create your models here.
 class CRMPersonManager(models.Manager):
 
     def full_members(self):
@@ -211,17 +213,27 @@ class EmailTemplate(models.Model):
     def send(self, user, target = None, extra_context = {}):
         total = 0
         if target:
-            total += self._send(user, target, extra_context)
+            send_email.delay(self.pk, user.pk, target.pk, extra_context)
+            total += 1
         elif self.recipients == 'all_members':
             for member in CRMPerson.objects.members():
-                total += self._send(user, member, extra_context)
+                send_email.delay(self.pk, user.pk, member.pk, extra_context)
+                total += 1
         elif self.recipients == 'full_members':
             for member in CRMPerson.objects.full_members():
-                total += self._send(user, member, extra_context)
+                send_email.delay(self.pk, user.pk, member.pk, extra_context)
+                total += 1
         return total
+
+@app.task    
+def send_email(email_template_id, user_id, target_id, extra_context):
+    email_template = EmailTemplate.objects.get(pk=email_template_id)
+    user = PS1User.objects.get(pk=user_id)
+    target = CRMPerson.objects.get(pk=target_id)
+    email_template._send(user, target, extra_context)
 
 class EmailAttachement(models.Model):
     name = models.CharField(max_length=255)
     email = models.ForeignKey('EmailTemplate', related_name='attachments')
-    file = models.FileField(upload_to="email_attachements")
+    file = models.FileField(upload_to="attachements/%Y/%m/%d")
 
