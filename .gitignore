@@ -16,3 +16,6 @@ reports/
 .settings/
 *.csv
 media/
+celerybeat-schedule
+celerybeat.pid
+celeryev.pid

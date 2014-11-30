@@ -30,6 +30,7 @@ zoho_user_to_ps1user_map = {
     'bry': 'bry',
     'Steve': 'stevetheotherone',
     'Farkas': 'stevetheotherone',
+    'farkas': 'stevetheotherone',
     'Everett': 'negativek',
     'Anthony': 'anthony',
     'derek': 'dbever',
@@ -135,9 +136,12 @@ class Command(BaseCommand):
                 crm_person.save()
 
                 # Port
-                existing_contact = Contact.objects.get(contact_id=entry['contact_id'])
-	        crm_person.user = existing_contact.user
-		crm_person.save()
+                try:
+                    existing_contact = Contact.objects.get(contact_id=entry['contact_id'])
+                    crm_person.user = existing_contact.user
+                    crm_person.save()
+                except Contact.DoesNotExist:
+                    pass
 
                 if (entry['payment_type'] == 'Paypal' and entry['primary_email']) or entry['secondary_email']:
                     paypal = PayPal()

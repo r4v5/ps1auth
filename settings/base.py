@@ -136,6 +136,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'south',
     'ckeditor',
+    'djcelery',
     #'paypal.standard.ipn',
     #'billing',
 )
@@ -221,6 +222,12 @@ AUTH_USER_MODEL = 'accounts.PS1User'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 LOGIN_REDIRECT_URL = '/zinc/member_list'
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+
 
 SECRET_KEY = get_env_variable('SECRET_KEY')
 AD_URL = get_env_variable('AD_URL')
