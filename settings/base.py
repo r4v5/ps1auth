@@ -119,14 +119,14 @@ PROJECT_APPS = (
     'ps1auth',
     'accounts',
     'rfid',
-    'zoho_integration',
+    'signup',
     'memberpoint',
     'paypal_integration',
     'crm',
 )
 
 INSTALLED_APPS = (
-    'bootstrap_toolkit',
+    'bootstrap3',
     'django.contrib.webdesign',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -134,7 +134,6 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'south',
     'ckeditor',
     'djcelery',
     #'paypal.standard.ipn',

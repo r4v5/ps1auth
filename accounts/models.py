@@ -9,7 +9,7 @@ import ldap.modlist
 from pprint import pprint
 
 class PS1UserManager(BaseUserManager):
-        
+
     def create_user(self, username, email = None, first_name = None, last_name = None, password = None):
         user_dn = "CN={0},{1}".format(username, settings.AD_BASEDN)
         user_attrs = {}
@@ -41,22 +41,22 @@ class PS1UserManager(BaseUserManager):
         guid = uuid.UUID(bytes_le=ldap_user['objectGUID'][0])
         user = PS1Backend().get_user(guid)
         user.save()
-        
+
         #set password
         if password:
             user.set_password(password)
-            
+
         #turn the account on
         result = ldap_connection.modify_s(user_dn, enable_account)
         user._expire_ldap_data()
         return user
-    
+
     def delete_user(self, user):
         l = get_ldap_connection()
         user_dn = user.ldap_user['distinguishedName'][0]
         result = l.delete_s(user_dn)
         user.delete()
-        
+
     def create_superuser(self, object_guid, password, email = None):
         """
         object_guid is actually a username. calling it object_guid gets around
@@ -100,8 +100,8 @@ class PS1User(AbstractBaseUser):
     USERNAME_FIELD = 'object_guid'
 
     def get_full_name(self):
-	if not self.ldap_user:
-	     return repr(self)
+        if not self.ldap_user:
+         return repr(self)
         try:
             first_name = self.ldap_user['givenName'][0]
             last_name = self.ldap_user['sn'][0]
@@ -110,10 +110,10 @@ class PS1User(AbstractBaseUser):
         return ("{0} {1}").format(first_name, last_name)
 
     def get_short_name(self):
-	if self.ldap_user:
-		return self.ldap_user['cn'][0]
-	else:
-		return "AD User Set, but not found"
+        if self.ldap_user:
+            return self.ldap_user['cn'][0]
+        else:
+            return "AD User Set, but not found"
 
     def check_password(self, raw_password):
         # HEFTODO strict check
@@ -136,7 +136,7 @@ class PS1User(AbstractBaseUser):
         add_pass = [(ldap.MOD_REPLACE, 'unicodePwd', [password_value])]
         user_dn = self.ldap_user['distinguishedName'][0]
         l.modify_s(user_dn, add_pass)
-        
+
     def set_unusable_password(self):
         raise NotImplementedError
 
@@ -185,10 +185,10 @@ class PS1User(AbstractBaseUser):
             l = get_ldap_connection()
             result = l.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
             if len(result) > 0:
-		    self._ldap_user = result[0][1]
-		    cache.set(self.object_guid, self._ldap_user, 24 * 60 * 60 * 70)
+                self._ldap_user = result[0][1]
+                cache.set(self.object_guid, self._ldap_user, 24 * 60 * 60 * 70)
         return self._ldap_user
-    
+
     def _expire_ldap_data(self):
         if hasattr(self, '_ldap_user'):
             del(self._ldap_user)

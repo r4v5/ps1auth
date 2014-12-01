@@ -24,7 +24,7 @@ EOF
 locale-gen
 
 # Install Dependencies 
-sudo pacman -S --noconfirm --needed postgresql python2-virtualenv samba nginx
+sudo pacman -S --noconfirm --needed postgresql python-virtualenv samba nginx
 yaourt -Sy --noconfirm --aur rabbitmq
 
 # Setup Samba
@@ -55,7 +55,7 @@ sudo -u vagrant createdb ps1auth
 
 # Bootstrap App
 
-sudo -u vagrant virtualenv2 venv
+sudo -u vagrant virtualenv venv
 sudo -u vagrant venv/bin/pip install -r /vagrant/requirements/local.txt
 sudo -u vagrant venv/bin/pip install gunicorn
 sudo -u vagrant -E venv/bin/python /vagrant/manage.py syncdb
@@ -143,12 +143,13 @@ cat << EOF > /etc/systemd/system/celery.service
 [Unit]
 Description=PS1 Auth Celery Worker
 After=vboxservice.service
+After=rabbitmq.service
 
 [Service]
 Type=simple
 User=vagrant
 WorkingDirectory=/vagrant
-ExecStart=/home/vagrant/venv/bin/celery -A ps1auth worker -l info
+ExecStart=/home/vagrant/venv/bin/celery -A ps1auth worker -E -B -l info
 EnvironmentFile=-/home/vagrant/ps1auth.conf
 Restart=on-failure
 RestartSec=10

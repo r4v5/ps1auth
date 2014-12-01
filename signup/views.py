@@ -12,10 +12,6 @@ from django.template import RequestContext
 
 import forms
 from models import Token
-from .models import Contact
-
-def fetch_contacts(request):
-    pass
 
 def activate_account(request):
     if request.method == 'POST':
@@ -23,7 +19,7 @@ def activate_account(request):
         if form.is_valid():
             site = get_current_site(request)
             user = form.save( request.is_secure(), site.domain)
-            return HttpResponseRedirect(reverse('zoho_integration.views.activation_email_sent'))
+            return HttpResponseRedirect(reverse('signup.views.activation_email_sent'))
     else:
         form = forms.activate_account_form()
     return render(request, 'activate_account.html', {
@@ -38,7 +34,7 @@ def account_activate_confirm(request, token):
         token = Token.objects.get(token=token)
     except Token.DoesNotExist:
         messages.error(request, "Unknown Account Activation URL")
-        return HttpResponseRedirect(reverse('zoho_integration.views.activate_account'))
+        return HttpResponseRedirect(reverse('signup.views.activate_account'))
     zoho_contact = token.zoho_contact 
     if request.method == 'POST':
         form = forms.account_register_form(request.POST)
@@ -57,10 +53,3 @@ def account_activate_confirm(request, token):
     return render(request, 'account_register.html', {
         'form': form,
     })
-
-@login_required()
-def member_list(request):
-    data = {}
-    data['full_members'] = Contact.objects.filter(membership_status = u'Full Membership').order_by('last_name', 'first_name')
-    data['starving_hackers'] = Contact.objects.filter(membership_status = u'PS1 Starving Hacker Membership').order_by('last_name', 'first_name')
-    return render(request, 'member_list.html', data)
