@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from pprint import pprint
 import json
-from crm.models import CRMPerson, Note, EmailRecord, PayPal, Cash, IDCheck
+from member_management.models import Person, Note, EmailRecord, PayPal, Cash, IDCheck
 from zoho_integration.models import Contact
 import dateutil.parser
 from django.conf import settings
@@ -98,12 +98,12 @@ class Command(BaseCommand):
         data = json.loads(open(args[0],'rb').read())
         self.id_map = {}
 
-        for person in CRMPerson.objects.all():
+        for person in Person.objects.all():
             person.delete()
 
         for entry in data:
             if entry.has_key('contact_id'):
-                crm_person = CRMPerson()
+                crm_person = Person()
                 self.id_map[entry['contact_id']] = crm_person
                 dob = entry['date_of_birth']
                 if dob:

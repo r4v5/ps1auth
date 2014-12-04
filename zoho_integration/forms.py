@@ -10,15 +10,15 @@ from django.template.loader import render_to_string
 from accounts.backends import PS1Backend, get_ldap_connection
 from accounts.models import PS1User
 from zoho_integration.models import Token
-from crm.models import CRMPerson
+from member_management.models import Person
 
 class activate_account_form(forms.Form):
     ps1_email = forms.EmailField(label="PS1 Email")
 
     def clean_ps1_email(self):
         try:
-            contact = CRMPerson.objects.get(email=self.cleaned_data['ps1_email'])
-        except CRMPerson.DoesNotExist:
+            contact = Person.objects.get(email=self.cleaned_data['ps1_email'])
+        except Person.DoesNotExist:
             raise forms.ValidationError("Unknown Email Address")
         if contact.user is not None:
             #HEFTODO an account recovery link would be nice.
@@ -29,7 +29,7 @@ class activate_account_form(forms.Form):
     def save(self, use_https, domain):
         email_address = self.cleaned_data['ps1_email']
         # HEFTODO check email against AD
-        zoho_contact = CRMPerson.objects.get(email=email_address)
+        zoho_contact = Person.objects.get(email=email_address)
         token = Token(token=uuid.uuid4(), zoho_contact=zoho_contact)
         token.save()
         c = {

@@ -17,15 +17,15 @@ from celery.contrib.methods import task_method
 from accounts.models import PS1User
 
 
-class CRMPersonManager(models.Manager):
+class PersonManager(models.Manager):
 
     def full_members(self):
-        return super(CRMPersonManager, self).get_queryset().filter(membership_status='full_member')
+        return super(PersonManager, self).get_queryset().filter(membership_status='full_member')
 
     def members(self):
-        return super(CRMPersonManager, self).get_queryset().filter(Q(membership_status='full_member')|Q(membership_status='starving_hacker'))
+        return super(PersonManager, self).get_queryset().filter(Q(membership_status='full_member')|Q(membership_status='starving_hacker'))
 
-class CRMPerson(models.Model):
+class Person(models.Model):
     MEMBERSHIP_LEVEL = (
             ('discontinued', 'Discontinued'),
             ('starving_hacker', 'Starving Hacker'),
@@ -44,20 +44,20 @@ class CRMPerson(models.Model):
     city = models.CharField(max_length=128, blank=True, null=True)
     zip_code = models.CharField(max_length=128, blank=True, null=True)
     country = models.CharField(max_length=128, blank=True, null=True)
-    objects = CRMPersonManager()
+    objects = PersonManager()
 
     def __unicode__(self):
         return u'{0} {1}'.format(self.first_name, self.last_name)
 
 class IDCheck(models.Model):
-    person = models.ForeignKey('CRMPerson')
+    person = models.ForeignKey('Person')
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     note = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
 class CRMPaymentMethod(models.Model):
-    person = models.OneToOneField('CRMPerson', null=True)
+    person = models.OneToOneField('Person', null=True)
     class Meta:
         abstract = True
 
@@ -75,7 +75,7 @@ class Cash(CRMPaymentMethod):
         verbose_name_plural = 'cash'
 
 class Note(models.Model):
-    person = models.ForeignKey('CRMPerson')
+    person = models.ForeignKey('Person')
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -134,7 +134,7 @@ class EmailRecord(models.Model):
     reply_to_email = models.EmailField(blank=True)
     to_email = models.EmailField()
     sender = models.ForeignKey(settings.AUTH_USER_MODEL)
-    recipient = models.ForeignKey('CRMPerson')
+    recipient = models.ForeignKey('Person')
     created_at = models.DateTimeField(auto_now_add=True)
     objects = EmailRecordManager()
     status = models.CharField(default='pending', max_length=30)
@@ -216,11 +216,11 @@ class EmailTemplate(models.Model):
             send_email.delay(self.pk, user.pk, target.pk, extra_context)
             total += 1
         elif self.recipients == 'all_members':
-            for member in CRMPerson.objects.members():
+            for member in Person.objects.members():
                 send_email.delay(self.pk, user.pk, member.pk, extra_context)
                 total += 1
         elif self.recipients == 'full_members':
-            for member in CRMPerson.objects.full_members():
+            for member in Person.objects.full_members():
                 send_email.delay(self.pk, user.pk, member.pk, extra_context)
                 total += 1
         return total
@@ -229,7 +229,7 @@ class EmailTemplate(models.Model):
 def send_email(email_template_id, user_id, target_id, extra_context):
     email_template = EmailTemplate.objects.get(pk=email_template_id)
     user = PS1User.objects.get(pk=user_id)
-    target = CRMPerson.objects.get(pk=target_id)
+    target = Person.objects.get(pk=target_id)
     email_template._send(user, target, extra_context)
 
 class EmailAttachement(models.Model):
