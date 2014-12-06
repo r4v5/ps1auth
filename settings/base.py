@@ -123,6 +123,7 @@ PROJECT_APPS = (
     'memberpoint',
     'paypal_integration',
     'member_management',
+    'crm',
 )
 
 INSTALLED_APPS = (

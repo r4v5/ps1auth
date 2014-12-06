@@ -6,11 +6,15 @@ from django.db import models
 
 
 class Migration(SchemaMigration):
+    
+    depends_on = (
+        ("member_management", "0001_initial"),
+    )
 
     def forwards(self, orm):
 
         # Changing field 'Token.zoho_contact'
-        db.alter_column(u'zoho_integration_token', 'zoho_contact_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['crm.CRMPerson']))
+        db.alter_column(u'zoho_integration_token', 'zoho_contact_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['member_management.Person']))
 
     def backwards(self, orm):
 
@@ -24,8 +28,8 @@ class Migration(SchemaMigration):
             'object_guid': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '48', 'primary_key': 'True', 'db_index': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
-        u'crm.crmperson': {
-            'Meta': {'object_name': 'CRMPerson'},
+        u'member_management.person': {
+            'Meta': {'object_name': 'Person'},
             'birthday': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'city': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
             'country': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
@@ -64,7 +68,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Token'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'token': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
-            'zoho_contact': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['crm.CRMPerson']"})
+            'zoho_contact': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['member_management.Person']"})
         }
     }
 
