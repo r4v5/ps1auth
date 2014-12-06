@@ -24,7 +24,7 @@ class PointAccount(models.Model):
         return self.point_transactions.all().order_by('-date',)
 
     def __unicode__(self):
-        return u'{}: {}'.format(self.user, self.balance)
+        return '{}: {}'.format(self.user, self.balance)
 
 class PointTransaction(models.Model):
     account = models.ForeignKey(PointAccount,
@@ -38,7 +38,7 @@ class PointTransaction(models.Model):
             blank=False)
 
     def __unicode__(self):
-        return u'User={}, Date={}, Points={}, Reason={}'.format(
+        return 'User={}, Date={}, Points={}, Reason={}'.format(
                 self.account.user, self.date, self.points, self.reason)
 
 

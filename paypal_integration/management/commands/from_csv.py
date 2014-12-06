@@ -30,19 +30,19 @@ class Command(BaseCommand):
             transaction.to_email = t[' To Email Address']
             transaction.name = t[' Name']
             transaction.status = t[' Status']
-            if t.has_key(' Gross'):
+            if ' Gross' in t:
                 transaction.amount = Money(t[' Gross'].replace(',',''), 'USD')
-            if t.has_key(' Fee') and t[' Fee'] != '...':
+            if ' Fee' in t and t[' Fee'] != '...':
                 transaction.fee_amount = Money(t[' Fee'], 'USD')
-            if t.has_key(' Net'):
+            if ' Net' in t:
                 transaction.net_amount = Money(t[' Net'].replace(',',''), 'USD')
 
             if t[' Balance'] != '...':
                 transaction.balance = Money(t[' Balance'].replace(',',''), 'USD')
-            if t.has_key(' Reference Txn ID') and t[' Reference Txn ID'] != '':
+            if ' Reference Txn ID' in t and t[' Reference Txn ID'] != '':
                 try:
                     referenced_transaction = Transaction.objects.get(id=t[' Reference Txn ID'])
                     transaction.reference = referenced_transaction
                 except Transaction.DoesNotExist:
-                    print("Skipping filling in reference for {}->{}".format(transaction.id, t[' Reference Txn ID']))
+                    print(("Skipping filling in reference for {}->{}".format(transaction.id, t[' Reference Txn ID'])))
             transaction.save()

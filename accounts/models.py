@@ -1,11 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from .backends import PS1Backend, get_ldap_connection
-import ldap
+import ldap3
 from django.conf import settings
 import uuid
 from django.core.cache import cache
-import ldap.modlist
 from pprint import pprint
 
 class PS1UserManager(BaseUserManager):

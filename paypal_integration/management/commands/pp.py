@@ -27,28 +27,28 @@ class Command(BaseCommand):
         pprint(latest)
         paypal = PayPalInterface(CONFIG)
         result = paypal.transaction_search(startdate=latest)
-        print "grabbed %d items" % len(result.items())
-        for item in result.items():
+        print("grabbed %d items" % len(list(result.items())))
+        for item in list(result.items()):
             error = False
             transaction = Transaction(id=item['TRANSACTIONID'])
-            transaction.timestamp = datetime.strptime(item[u'TIMESTAMP'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=pytz.UTC)
-            transaction.type = item[u'TYPE']
+            transaction.timestamp = datetime.strptime(item['TIMESTAMP'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=pytz.UTC)
+            transaction.type = item['TYPE']
             try:
-                transaction.email = item[u'EMAIL']
+                transaction.email = item['EMAIL']
             except KeyError:
                 error = True
-            transaction.name = item[u'NAME']
-            transaction.status = item[u'STATUS']
+            transaction.name = item['NAME']
+            transaction.status = item['STATUS']
             try:
-                transaction.amount = Money(item[u'AMT'], item[u'CURRENCYCODE'])
-            except KeyError:
-                error = True
-            try:
-                transaction.fee_amount = Money(item[u'FEEAMT'], item[u'CURRENCYCODE'])
+                transaction.amount = Money(item['AMT'], item['CURRENCYCODE'])
             except KeyError:
                 error = True
             try:
-                transaction.net_amount = Money(item[u'NETAMT'], item[u'CURRENCYCODE'])
+                transaction.fee_amount = Money(item['FEEAMT'], item['CURRENCYCODE'])
+            except KeyError:
+                error = True
+            try:
+                transaction.net_amount = Money(item['NETAMT'], item['CURRENCYCODE'])
             except KeyError:
                 error = True
 

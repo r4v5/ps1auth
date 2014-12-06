@@ -10,8 +10,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.template import RequestContext
 
-import forms
-from models import Token
+from . import forms
+from .models import Token
 
 def activate_account(request):
     if request.method == 'POST':

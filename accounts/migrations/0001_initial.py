@@ -9,21 +9,21 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'PS1User'
-        db.create_table(u'accounts_ps1user', (
+        db.create_table('accounts_ps1user', (
             ('password', self.gf('django.db.models.fields.CharField')(max_length=128)),
             ('last_login', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
             ('object_guid', self.gf('django.db.models.fields.CharField')(unique=True, max_length=48, primary_key=True, db_index=True)),
         ))
-        db.send_create_signal(u'accounts', ['PS1User'])
+        db.send_create_signal('accounts', ['PS1User'])
 
 
     def backwards(self, orm):
         # Deleting model 'PS1User'
-        db.delete_table(u'accounts_ps1user')
+        db.delete_table('accounts_ps1user')
 
 
     models = {
-        u'accounts.ps1user': {
+        'accounts.ps1user': {
             'Meta': {'object_name': 'PS1User'},
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'object_guid': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '48', 'primary_key': 'True', 'db_index': 'True'}),

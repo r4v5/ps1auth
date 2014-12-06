@@ -20,19 +20,19 @@ class Migration(SchemaMigration):
 
 
     models = {
-        u'accounts.ps1user': {
+        'accounts.ps1user': {
             'Meta': {'object_name': 'PS1User'},
             'id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '48', 'primary_key': True, 'db_column': "'object_guid'", 'db_index': 'True'}),
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'object_guid': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '48', 'primary_key': 'True', 'db_index': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
-        u'accounts.token': {
+        'accounts.token': {
             'Meta': {'object_name': 'Token'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'key': ('django.db.models.fields.CharField', [], {'default': "'061af369-67bf-47c6-999f-8ea695900cac'", 'max_length': '36'}),
             'timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['accounts.PS1User']"})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['accounts.PS1User']"})
         }
     }
 

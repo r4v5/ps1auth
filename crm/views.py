@@ -22,7 +22,7 @@ def send_templated_email(request, email_template_id, person_id=None):
 @login_required()
 def member_list(request):
     data = {}
-    data['full_members'] = Contact.objects.filter(membership_status = u'Full Membership').order_by('last_name', 'first_name')
-    data['starving_hackers'] = Contact.objects.filter(membership_status = u'PS1 Starving Hacker Membership').order_by('last_name', 'first_name')
+    data['full_members'] = Contact.objects.filter(membership_status = 'Full Membership').order_by('last_name', 'first_name')
+    data['starving_hackers'] = Contact.objects.filter(membership_status = 'PS1 Starving Hacker Membership').order_by('last_name', 'first_name')
     return render(request, 'member_list.html', data)
 

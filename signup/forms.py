@@ -63,7 +63,7 @@ class account_register_form(forms.Form):
             start with a letter,
             contain only letters and numbers,
             and be between 3 and 30 characters"""
-            raise(forms.ValidationError(error_string))
+            raise forms
 
         return username
 

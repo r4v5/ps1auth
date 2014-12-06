@@ -47,7 +47,7 @@ class CRMPerson(models.Model):
     objects = CRMPersonManager()
 
     def __unicode__(self):
-        return u'{0} {1}'.format(self.first_name, self.last_name)
+        return '{0} {1}'.format(self.first_name, self.last_name)
 
 class IDCheck(models.Model):
     person = models.ForeignKey('CRMPerson')
@@ -163,7 +163,7 @@ class EmailTemplate(models.Model):
     objects = EmailTemplateManager()
 
     def __unicode__(self):
-        return u'{}'.format(self.subject)
+        return '{}'.format(self.subject)
 
     def _convert_inline_images(self, html_content):
         soup = BeautifulSoup(html_content)

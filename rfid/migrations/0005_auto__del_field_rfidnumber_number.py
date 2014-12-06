@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Deleting field 'RFIDNumber.number'
-        db.delete_column(u'rfid_rfidnumber', 'number')
+        db.delete_column('rfid_rfidnumber', 'number')
 
 
     def backwards(self, orm):
@@ -18,26 +18,26 @@ class Migration(SchemaMigration):
         raise RuntimeError("Cannot reverse this migration. 'RFIDNumber.number' and its values cannot be restored.")
 
     models = {
-        u'accounts.ps1user': {
+        'accounts.ps1user': {
             'Meta': {'object_name': 'PS1User'},
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'object_guid': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '48', 'primary_key': 'True', 'db_index': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
-        u'rfid.adgroupresource': {
-            'Meta': {'object_name': 'AdGroupResource', '_ormbases': [u'rfid.Resource']},
+        'rfid.adgroupresource': {
+            'Meta': {'object_name': 'AdGroupResource', '_ormbases': ['rfid.Resource']},
             'ad_group': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            u'resource_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['rfid.Resource']", 'unique': 'True', 'primary_key': 'True'})
+            'resource_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['rfid.Resource']", 'unique': 'True', 'primary_key': 'True'})
         },
-        u'rfid.resource': {
+        'rfid.resource': {
             'Meta': {'object_name': 'Resource'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '160'})
         },
-        u'rfid.rfidnumber': {
+        'rfid.rfidnumber': {
             'Meta': {'object_name': 'RFIDNumber'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['accounts.PS1User']", 'unique': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['accounts.PS1User']", 'unique': 'True'}),
             'weigand26_125khz': ('django.db.models.fields.CharField', [], {'default': "''", 'unique': 'True', 'max_length': '7'})
         }
     }

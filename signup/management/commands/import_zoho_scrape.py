@@ -102,7 +102,7 @@ class Command(BaseCommand):
             person.delete()
 
         for entry in data:
-            if entry.has_key('contact_id'):
+            if 'contact_id' in entry:
                 crm_person = CRMPerson()
                 self.id_map[entry['contact_id']] = crm_person
                 dob = entry['date_of_birth']
@@ -164,7 +164,7 @@ class Command(BaseCommand):
 
             if self.id_check(entry):
                 pass
-            elif entry.has_key('note_id'):
+            elif 'note_id' in entry:
                 note = Note()
                 note.person = self.id_map[entry['parent_contact_id']]
                 if entry['title']:
@@ -175,7 +175,7 @@ class Command(BaseCommand):
                 note.created_at = dateutil.parser.parse(entry['created_at']).replace(tzinfo=tz)
                 note.save()
 
-            elif entry.has_key('msg_id'):
+            elif 'msg_id' in entry:
                 email_record = EmailRecord()
                 email_record.sender = PS1User.objects.first()
                 email_record.recipient = self.id_map[entry['contact_zoho_crm_id']]
@@ -189,7 +189,7 @@ class Command(BaseCommand):
                 email_record.save()
 
     def id_check(self, entry):
-        if entry.has_key('note_id'):
+        if 'note_id' in entry:
             for regex in id_check_regex_list:
                 #try:
                     m = re.match(regex,entry['body'])
@@ -211,7 +211,7 @@ class Command(BaseCommand):
                         id_check.save()
 
 
-                        if m.groupdict().has_key('checker2'):
+                        if 'checker2' in m.groupdict():
                             username = zoho_user_to_ps1user_map[checker]
                             user = PS1User.objects.get_users_by_field("sAMAccountName", username)[0]
                             id_check = IDCheck(
