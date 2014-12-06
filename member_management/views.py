@@ -1,13 +1,13 @@
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from .models import CRMPerson, EmailTemplate
+from .models import person, EmailTemplate
 
 @staff_member_required
 def send_templated_email(request, email_template_id, person_id=None):
     email_template = EmailTemplate.objects.get(pk = email_template_id)
     if person_id:
-        recipient = CRMPerson.objects.get(pk=person_id)
+        recipient = person.objects.get(pk=person_id)
     else:
         recipient = None
     count = email_template.send(request.user, recipient)

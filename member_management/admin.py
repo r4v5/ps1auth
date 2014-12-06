@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.forms import Textarea
 from django.db import models
-from .models import CRMPerson, PayPal, Cash, Note, EmailRecord, EmailTemplate, EmailAttachement, IDCheck
+from .models import Person, PayPal, Cash, Note, EmailRecord, EmailTemplate, EmailAttachement, IDCheck
 
 class PayPalInline(admin.StackedInline):
     model = PayPal
@@ -35,7 +35,7 @@ class EmailRecordAdminInline(admin.TabularInline):
     extra = 0
     max_num = 0
 
-class CRMPersonAdmin(admin.ModelAdmin):
+class PersonAdmin(admin.ModelAdmin):
     search_fields = ['first_name', 'last_name', 'email', 'note__content']
     list_display = ['user', 'last_name', 'first_name', 'email',
             'membership_status']
@@ -50,7 +50,7 @@ class CRMPersonAdmin(admin.ModelAdmin):
     def change_view(self, request, object_id, form_url='', extra_context=None):
         extra_context = extra_context or {}
         extra_context['email_templates'] = EmailTemplate.objects.individual_recipient()
-        return super(CRMPersonAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
+        return super(PersonAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
     
 
 class EmailAttachementInline(admin.StackedInline):
@@ -63,5 +63,5 @@ class EmailTemplateAdmin(admin.ModelAdmin):
     ]
 
 
-admin.site.register(CRMPerson, CRMPersonAdmin)
+admin.site.register(Person, PersonAdmin)
 admin.site.register(EmailTemplate, EmailTemplateAdmin)

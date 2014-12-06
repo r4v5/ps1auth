@@ -122,7 +122,7 @@ PROJECT_APPS = (
     'zoho_integration',
     'memberpoint',
     'paypal_integration',
-    'crm',
+    'member_management',
 )
 
 INSTALLED_APPS = (

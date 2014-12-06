@@ -3,5 +3,5 @@
 {% endblock %}
 {% block object-tools-items %}
   {{ block.super }}
-    <li><a href="{% url 'crm.views.send_templated_email' original.id %}" class="historylink" >Send email</a></li>
+    <li><a href="{% url 'member_management.views.send_templated_email' original.id %}" class="historylink" >Send email</a></li>
 {% endblock %}

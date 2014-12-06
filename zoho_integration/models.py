@@ -2,7 +2,7 @@ from django.db import models
 import accounts.models
 from datetime import datetime
 import pytz
-from crm.models import CRMPerson
+from member_management.models import person
 
 class Contact(models.Model):
     MEMBERSHIP_STATUS_CHOICES = (
@@ -30,7 +30,7 @@ class Contact(models.Model):
 
 class Token(models.Model):
     token = models.CharField(max_length=36)
-    zoho_contact = models.ForeignKey(CRMPerson)
+    zoho_contact = models.ForeignKey(person)
 
 class ContactChange(models.Model):
     contact = models.ForeignKey(Contact)
