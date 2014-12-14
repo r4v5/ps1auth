@@ -194,7 +194,7 @@ class EmailTemplate(models.Model):
         t = Template(self.message)
         message = t.render(Context(extra_context))
         html_content, attachments = self._convert_inline_images(message)
-        txt_content = html2text(html_content)
+        txt_content = html2text(html_content.decode('utf-8'))
         for attachment in self.attachments.all():
             file_data = MIMEApplication(attachment.file.read())
             file_data.add_header('Content-Disposition', 'attachment', filename=attachment.name)
