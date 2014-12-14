@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 from ps1auth.celery import app
 from celery.contrib.methods import task_method
 from accounts.models import PS1User
-
+import reversion
 
 class PersonManager(models.Manager):
 
@@ -25,6 +25,7 @@ class PersonManager(models.Manager):
     def members(self):
         return super(PersonManager, self).get_queryset().filter(Q(membership_status='full_member')|Q(membership_status='starving_hacker'))
 
+@reversion.register
 class Person(models.Model):
     MEMBERSHIP_LEVEL = (
             ('discontinued', 'Discontinued'),
@@ -49,6 +50,7 @@ class Person(models.Model):
     def __unicode__(self):
         return u'{0} {1}'.format(self.first_name, self.last_name)
 
+@reversion.register
 class IDCheck(models.Model):
     person = models.ForeignKey('Person')
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -56,6 +58,7 @@ class IDCheck(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+@reversion.register
 class CRMPaymentMethod(models.Model):
     person = models.OneToOneField('Person', null=True)
     class Meta:
@@ -76,6 +79,7 @@ class Cash(CRMPaymentMethod):
 
 class Note(models.Model):
     person = models.ForeignKey('Person')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -147,6 +151,7 @@ class EmailTemplateManager(models.Manager):
     def individual_recipient(self):
         return self.filter(recipients='individual')
 
+@reversion.register
 class EmailTemplate(models.Model):
     RECIPIENTS = (
             ('all_members', 'All Members'),

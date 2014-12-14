@@ -1,215 +1,179 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from django.db import models, migrations
 import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+import ckeditor.fields
+from django.conf import settings
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'Person'
-        db.create_table(u'member_management_person', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['accounts.PS1User'], unique=True, null=True, blank=True)),
-            ('first_name', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('last_name', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('email', self.gf('django.db.models.fields.EmailField')(max_length=75, null=True, blank=True)),
-            ('birthday', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
-            ('membership_status', self.gf('django.db.models.fields.CharField')(default='discontinued', max_length=128)),
-            ('membership_start_date', self.gf('django.db.models.fields.DateField')(default=datetime.date.today)),
-            ('street_address', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('city', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('zip_code', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('country', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-        ))
-        db.send_create_signal(u'member_management', ['Person'])
+    dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
 
-        # Adding model 'IDCheck'
-        db.create_table(u'member_management_idcheck', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('person', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['member_management.Person'])),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['accounts.PS1User'])),
-            ('note', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-        ))
-        db.send_create_signal(u'member_management', ['IDCheck'])
-
-        # Adding model 'PayPal'
-        db.create_table(u'member_management_paypal', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('person', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['member_management.Person'], unique=True, null=True)),
-            ('email', self.gf('django.db.models.fields.EmailField')(max_length=75)),
-            ('paid_up_until', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
-        ))
-        db.send_create_signal(u'member_management', ['PayPal'])
-
-        # Adding model 'Cash'
-        db.create_table(u'member_management_cash', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('person', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['member_management.Person'], unique=True, null=True)),
-            ('paid_up_until', self.gf('django.db.models.fields.DateField')(blank=True)),
-        ))
-        db.send_create_signal(u'member_management', ['Cash'])
-
-        # Adding model 'Note'
-        db.create_table(u'member_management_note', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('person', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['member_management.Person'])),
-            ('content', self.gf('django.db.models.fields.TextField')()),
-            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('updated_at', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-        ))
-        db.send_create_signal(u'member_management', ['Note'])
-
-        # Adding model 'EmailRecord'
-        db.create_table(u'member_management_emailrecord', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('subject', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('message', self.gf('django.db.models.fields.TextField')()),
-            ('from_email', self.gf('django.db.models.fields.EmailField')(max_length=75)),
-            ('reply_to_email', self.gf('django.db.models.fields.EmailField')(max_length=75, blank=True)),
-            ('to_email', self.gf('django.db.models.fields.EmailField')(max_length=75)),
-            ('sender', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['accounts.PS1User'])),
-            ('recipient', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['member_management.Person'])),
-            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('status', self.gf('django.db.models.fields.CharField')(default='pending', max_length=30)),
-        ))
-        db.send_create_signal(u'member_management', ['EmailRecord'])
-
-        # Adding model 'EmailTemplate'
-        db.create_table(u'member_management_emailtemplate', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('from_name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('from_email', self.gf('django.db.models.fields.EmailField')(max_length=75)),
-            ('reply_to_name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('reply_to_email', self.gf('django.db.models.fields.EmailField')(max_length=75, blank=True)),
-            ('recipients', self.gf('django.db.models.fields.CharField')(default='full_members', max_length=128)),
-            ('subject', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('message', self.gf('ckeditor.fields.RichTextField')()),
-        ))
-        db.send_create_signal(u'member_management', ['EmailTemplate'])
-
-        # Adding model 'EmailAttachement'
-        db.create_table(u'member_management_emailattachement', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('email', self.gf('django.db.models.fields.related.ForeignKey')(related_name='attachments', to=orm['member_management.EmailTemplate'])),
-            ('file', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
-        ))
-        db.send_create_signal(u'member_management', ['EmailAttachement'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'Person'
-        db.delete_table(u'member_management_person')
-
-        # Deleting model 'IDCheck'
-        db.delete_table(u'member_management_idcheck')
-
-        # Deleting model 'PayPal'
-        db.delete_table(u'member_management_paypal')
-
-        # Deleting model 'Cash'
-        db.delete_table(u'member_management_cash')
-
-        # Deleting model 'Note'
-        db.delete_table(u'member_management_note')
-
-        # Deleting model 'EmailRecord'
-        db.delete_table(u'member_management_emailrecord')
-
-        # Deleting model 'EmailTemplate'
-        db.delete_table(u'member_management_emailtemplate')
-
-        # Deleting model 'EmailAttachement'
-        db.delete_table(u'member_management_emailattachement')
-
-
-    models = {
-        u'accounts.ps1user': {
-            'Meta': {'object_name': 'PS1User'},
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'object_guid': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '48', 'primary_key': 'True', 'db_index': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'})
-        },
-        u'member_management.cash': {
-            'Meta': {'object_name': 'Cash'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'paid_up_until': ('django.db.models.fields.DateField', [], {'blank': 'True'}),
-            'person': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['member_management.Person']", 'unique': 'True', 'null': 'True'})
-        },
-        u'member_management.emailattachement': {
-            'Meta': {'object_name': 'EmailAttachement'},
-            'email': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'attachments'", 'to': u"orm['member_management.EmailTemplate']"}),
-            'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'})
-        },
-        u'member_management.emailrecord': {
-            'Meta': {'ordering': "['-created_at']", 'object_name': 'EmailRecord'},
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'from_email': ('django.db.models.fields.EmailField', [], {'max_length': '75'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'message': ('django.db.models.fields.TextField', [], {}),
-            'recipient': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['member_management.Person']"}),
-            'reply_to_email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'sender': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['accounts.PS1User']"}),
-            'status': ('django.db.models.fields.CharField', [], {'default': "'pending'", 'max_length': '30'}),
-            'subject': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'to_email': ('django.db.models.fields.EmailField', [], {'max_length': '75'})
-        },
-        u'member_management.emailtemplate': {
-            'Meta': {'object_name': 'EmailTemplate'},
-            'from_email': ('django.db.models.fields.EmailField', [], {'max_length': '75'}),
-            'from_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'message': ('ckeditor.fields.RichTextField', [], {}),
-            'recipients': ('django.db.models.fields.CharField', [], {'default': "'full_members'", 'max_length': '128'}),
-            'reply_to_email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'reply_to_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'subject': ('django.db.models.fields.CharField', [], {'max_length': '128'})
-        },
-        u'member_management.idcheck': {
-            'Meta': {'object_name': 'IDCheck'},
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'note': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'person': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['member_management.Person']"}),
-            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['accounts.PS1User']"})
-        },
-        u'member_management.note': {
-            'Meta': {'ordering': "['-created_at']", 'object_name': 'Note'},
-            'content': ('django.db.models.fields.TextField', [], {}),
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'person': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['member_management.Person']"}),
-            'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
-        },
-        u'member_management.paypal': {
-            'Meta': {'object_name': 'PayPal'},
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'paid_up_until': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'person': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['member_management.Person']", 'unique': 'True', 'null': 'True'})
-        },
-        u'member_management.person': {
-            'Meta': {'object_name': 'Person'},
-            'birthday': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'city': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'country': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'null': 'True', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'membership_start_date': ('django.db.models.fields.DateField', [], {'default': 'datetime.date.today'}),
-            'membership_status': ('django.db.models.fields.CharField', [], {'default': "'discontinued'", 'max_length': '128'}),
-            'street_address': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['accounts.PS1User']", 'unique': 'True', 'null': 'True', 'blank': 'True'}),
-            'zip_code': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'})
-        }
-    }
-
-    complete_apps = ['member_management']
+    operations = [
+        migrations.CreateModel(
+            name='Cash',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('paid_up_until', models.DateField(blank=True)),
+            ],
+            options={
+                'verbose_name': 'cash',
+                'verbose_name_plural': 'cash',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='EmailAttachement',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255)),
+                ('file', models.FileField(upload_to=b'attachements/%Y/%m/%d')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='EmailRecord',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('subject', models.CharField(max_length=128)),
+                ('message', models.TextField()),
+                ('from_email', models.EmailField(max_length=75)),
+                ('reply_to_email', models.EmailField(max_length=75, blank=True)),
+                ('to_email', models.EmailField(max_length=75)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('status', models.CharField(default=b'pending', max_length=30)),
+            ],
+            options={
+                'ordering': ['-created_at'],
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='EmailTemplate',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('from_name', models.CharField(max_length=255, blank=True)),
+                ('from_email', models.EmailField(max_length=75, verbose_name=b'From')),
+                ('reply_to_name', models.CharField(max_length=255, blank=True)),
+                ('reply_to_email', models.EmailField(max_length=75, verbose_name=b'Reply-To', blank=True)),
+                ('recipients', models.CharField(default=b'full_members', max_length=128, choices=[(b'all_members', b'All Members'), (b'full_members', b'Full Members'), (b'individual', b'Individual')])),
+                ('subject', models.CharField(max_length=128)),
+                ('message', ckeditor.fields.RichTextField()),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='IDCheck',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('note', models.TextField(null=True, blank=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Note',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('content', models.TextField()),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+            ],
+            options={
+                'ordering': ['-created_at'],
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='PayPal',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('email', models.EmailField(max_length=75)),
+                ('paid_up_until', models.DateField(null=True, blank=True)),
+            ],
+            options={
+                'verbose_name': 'PayPal',
+                'verbose_name_plural': 'PayPal',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Person',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('first_name', models.CharField(max_length=128)),
+                ('last_name', models.CharField(max_length=128)),
+                ('email', models.EmailField(max_length=75, null=True, blank=True)),
+                ('birthday', models.DateField(null=True, blank=True)),
+                ('membership_status', models.CharField(default=b'discontinued', max_length=128, choices=[(b'discontinued', b'Discontinued'), (b'starving_hacker', b'Starving Hacker'), (b'full_member', b'Full Member'), (b'suspended', b'Suspended'), (b'banned', b'Banned')])),
+                ('membership_start_date', models.DateField(default=datetime.date.today)),
+                ('street_address', models.CharField(max_length=128, null=True, blank=True)),
+                ('city', models.CharField(max_length=128, null=True, blank=True)),
+                ('zip_code', models.CharField(max_length=128, null=True, blank=True)),
+                ('country', models.CharField(max_length=128, null=True, blank=True)),
+                ('user', models.OneToOneField(null=True, blank=True, to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.AddField(
+            model_name='paypal',
+            name='person',
+            field=models.OneToOneField(null=True, to='member_management.Person'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='note',
+            name='person',
+            field=models.ForeignKey(to='member_management.Person'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='idcheck',
+            name='person',
+            field=models.ForeignKey(to='member_management.Person'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='idcheck',
+            name='user',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='emailrecord',
+            name='recipient',
+            field=models.ForeignKey(to='member_management.Person'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='emailrecord',
+            name='sender',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='emailattachement',
+            name='email',
+            field=models.ForeignKey(related_name='attachments', to='member_management.EmailTemplate'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='cash',
+            name='person',
+            field=models.OneToOneField(null=True, to='member_management.Person'),
+            preserve_default=True,
+        ),
+    ]

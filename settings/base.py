@@ -121,7 +121,7 @@ PROJECT_APPS = (
     'rfid',
     'zoho_integration',
     'memberpoint',
-    'paypal_integration',
+#    'paypal_integration',
     'member_management',
     'crm',
 )
@@ -135,9 +135,9 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'south',
     'ckeditor',
     'djcelery',
+    'reversion',
     #'paypal.standard.ipn',
     #'billing',
 )

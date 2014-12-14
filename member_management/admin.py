@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.forms import Textarea
 from django.db import models
 from .models import Person, PayPal, Cash, Note, EmailRecord, EmailTemplate, EmailAttachement, IDCheck
+import reversion
 
 class PayPalInline(admin.StackedInline):
     model = PayPal
@@ -35,7 +36,7 @@ class EmailRecordAdminInline(admin.TabularInline):
     extra = 0
     max_num = 0
 
-class PersonAdmin(admin.ModelAdmin):
+class PersonAdmin(reversion.VersionAdmin):
     search_fields = ['first_name', 'last_name', 'email', 'note__content']
     list_display = ['user', 'last_name', 'first_name', 'email',
             'membership_status']
@@ -57,7 +58,7 @@ class EmailAttachementInline(admin.StackedInline):
     model = EmailAttachement
 
 
-class EmailTemplateAdmin(admin.ModelAdmin):
+class EmailTemplateAdmin(reversion.VersionAdmin):
     inlines = [
         EmailAttachementInline
     ]
