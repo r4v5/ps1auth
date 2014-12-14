@@ -1,55 +1,46 @@
 # -*- coding: utf-8 -*-
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+from django.conf import settings
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'Resource'
-        db.create_table(u'rfid_resource', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=160)),
-        ))
-        db.send_create_signal(u'rfid', ['Resource'])
+    dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
 
-        # Adding model 'Key'
-        db.create_table(u'rfid_key', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['accounts.PS1User'], unique=True)),
-            ('number', self.gf('django.db.models.fields.BigIntegerField')()),
-        ))
-        db.send_create_signal(u'rfid', ['Key'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'Resource'
-        db.delete_table(u'rfid_resource')
-
-        # Deleting model 'Key'
-        db.delete_table(u'rfid_key')
-
-
-    models = {
-        u'accounts.ps1user': {
-            'Meta': {'object_name': 'PS1User'},
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'object_guid': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '48', 'primary_key': 'True', 'db_index': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'})
-        },
-        u'rfid.key': {
-            'Meta': {'object_name': 'Key'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'number': ('django.db.models.fields.BigIntegerField', [], {}),
-            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['accounts.PS1User']", 'unique': 'True'})
-        },
-        u'rfid.resource': {
-            'Meta': {'object_name': 'Resource'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '160'})
-        }
-    }
-
-    complete_apps = ['rfid']
+    operations = [
+        migrations.CreateModel(
+            name='Resource',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=160)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='AdGroupResource',
+            fields=[
+                ('resource_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='rfid.Resource')),
+                ('ad_group', models.CharField(max_length=255)),
+            ],
+            options={
+            },
+            bases=('rfid.resource',),
+        ),
+        migrations.CreateModel(
+            name='RFIDNumber',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('ASCII_125khz', models.CharField(default=b'', unique=True, max_length=12, verbose_name=b'RFID')),
+                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+    ]

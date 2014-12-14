@@ -1,8 +1,0 @@
-{% extends "admin/change_form.html" %}
-{% block object-tools-items %}
-  {{ block.super }}
-  {% for email_template in email_templates %}
-    <li><a href="{% url 'crm.views.send_templated_email' email_template.id original.id %}" class="historylink" >Send {{ email_template.subject}} email</a></li>
-  {% endfor %}
-</ul>
-{% endblock %}

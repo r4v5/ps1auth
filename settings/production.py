@@ -43,4 +43,5 @@ MIDDLEWARE_CLASSES += (
 STATIC_ROOT = "/srv/http/members.pumpingstationone.org/static"
 MEDIA_ROOT = "/srv/http/members.pumpingstationone.org/media"
 
-EMAIL_HOST = 'mail.ad.pumpingstationone.org'
+#EMAIL_HOST = 'mail.ad.pumpingstationone.org'
+EMAIL_HOST = '10.100.0.115'
