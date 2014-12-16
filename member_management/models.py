@@ -53,12 +53,14 @@ class Person(models.Model):
 @reversion.register
 class IDCheck(models.Model):
     person = models.ForeignKey('Person')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, help_text="Only Board Members are able to perform ID checks.")
     note = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-@reversion.register
+    def __unicode__(self):
+        return "ID Check for {} performed by {}".format(self.person, self.user)
+
 class CRMPaymentMethod(models.Model):
     person = models.OneToOneField('Person', null=True)
     class Meta:
@@ -77,6 +79,7 @@ class Cash(CRMPaymentMethod):
         verbose_name = 'cash'
         verbose_name_plural = 'cash'
 
+@reversion.register
 class Note(models.Model):
     person = models.ForeignKey('Person')
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
