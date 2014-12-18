@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from .models import Person, EmailTemplate
+from math import ceil
 
 @staff_member_required
 def send_templated_email(request, email_template_id, person_id=None):
@@ -27,5 +28,5 @@ def member_list(request):
     data['full_members'] = Person.objects.full_members().order_by('last_name')
     data['starving_hackers'] = Person.objects.starving_hackers().order_by('last_name')
     data['member_count'] = Person.objects.members().count()
-    data['quorum_count'] = max(data['full_members'].count() / 3, 1)
+    data['quorum_count'] = max(ceil(float(data['full_members'].count() / 3)), 1)
     return render(request, 'member_management/member_list.html', data)
