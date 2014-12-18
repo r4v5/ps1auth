@@ -27,6 +27,7 @@ class IDCheckInline(admin.TabularInline):
             'widget': Textarea(attrs={'rows': 1})
         }
     }
+    max_num=2
 
 class EmailRecordAdminInline(admin.TabularInline):
     model = EmailRecord

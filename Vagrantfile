@@ -58,9 +58,7 @@ sudo -u vagrant createdb ps1auth
 sudo -u vagrant virtualenv2 venv
 sudo -u vagrant venv/bin/pip install -r /vagrant/requirements/local.txt
 sudo -u vagrant venv/bin/pip install gunicorn
-sudo -u vagrant -E venv/bin/python /vagrant/manage.py syncdb
-sudo -u vagrant -E venv/bin/python /vagrant/manage.py migrate
-
+sudo -u vagrant -E venv/bin/python /vagrant/manage.py syncdb --noinput
 
 # Setup systemd environment file
 cat << EOF > /home/vagrant/ps1auth.conf
