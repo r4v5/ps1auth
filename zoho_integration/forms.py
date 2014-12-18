@@ -17,7 +17,7 @@ class activate_account_form(forms.Form):
 
     def clean_ps1_email(self):
         try:
-            contact = person.objects.get(email=self.cleaned_data['ps1_email'])
+            contact = Person.objects.get(email=self.cleaned_data['ps1_email'])
         except person.DoesNotExist:
             raise forms.ValidationError("Unknown Email Address")
         if contact.user is not None:
