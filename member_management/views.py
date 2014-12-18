@@ -24,6 +24,8 @@ def send_templated_email(request, email_template_id, person_id=None):
 @login_required()
 def member_list(request):
     data = {}
-    data['full_members'] = Person.objects.full_members()
-    data['starving_hackers'] = Person.objects.starving_hackers()
+    data['full_members'] = Person.objects.full_members().order_by('last_name')
+    data['starving_hackers'] = Person.objects.starving_hackers().order_by('last_name')
+    data['member_count'] = Person.objects.members().count()
+    data['quorum_count'] = max(data['full_members'].count() / 3, 1)
     return render(request, 'member_management/member_list.html', data)

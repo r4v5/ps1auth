@@ -8,6 +8,18 @@
 {% block content %}
 
 <div class="row">
+  <div class="span4">
+    <h1>Full Members: {{ full_members.count }}</h1>
+  </div>
+  <div class="span4">
+    <h1>Total Members: {{ member_count }}</h1>
+  </div>
+  <div class="span4">
+    <h1>Quorum: {{ quorum_count }}</p>
+  </div>
+</div>
+
+<div class="row">
   <div class="span12">
     <h1>Full Members</h1>
     <table class='table table-striped'>
@@ -53,4 +65,5 @@
       </tbody>
     </table>
   </div>
+</div>
 {% endblock %}

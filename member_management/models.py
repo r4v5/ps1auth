@@ -20,13 +20,13 @@ import reversion
 class PersonManager(models.Manager):
 
     def full_members(self):
-        return super(PersonManager, self).get_queryset().filter(membership_status='full_member')
+        return self.get_queryset().filter(membership_status='full_member')
 
     def starving_hackers(self):
-        return super(PersonManager, self).get_queryset().filter(membership_status='starving_hacker')
+        return self.get_queryset().filter(membership_status='starving_hacker')
 
     def members(self):
-        return super(PersonManager, self).get_queryset().filter(Q(membership_status='full_member')|Q(membership_status='starving_hacker'))
+        return self.get_queryset().filter(Q(membership_status='full_member')|Q(membership_status='starving_hacker'))
 
 @reversion.register
 class Person(models.Model):
