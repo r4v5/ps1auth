@@ -13,7 +13,7 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'auth.views.home', name='home'),
     url(r'^$', RedirectView.as_view(permanent=False, url='/mm/member_list')),
-    url(r'^/zinc/member_list$', RedirectView.as_view(permanent=False, url='/mm/member_list')),
+    url(r'^zinc/member_list$', RedirectView.as_view(permanent=False, url='/mm/member_list')),
     url(r'^accounts/', include('accounts.urls')),
     url(r'^rfid/', include('rfid.urls')),
     url(r'^zinc/', include('zoho_integration.urls')),
