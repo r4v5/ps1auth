@@ -9,18 +9,18 @@
 
 <div class="row">
   <div class="span4">
-    <h1>Full Members: {{ full_members.count }}</h1>
+    <h1 class="well">Full Members: {{ full_members.count }}</h1>
   </div>
   <div class="span4">
-    <h1>Total Members: {{ member_count }}</h1>
+    <h1 class="well">Total Members: {{ member_count }}</h1>
   </div>
   <div class="span4">
-    <h1>Quorum: {{ quorum_count }}</p>
+    <h1 class="well">Quorum: {{ quorum_count }}</p>
   </div>
 </div>
 
 <div class="row">
-  <div class="span12">
+  <div class="span10 offset1">
     <h1>Full Members</h1>
     <table class='table table-striped'>
       <thead>
@@ -44,7 +44,7 @@
 </div>
 
 <div class="row">
-  <div class="span12">
+  <div class="span10 offset1">
     <h1>Starving Hackers</h1>
     <table class='table table-striped'>
       <thead>
