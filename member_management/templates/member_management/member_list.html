@@ -47,7 +47,7 @@
         <tr>
           <td>{{ member.get_full_name }}</td>
           <td>{{ member.user.ldap_user.sAMAccountName.0 }}</td>
-          <td>{{ member.user.member_point.balance }}</td>
+          <td>{{ member.user.memberpoint_set.valid.count }}</td>
         </tr>
       {% endfor %}
       </tbody>
