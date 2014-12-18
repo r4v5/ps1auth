@@ -9,13 +9,13 @@
 
 <div class="row">
   <div class="span4">
-    <h1 class="well">Full Members: {{ full_members.count }}</h1>
+    <h2 class="well">Full Members: {{ full_members.count }}</h2>
   </div>
   <div class="span4">
-    <h1 class="well">Total Members: {{ member_count }}</h1>
+    <h2 class="well">Total Members: {{ member_count }}</h2>
   </div>
   <div class="span4">
-    <h1 class="well">Quorum: {{ quorum_count }}</p>
+    <h2 class="well">Quorum: {{ quorum_count }}</h2>
   </div>
 </div>
 
@@ -59,7 +59,7 @@
         <tr>
           <td>{{ member.get_full_name }}</td>
           <td>{{ member.user.ldap_user.sAMAccountName.0 }}</td>
-          <td>{{ member.user.memberpoint_set.valid.count }}</td>
+          <td>{% if member.user.memberpoint_set.valid.count > 0 %}{{member.user.memberpoint_set.valid.count}}{% endif %}</td>
         </tr>
       {% endfor %}
       </tbody>
