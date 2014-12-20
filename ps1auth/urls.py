@@ -20,7 +20,7 @@ urlpatterns = patterns('',
     #url(r'^pp/', include('paypal_integration.urls')),
     url(r'^mm/', include('member_management.urls')),
     url(r'^ckeditor/', include('ckeditor.urls')),
-    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    #url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
