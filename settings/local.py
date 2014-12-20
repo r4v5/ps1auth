@@ -35,3 +35,6 @@ MEDIA_ROOT = os.path.join(SITE_ROOT,'media')
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = os.path.join(SITE_ROOT, 'cache', 'mail')
