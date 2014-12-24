@@ -20,10 +20,13 @@ import reversion
 class PersonManager(models.Manager):
 
     def full_members(self):
-        return super(PersonManager, self).get_queryset().filter(membership_status='full_member')
+        return self.get_queryset().filter(membership_status='full_member')
+
+    def starving_hackers(self):
+        return self.get_queryset().filter(membership_status='starving_hacker')
 
     def members(self):
-        return super(PersonManager, self).get_queryset().filter(Q(membership_status='full_member')|Q(membership_status='starving_hacker'))
+        return self.get_queryset().filter(Q(membership_status='full_member')|Q(membership_status='starving_hacker'))
 
 @reversion.register
 class Person(models.Model):
@@ -50,15 +53,23 @@ class Person(models.Model):
     def __unicode__(self):
         return u'{0} {1}'.format(self.first_name, self.last_name)
 
+    def get_full_name(self):
+        if self.user:
+            return self.user.get_full_name()
+        else:
+            return u"{} {}".format(self.first_name, self.last_name)
+
 @reversion.register
 class IDCheck(models.Model):
     person = models.ForeignKey('Person')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, help_text="Only Board Members are able to perform ID checks.")
     note = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-@reversion.register
+    def __unicode__(self):
+        return "ID Check for {} performed by {}".format(self.person, self.user)
+
 class CRMPaymentMethod(models.Model):
     person = models.OneToOneField('Person', null=True)
     class Meta:
@@ -77,6 +88,7 @@ class Cash(CRMPaymentMethod):
         verbose_name = 'cash'
         verbose_name_plural = 'cash'
 
+@reversion.register
 class Note(models.Model):
     person = models.ForeignKey('Person')
     author = models.ForeignKey(settings.AUTH_USER_MODEL)

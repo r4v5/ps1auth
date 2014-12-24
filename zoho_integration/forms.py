@@ -17,8 +17,8 @@ class activate_account_form(forms.Form):
 
     def clean_ps1_email(self):
         try:
-            contact = person.objects.get(email=self.cleaned_data['ps1_email'])
-        except person.DoesNotExist:
+            contact = Person.objects.get(email=self.cleaned_data['ps1_email'])
+        except Person.DoesNotExist:
             raise forms.ValidationError("Unknown Email Address")
         if contact.user is not None:
             #HEFTODO an account recovery link would be nice.
@@ -29,7 +29,7 @@ class activate_account_form(forms.Form):
     def save(self, use_https, domain):
         email_address = self.cleaned_data['ps1_email']
         # HEFTODO check email against AD
-        zoho_contact = person.objects.get(email=email_address)
+        zoho_contact = Person.objects.get(email=email_address)
         token = Token(token=uuid.uuid4(), zoho_contact=zoho_contact)
         token.save()
         c = {

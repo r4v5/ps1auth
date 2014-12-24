@@ -38,6 +38,10 @@
                   <li><a href="{% url 'rfid.views.configure_rfid' %}">Configure RFID</a></li>
                   <li><a href="{% url 'accounts.views.set_password' %}">Reset Password</a></li>
                   <li><a href="{% url 'django.contrib.auth.views.logout' %}">Logout</a></li>
+                  {% if user.is_staff %}
+                  <li class="divider"></li>
+                  <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                  {% endif %}
                 </ul>
               </li>
               {% else %}

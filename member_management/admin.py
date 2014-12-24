@@ -22,11 +22,13 @@ class NoteInline(admin.StackedInline):
 
 class IDCheckInline(admin.TabularInline):
     model = IDCheck
+    readonly_fields = ['created_at']
     formfield_overrides = {
         models.TextField: {
             'widget': Textarea(attrs={'rows': 1})
         }
     }
+    max_num=2
 
 class EmailRecordAdminInline(admin.TabularInline):
     model = EmailRecord
@@ -38,8 +40,9 @@ class EmailRecordAdminInline(admin.TabularInline):
 
 class PersonAdmin(reversion.VersionAdmin):
     search_fields = ['first_name', 'last_name', 'email', 'note__content']
-    list_display = ['user', 'last_name', 'first_name', 'email',
+    list_display = ['last_name', 'first_name', 'email',
             'membership_status']
+    readonly_fields = ['user']
     list_filter = ['membership_status']
     inlines = [
         IDCheckInline,
