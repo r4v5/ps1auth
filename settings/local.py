@@ -1,6 +1,6 @@
 from .base import *
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = ['127.0.0.1:8001', '127.0.0.1']
@@ -35,18 +35,10 @@ MIDDLEWARE_CLASSES = (
 ) + MIDDLEWARE_CLASSES
 
 MEDIA_ROOT = os.path.join(SITE_ROOT,'media')
-MEDIA_URL = '/media/'
 
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
 }
 
-def show_toolbar(request):
-    if not request.is_ajax() and str(request.user) == "hef":
-        return True
-    return False
-
-DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_TOOLBAR_CALLBACK': 'settings.local.show_toolbar',
-}
-
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = os.path.join(SITE_ROOT, 'cache', 'mail')
