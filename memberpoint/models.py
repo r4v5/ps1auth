@@ -21,7 +21,7 @@ class MemberPointManager(models.Manager):
         return self.get_queryset().filter(created_on__lt=last_year)
 
     def next_to_expire(self):
-        return self.valid().order_by('created_on')[0]
+        return self.valid().order_by('created_on').first()
 
 @reversion.register
 class MemberPoint(models.Model):

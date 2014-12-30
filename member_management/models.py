@@ -51,6 +51,8 @@ class Person(models.Model):
     state = models.CharField(max_length=128, blank=True, null=True)
     zip_code = models.CharField(max_length=128, blank=True, null=True)
     country = models.CharField(max_length=128, blank=True, null=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
     objects = PersonManager()
 
     def __unicode__(self):

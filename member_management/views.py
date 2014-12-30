@@ -5,10 +5,13 @@ from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import ListView
+from .filters import PersonFilter
+from .forms import PersonForm, IDCheckForm, PayPalForm, PersonSearchForm
 from .models import Person, EmailTemplate, EmailRecord, IDCheck
-from .forms import PersonForm, IDCheckForm, PayPalForm
+from .tables import PersonTable
 from math import ceil
 import reversion
+from django_tables2 import RequestConfig
 
 @staff_member_required
 def send_templated_email(request, email_template_id, person_id=None):
@@ -76,6 +79,17 @@ def person_detail(request, person_id):
     data['id_checks'] = IDCheck.objects.filter(person=person)
     return render(request, 'member_management/detail.html', data)
 
-class PersonList(ListView):
-    model = Person
-    context_object_name = 'people'
+def person_list(request): 
+    # poor mans search
+    search_form = PersonSearchForm(request.GET)
+
+    if search_form.is_valid():
+        queryset = search_form.get_queryset()
+    else:
+        queryset = Person.objects.all()
+    data = {}
+    table = PersonTable(queryset)
+    RequestConfig(request, paginate={'per_page':100}).configure(table)
+    data['table'] = table
+    data['search_form'] = search_form
+    return render(request, 'member_management/person_list.html', data)

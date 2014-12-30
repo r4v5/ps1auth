@@ -35,7 +35,7 @@
     <p>Member Points: {{ person.user.memberpoint_set.valid.count|default:0 }}</p>
     <p>Used Points: {{ person.user.memberpoint_set.consumed.count|default:0 }}</p>
     <p>Expired Points: {{ person.user.memberpoint_set.expired.count|default:0 }}</p>
-    <p>Next Expiration: {{ person.user.memberpoint_set.next_to_expire.expiration_date|default:0 }}</p>
+    <p>Next Expiration: {{ person.user.memberpoint_set.next_to_expire.expiration_date|default:'N/A' }}</p>
   </div>
 </div>
 <div class="row">
