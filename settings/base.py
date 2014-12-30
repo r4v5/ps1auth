@@ -127,7 +127,8 @@ PROJECT_APPS = (
 )
 
 INSTALLED_APPS = (
-    'bootstrap_toolkit',
+    'bootstrap3',
+    'bootstrap3_datetime',
     'django.contrib.webdesign',
     'django.contrib.auth',
     'django.contrib.contenttypes',

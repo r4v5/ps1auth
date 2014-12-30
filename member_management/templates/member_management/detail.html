@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block extra_head %}
+{{ person_form.media }}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-12">
+    <form role="form" class="form-horizontal" action="" method="post">
+      {% csrf_token %}
+      <h3>Personal Information</h3>
+      {% bootstrap_form person_form layout="horizontal" %}
+
+      <h3>Payment Information</h3>
+      {% bootstrap_form paypal_form layout="horizontal" %}
+      {% buttons layout='horizontal' %}
+      <button type="submit" name="_save" class="btn btn-primary"> {% bootstrap_icon "star" %} Save</button>
+      <button type="submit" name="_save_and_check_id" class="btn">{% bootstrap_icon "user" %} Check ID</button>
+      <button type="reset" class="btn">Reset</button>
+      {% endbuttons %}
+    </form>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <h3>Member Points</h3>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-offset-1">
+    <p>Member Points: {{ person.user.memberpoint_set.valid.count|default:0 }}</p>
+    <p>Used Points: {{ person.user.memberpoint_set.consumed.count|default:0 }}</p>
+    <p>Expired Points: {{ person.user.memberpoint_set.expired.count|default:0 }}</p>
+    <p>Next Expiration: {{ person.user.memberpoint_set.next_to_expire.expiration_date|default:0 }}</p>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <h3>ID Checks</h3>
+     <ul>
+      {% for id_check in id_checks %}
+        <li>ID Check performed by {{ id_check.user }} on {{ id_check.created_at }}</li>
+      {% empty %}
+        <p>No ID Checks have been performed for this person</p>
+      {% endfor %}
+     </ul>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <h3>Email Records</h3>
+    <table class='table table-striped table-hover'>
+      <tr>
+        <th>Subject:</th>
+        <th>From:</th>
+        <th>To:</th>
+        <th>Sent On</th>
+        <th>Sender</th>
+        <th>Status</th>
+      </tr>
+      {% for email_record in email_records %}
+      <tr>
+        <td>{{ email_record.subject }}</td>
+        <td>{{ email_record.from_email }}</td>
+        <td>{{ email_record.to_email }}</td>
+        <td>{{ email_record.created_at }}</td>
+        <td>{{ email_record.sender }}</td>
+        <td>{{ email_record.status }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
+{% endblock %}

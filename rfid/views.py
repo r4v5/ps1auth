@@ -3,8 +3,7 @@ from .forms import KeyForm
 from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.template.loader import get_template
-from django.template import RequestContext
+from django.shortcuts import render
 
 
 def check(request, resource_name, tag_number):
@@ -34,9 +33,9 @@ def configure_rfid(request):
     else:
         request.user.rfidnumber
         form = KeyForm(instance=tag)
-    t = get_template("configure_rfid.html")
-    context = RequestContext(request)
-    context["form"] = form
-    html = t.render(context)
-    return HttpResponse(html)
+
+    data = {}
+    data['form'] = form
+    data['title'] = 'Configure RFID'
+    return render(request, "ps1auth/form.html", data)
 

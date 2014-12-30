@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load bootstrap_toolkit %}
+
+{% block extra_head %}
+{{ form.media }}
+{% endblock %}
+
+
+{% block content %}
+
+<pre>{{ debug|pprint }}</pre>
+
+<div class="row">
+  <div class="span12">
+    <h2>{{ title }}: {{ owner }}</h2>
+    <form class="form" action="" method="post">
+      {% csrf_token %}
+      {{ form|as_bootstrap }}
+      <p class="form-actions">
+        <input type="submit" value="Submit" class="btn btn-primary">
+      </p>
+    </form>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="span10">
+  <h2>{{ owner }}'s Member Points</h2>
+  <ul>
+  {% for point in points %}
+  <li>Member Point of Awesome</li>
+    <ul>
+      <li>Awarded on {{ point.created_on }}</li>
+      {% if point.reason %}<li>{{ point.reason }}</li>{% endif %}
+    </ul>
+  {% endfor %}
+  </ul>
+  </div>
+</div>
+{% endblock %}

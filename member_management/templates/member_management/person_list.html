@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block extra_head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-12">
+    <h2>people</h2>
+    <ul>
+      {% for person in people %}
+      <li>{{ person }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+{% endblock %}
