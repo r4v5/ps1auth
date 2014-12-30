@@ -1,0 +1,62 @@
+{% spaceless %}
+{% load django_tables2 %}
+{% load bootstrap3 %}
+<div class="row">
+  <div class="col-md-12">
+    {% block table %}
+    <table class="table table table-striped table-hover table-condensed">
+      {% nospaceless %}
+      {% block table.thead %}
+      <thead>
+        <tr>
+          {% for column in table.columns %}
+          {% if column.orderable %}
+          <th {{ column.attrs.th.as_html }}><a href="{% querystring table.prefixed_order_by_field=column.order_by_alias.next %}">{{ column.header }}</a></th>
+          {% else %}
+          <th {{ column.attrs.th.as_html }}>{{ column.header }}</th>
+          {% endif %}
+          {% endfor %}
+        </tr>
+      </thead>
+      {% endblock table.thead %}
+      {% block table.tbody %}
+      <tbody>
+        {% for row in table.page.object_list|default:table.rows %} {# support pagination #}
+        {% block table.tbody.row %}
+        <tr> {# avoid cycle for Django 1.2-1.6 compatibility #}
+          {% for column, cell in row.items %}
+          <td>{{ cell }}</td>
+          {% endfor %}
+        </tr>
+        {% endblock table.tbody.row %}
+        {% empty %}
+        {% if table.empty_text %}
+        {% block table.tbody.empty_text %}
+        <tr><td colspan="{{ table.columns|length }}">{{ table.empty_text }}</td></tr>
+        {% endblock table.tbody.empty_text %}
+        {% endif %}
+        {% endfor %}
+      </tbody>
+      {% endblock table.tbody %}
+      {% block table.tfoot %}
+      <tfoot></tfoot>
+      {% endblock table.tfoot %}
+      {% endnospaceless %}
+    </table>
+  </div>
+</div>
+{% endblock table %}
+
+{% if table.page %}
+{% block pagination %}
+<div class="row">
+  <div class="col-md-6">
+    {% bootstrap_pagination table.page %}
+  </div>
+  <div class="col-md-6">
+    <span class="text-muted pagination pull-right">{{ table.page.paginator.count }}  {% if total == 1 %}{{ table.data.verbose_name }}{% else %}{{ table.data.verbose_name_plural|title }}{% endif %}</span>
+  </div>
+</div>
+{% endblock pagination %}
+{% endif %}
+{% endspaceless %}

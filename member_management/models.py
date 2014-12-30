@@ -67,6 +67,9 @@ class Person(models.Model):
     def get_absolute_url(self):
         return reverse('member_management.views.person_detail', kwargs={'person_id':self.id})
 
+    class Meta:
+        verbose_name_plural = "people"
+
 @reversion.register
 class IDCheck(models.Model):
     person = models.ForeignKey('Person')

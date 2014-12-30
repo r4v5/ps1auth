@@ -8,12 +8,12 @@ class PersonTable(tables.Table):
     paypal = tables.Column(verbose_name='PayPal Email', accessor='paypal.email')
     class Meta:
         model = Person
-        attrs = {'class': 'table table-striped table-hover table-condensed'}
         fields = (
             'user',
             'last_name',
             'first_name',
             'email',
             'paypal',
-            'membership_status','updated_on'
+            'membership_status',
+            'updated_on'
         )
