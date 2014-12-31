@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load bootstrap3 %}
 
 {% block extra_head %}
 {{ form.media }}
@@ -12,17 +11,5 @@
     <h2>{{title}}</h2>
   </div>
 </div>
-<div class="row">
-  <div class="col-md-12">
-    <form class="form" action="" method="post">
-      {% csrf_token %}
-      {% bootstrap_form form %}
-      {% buttons %}
-      <button type="submit" class="btn btn-primary">
-        {% bootstrap_icon "star" %} Submit
-      </button>
-      {% endbuttons %}
-    </form>
-  </div>
-</div>
+{% include 'ps1auth/_form.html' %}
 {% endblock %}

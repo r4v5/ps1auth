@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
@@ -67,7 +68,10 @@ def person_detail(request, person_id=None):
                 paypal.save()
                 reversion.set_user(request.user)
                 messages.success(request, 'Saved Changes Successfully')
-                return HttpResponseRedirect(person.get_absolute_url())
+                if '_save_and_check_id' in request.POST:
+                    return HttpResponseRedirect(reverse(id_check, kwargs={'person_id': person.pk}))
+                else:
+                    return HttpResponseRedirect(person.get_absolute_url())
     else:
         person_form = PersonForm(prefix='person', instance=person)
         paypal_form = PayPalForm(prefix='paypal', instance=paypal)
@@ -79,6 +83,7 @@ def person_detail(request, person_id=None):
     data['id_checks'] = IDCheck.objects.filter(person=person)
     return render(request, 'member_management/detail.html', data)
 
+@staff_member_required
 def person_list(request): 
     # poor mans search
     search_form = PersonSearchForm(request.GET)
@@ -93,3 +98,19 @@ def person_list(request):
     data['table'] = table
     data['search_form'] = search_form
     return render(request, 'member_management/person_list.html', data)
+
+@staff_member_required
+def id_check(request, person_id):
+    person = Person.objects.get(pk=person_id)
+    if request.method == 'POST':
+        id_check_form = IDCheckForm(request.POST, person=person)
+        id_check_form.full_clean()
+        if id_check_form.is_valid():
+            id_check_form.save()
+            return HttpResponseRedirect(person.get_absolute_url())
+    else:
+        id_check_form = IDCheckForm(person=person)
+    data = {}
+    data['person'] = person
+    data['form'] = id_check_form
+    return render(request, 'member_management/id_check.html', data)

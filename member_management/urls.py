@@ -8,4 +8,5 @@ urlpatterns = patterns('member_management.views',
     url(r'person/(?P<person_id>\d+)$', 'person_detail', {}),
     url(r'person/$', 'person_detail', {'person_id':None}, name="member_management-add_person"),
     url(r'people/$', 'person_list'),
+    url(r'id_check/(?P<person_id>\d+)$', 'id_check'),
 )

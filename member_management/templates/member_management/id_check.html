@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <h2>Board Member ID Check for <a href="{{ person.get_absolute_url }}">{{person.first_name}} {{person.last_name}}</a></h2>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <form class="form" action="" method="post">
+      {% csrf_token %}
+      {% bootstrap_form form %}
+      {% buttons %}
+      <button type="submit" class="btn btn-primary">
+        {% bootstrap_icon "user" %} ID Check
+      </button>
+      <button type="reset" class="btn">Reset</button>
+      {% endbuttons %}
+    </form>
+  </div>
+</div>
+{% endblock %}
+

@@ -1,5 +1,7 @@
 from django import forms
 from django.db.models import Q
+from datetime import date
+from dateutil.relativedelta import relativedelta
 from ckeditor.widgets import CKEditorWidget
 from bootstrap3_datetime.widgets import DateTimePicker
 from .models import Person, PayPal
@@ -25,7 +27,54 @@ class PersonForm(forms.ModelForm):
         model = Person
 
 class IDCheckForm(forms.Form):
-    government_issued = forms.BooleanField()
+    board_member = forms.BooleanField(label="You a board member.")
+    government_issued = forms.BooleanField(label="The ID is government issued.")
+    name_matches = forms.BooleanField()
+    birthday_matches = forms.BooleanField(label='The D.O.B. on the ID matches.')
+    over_18 = forms.BooleanField(label='The person is over 18 years of age.')
+    preferred_email = forms.BooleanField(label="The email address is correct and is the person's preferred email address.")
+    waiver = forms.BooleanField(label="The person has filled out a waiver.")
+
+    def __init__(self, *args, **kwargs):
+        self.person = kwargs.pop('person')
+        super(IDCheckForm, self).__init__(*args, **kwargs)
+        self.cleaned_data = {}
+
+        pre_clean_fields = ['over_18', 'birthday_matches', 'preferred_email']
+        for pre_clean_field in pre_clean_fields:
+            self._pre_clean(pre_clean_field)
+        self.fields['name_matches'].label = 'The name on the ID is {} {}'.format(self.person.first_name, self.person.last_name)
+        self.fields['waiver'].help_text = 'Have you filled out and signed a waiver?'
+
+    def _pre_clean(self, name):
+        try:
+            getattr(self, 'clean_{}'.format(name))()
+        except forms.ValidationError as e:
+            self.add_error(name, e)
+
+    def clean_over_18(self):
+        if not self.person.birthday:
+            raise forms.ValidationError('No birthday entered for person')
+        if self.person.birthday + relativedelta(years=18) > date.today():
+            raise forms.ValidationError("Person is under 18 years of age, and is therefore not eligible for membership")
+
+    def clean_birthday_matches(self):
+        if self.person.birthday:
+            self.fields['birthday_matches'].label = 'The D.O.B on the ID is {} ({})'.format(self.person.birthday, self.person.birthday.strftime('%m/%d/%y') )
+            self.fields['birthday_matches'].help_text = 'Is your Birthday {}?'.format(self.person.birthday.strftime('%B %d, %Y'))
+        else:
+            raise forms.ValidationError('No birthday entered for person')
+
+    def clean_preferred_email(self):
+        if self.person.email:
+            self.fields['preferred_email'].label = 'The Person\'s preferred email address is {}'.format(self.person.email)
+            self.fields['preferred_email'].help_text = 'Is your preferred email address {}?'.format(self.person.email)
+        else:
+            raise forms.ValidationError('No email address entered for person')
+
+    def validate_id_checker(self):
+        pass
+    
 
 class PayPalForm(forms.ModelForm):
 
