@@ -8,10 +8,10 @@ urlpatterns = patterns('memberpoint.views',
         MemberPointFormView.as_view(
             form_class = GrantMemberPointForm,
             title = 'Add Member Point',
-        ), name='grant_point'),
+        ), name='memberpoint-grant'),
     url(r'consume/(?P<user_id>.+)$',
         MemberPointFormView.as_view(
             form_class=ConsumeMemberPointForm,
             title = 'Consume Member Point',
-        ), name='consume_point'),
+        ), name='memberpoint-consume'),
 )

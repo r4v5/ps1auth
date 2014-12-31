@@ -11,8 +11,6 @@ from .models import MemberPoint
 from .forms import GrantMemberPointForm
 import reversion
 
-
-
 @login_required
 def list(request):
     context = {}
@@ -28,7 +26,6 @@ class MemberPointFormView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(MemberPointFormView, self).get_context_data(**kwargs)
-        context['debug'] = kwargs
         context['title'] = self.title
         context['points'] = kwargs['owner'].memberpoint_set.valid()
         return context

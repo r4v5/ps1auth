@@ -43,7 +43,7 @@ def member_list(request):
     return render(request, 'member_management/member_list.html', data)
 
 @staff_member_required
-def person_detail(request, person_id):
+def person_detail(request, person_id=None):
     try:
         person = Person.objects.get(pk=person_id)
     except Person.DoesNotExist:
