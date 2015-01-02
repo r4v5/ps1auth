@@ -1,7 +1,11 @@
 {% extends "admin/change_form.html" %}
+
 {% block extrahead %}<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>{{ block.super }}
 {% endblock %}
+
 {% block object-tools-items %}
-  {{ block.super }}
-    <li><a href="{% url 'member_management.views.send_templated_email' original.id %}" class="historylink" >Send email</a></li>
+<li>Save your changes before sending email!</li>
+{{ block.super }}
+<li><a href="{% url 'member_management.views.send_templated_email' original.id %}" class="historylink" >Send email</a></li>
+<li><a href="{% url 'member_management.views.send_test_templated_email' original.id %}" class="historylink" >Test email</a></li>
 {% endblock %}

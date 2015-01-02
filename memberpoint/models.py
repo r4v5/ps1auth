@@ -18,15 +18,15 @@ class MemberPointManager(models.Manager):
     def expired(self):
         now = timezone.now()
         last_year = now.replace(now.year -1)
-        return self.get_queryset().filter(created_on__lte=last_year)
+        return self.get_queryset().filter(created_on__lt=last_year)
 
     def next_to_expire(self):
-        return self.valid().order_by('created_on')[0]
+        return self.valid().order_by('created_on').first()
 
 @reversion.register
 class MemberPoint(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
-    reason = models.TextField( help_text="Reason the point was created")
+    reason = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
     consumed_on = models.DateTimeField(null=True, blank=True)
     objects = MemberPointManager()
@@ -44,4 +44,6 @@ class MemberPoint(models.Model):
             self.consumed_on = timezone.now()
             self.save()
 
+    def expiration_date(self):
+        return self.created_on.replace(year = self.created_on.year + 1)
 

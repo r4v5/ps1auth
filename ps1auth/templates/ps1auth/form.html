@@ -1,10 +1,15 @@
 {% extends "base.html" %}
 
+{% block extra_head %}
+{{ form.media }}
+{% endblock %}
+
+
 {% block content %}
 <div class="row">
   <div class="col-md-12">
-    <h1>Success!</h1>
-    <p>An activation email was sent to your email address.</p>
+    <h2>{{title}}</h2>
   </div>
 </div>
+{% include 'ps1auth/_form.html' %}
 {% endblock %}
