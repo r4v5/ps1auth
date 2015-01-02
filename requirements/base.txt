@@ -19,3 +19,4 @@ django-reversion==1.8.5
 django-debug-toolbar==1.2.2
 django-bootstrap3==5.0.3
 django-bootstrap3-datetimepicker==2.2.3
+django-tables2==0.15.0
