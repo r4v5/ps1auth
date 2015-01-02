@@ -6,7 +6,6 @@ from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import ListView
-from .filters import PersonFilter
 from .forms import PersonForm, IDCheckForm, PayPalForm, PersonSearchForm
 from .models import Person, EmailTemplate, EmailRecord, IDCheck
 from .tables import PersonTable
