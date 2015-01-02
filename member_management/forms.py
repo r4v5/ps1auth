@@ -27,7 +27,7 @@ class PersonForm(forms.ModelForm):
         model = Person
 
 class IDCheckForm(forms.Form):
-    board_member = forms.BooleanField(label="You a board member.")
+    board_member = forms.BooleanField(label="You are a board member.")
     government_issued = forms.BooleanField(label="The ID is government issued.")
     name_matches = forms.BooleanField()
     birthday_matches = forms.BooleanField(label='The D.O.B. on the ID matches.')
@@ -47,6 +47,9 @@ class IDCheckForm(forms.Form):
         self.fields['waiver'].help_text = 'Have you filled out and signed a waiver?'
 
     def _pre_clean(self, name):
+        """runs a validation step before the user has filled out the form.
+        Useful for things like checking age and that data has been entered in already.
+        """
         try:
             getattr(self, 'clean_{}'.format(name))()
         except forms.ValidationError as e:
@@ -61,7 +64,7 @@ class IDCheckForm(forms.Form):
     def clean_birthday_matches(self):
         if self.person.birthday:
             self.fields['birthday_matches'].label = 'The D.O.B on the ID is {} ({})'.format(self.person.birthday, self.person.birthday.strftime('%m/%d/%y') )
-            self.fields['birthday_matches'].help_text = 'Is your Birthday {}?'.format(self.person.birthday.strftime('%B %d, %Y'))
+            self.fields['birthday_matches'].help_text = 'Is your birthday {}?'.format(self.person.birthday.strftime('%B %d, %Y'))
         else:
             raise forms.ValidationError('No birthday entered for person')
 
