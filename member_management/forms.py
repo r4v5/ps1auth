@@ -30,7 +30,7 @@ class IDCheckForm(forms.Form):
     board_member = forms.BooleanField(label="You are a board member.")
     government_issued = forms.BooleanField(label="The ID is government issued.")
     name_matches = forms.BooleanField()
-    birthday_matches = forms.BooleanField(label='The D.O.B. on the ID matches.')
+    birthday_matches = forms.BooleanField(label='The D.O.B. on the ID matches our records.')
     over_18 = forms.BooleanField(label='The person is over 18 years of age.')
     preferred_email = forms.BooleanField(label="The email address is correct and is the person's preferred email address.")
     waiver = forms.BooleanField(label="The person has filled out a waiver.")
@@ -44,7 +44,7 @@ class IDCheckForm(forms.Form):
         for pre_clean_field in pre_clean_fields:
             self._pre_clean(pre_clean_field)
         self.fields['name_matches'].label = 'The name on the ID is {} {}'.format(self.person.first_name, self.person.last_name)
-        self.fields['waiver'].help_text = 'Have you filled out and signed a waiver?'
+        #self.fields['waiver'].help_text = 'Have you filled out and signed a waiver?'
 
     def _pre_clean(self, name):
         """runs a validation step before the user has filled out the form.
@@ -63,15 +63,15 @@ class IDCheckForm(forms.Form):
 
     def clean_birthday_matches(self):
         if self.person.birthday:
-            self.fields['birthday_matches'].label = 'The D.O.B on the ID is {} ({})'.format(self.person.birthday, self.person.birthday.strftime('%m/%d/%y') )
-            self.fields['birthday_matches'].help_text = 'Is your birthday {}?'.format(self.person.birthday.strftime('%B %d, %Y'))
+            self.fields['birthday_matches'].label = 'The D.O.B on the ID is {} ({})'.format(self.person.birthday.strftime('%B %d, %Y'), self.person.birthday.strftime('%m/%d/%y') )
+            #self.fields['birthday_matches'].help_text = 'Is your birthday {}?'.format(self.person.birthday.strftime('%B %d, %Y'))
         else:
             raise forms.ValidationError('No birthday entered for person')
 
     def clean_preferred_email(self):
         if self.person.email:
             self.fields['preferred_email'].label = 'The Person\'s preferred email address is {}'.format(self.person.email)
-            self.fields['preferred_email'].help_text = 'Is your preferred email address {}?'.format(self.person.email)
+            #self.fields['preferred_email'].help_text = 'Is your preferred email address {}?'.format(self.person.email)
         else:
             raise forms.ValidationError('No email address entered for person')
 
