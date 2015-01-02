@@ -1,9 +1,6 @@
 Django==1.7.1
-#distribute==0.6.34
-django-bootstrap-toolkit==2.12.0
 python-ldap==2.4.10
 pytz==2013b
-#South==0.8.1
 psycopg2==2.5.1
 #django-money==0.4.1
 #git+https://github.com/duointeractive/paypal-python.git
@@ -20,3 +17,6 @@ anyjson==0.3.3
 django-celery==3.1.16
 django-reversion==1.8.5
 django-debug-toolbar==1.2.2
+django-bootstrap3==5.0.3
+django-bootstrap3-datetimepicker==2.2.3
+django-tables2==0.15.0

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block extra_head %}
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <h2>{{ title }}: {{ owner }}</h2>
+    <form class="form" action="" method="post">
+      {% csrf_token %}
+      {% bootstrap_form form %}
+      {% buttons %}
+      <button type="submit" class="btn btn-primary">
+        {% bootstrap_icon "star" %} Submit
+      </button>
+      {% endbuttons %}
+    </form>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-md-12">
+  <h2>{{ owner }}'s Member Points</h2>
+  <ul>
+  {% for point in points %}
+    <li>Member Point awarded on {{ point.created_on }}</li>
+    {% if point.reason %}<ul><li>{{ point.reason }}</li></ul>{% endif %}
+  {% empty %}
+    <p>No Member Points Available.</p>
+  {% endfor %}
+  </ul>
+  </div>
+</div>
+{% endblock %}
