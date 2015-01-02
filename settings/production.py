@@ -27,6 +27,7 @@ CACHES = {
 }
 
 INSTALLED_APPS += (
+    "debug_toolbar",
 )
 
 INTERNAL_IPS = (
@@ -45,3 +46,16 @@ MEDIA_ROOT = "/srv/http/members.pumpingstationone.org/media"
 
 #EMAIL_HOST = 'mail.ad.pumpingstationone.org'
 EMAIL_HOST = '10.100.0.115'
+
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS': False,
+}
+
+def show_toolbar(request):
+    if not request.is_ajax() and str(request.user) == "hef":
+        return True
+    return False
+
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': 'settings.local.show_toolbar',
+}
