@@ -27,8 +27,10 @@
   <h2>{{ owner }}'s Member Points</h2>
   <ul>
   {% for point in points %}
-      <li>Member Point awarded on {{ point.created_on }}</li>
-      {% if point.reason %}<ul><li>{{ point.reason }}</li></ul>{% endif %}
+    <li>Member Point awarded on {{ point.created_on }}</li>
+    {% if point.reason %}<ul><li>{{ point.reason }}</li></ul>{% endif %}
+  {% empty %}
+    <p>No Member Points Available.</p>
   {% endfor %}
   </ul>
   </div>

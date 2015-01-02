@@ -27,27 +27,28 @@ class MemberPointFormView(FormView):
     def get_context_data(self, **kwargs):
         context = super(MemberPointFormView, self).get_context_data(**kwargs)
         context['title'] = self.title
-        context['points'] = kwargs['owner'].memberpoint_set.valid()
+        context['points'] = self.owner.memberpoint_set.valid()
+        context['owner'] = self.owner
         return context
-
-    def form_valid(self, form):
-        return super(MemberPointFormView, self).form_valid(form)
 
     def get(self, request, user_id):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        form.fields['owner'].initial = user_id
-        owner = get_user_model().objects.get(pk=user_id)
-        context = self.get_context_data(form=form, owner=owner)
+        form.owner = get_user_model().objects.get(pk=user_id)
+        #form.fields['owner'].initial = user_id
+        self.owner = get_user_model().objects.get(pk=user_id)
+        context = self.get_context_data(form=form)
         return self.render_to_response(context)
 
     def post(self, request, user_id):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
+        self.owner = get_user_model().objects.get(pk=user_id)
+        form.owner = self.owner
         if form.is_valid():
             with transaction.atomic(), reversion.create_revision():
                 form.save()
-                messages.success(request, 'Memberpoint action completed')
+                messages.success(request, form.success_message)
                 reversion.set_user(request.user)
             return HttpResponseRedirect(request.get_full_path())
         else:
