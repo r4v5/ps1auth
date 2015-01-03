@@ -16,6 +16,7 @@ from ps1auth.celery import app
 from celery.contrib.methods import task_method
 from accounts.models import PS1User
 import reversion
+from django.core.urlresolvers import reverse
 
 class PersonManager(models.Manager):
 
@@ -45,9 +46,13 @@ class Person(models.Model):
     membership_status = models.CharField(max_length=128, choices=MEMBERSHIP_LEVEL, default='discontinued')
     membership_start_date = models.DateField(default=date.today)
     street_address = models.CharField(max_length=128, blank=True, null=True)
+    unit_number = models.CharField(max_length=128, blank=True, null=True)
     city = models.CharField(max_length=128, blank=True, null=True)
+    state = models.CharField(max_length=128, blank=True, null=True)
     zip_code = models.CharField(max_length=128, blank=True, null=True)
     country = models.CharField(max_length=128, blank=True, null=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
     objects = PersonManager()
 
     def __unicode__(self):
@@ -58,6 +63,12 @@ class Person(models.Model):
             return self.user.get_full_name()
         else:
             return u"{} {}".format(self.first_name, self.last_name)
+
+    def get_absolute_url(self):
+        return reverse('member_management.views.person_detail', kwargs={'person_id':self.id})
+
+    class Meta:
+        verbose_name_plural = "people"
 
 @reversion.register
 class IDCheck(models.Model):

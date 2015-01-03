@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load django_tables2 %}
+
+{% block extra_head %}
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <form class="form-inline pull-right" action="" method="get" role="form">
+      {% bootstrap_form search_form layout='inline'%}
+      {% buttons %}
+      <button type="submit" class="btn btn-primary">
+        {% bootstrap_icon "search" %} Search
+      </button>
+      <a href="{% url 'member_management-add_person' %}" role="button" class="btn btn-default">{% bootstrap_icon "plus" %} Person</a>
+      {% endbuttons %}
+    </form>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    {% include "ps1auth/_table.html" with table=table %}
+  </div>
+</div>
+
+{% endblock %}

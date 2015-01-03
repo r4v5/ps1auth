@@ -1,75 +1,74 @@
 <!DOCTYPE html> 
-{% load bootstrap_toolkit %}
+{% load bootstrap3 %}
 {% load static from staticfiles %}
 <html lang=en>
   <head>
     <meta charset="utf-8">
-    <title>{% block title %} PS:1 Member Site {% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>{% block title %} PS:One Member Site {% endblock %}</title>
+    {% bootstrap_css %}
     <style type="text/css">
       body {
-        padding-top: 60px;
-        padding-bottom: 60px;
+        padding-top: 70px;
+        padding-bottom: 70px;
       }
     </style>
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-responsive.min.css">
+    {#<link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-responsive.min.css">#}
     <link href={% static "css/ps1auth.css" %} rel="stylesheet">
-    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    {% bootstrap_javascript %}
     {% block extra_head %}{% endblock %}
   </head>
   <body>
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="brand" href="/">PS:1 Member Site</a>
-          <div class="nav-collapse collapse">
-            <ul class="nav pull-right">
-              {% if user.is_authenticated %}
-              {# <li><a href="{% url 'paypal_integration.views.reports' %}">Reports</a></li> #}
-              <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.get_short_name }} <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <li><a href="{% url 'rfid.views.configure_rfid' %}">Configure RFID</a></li>
-                  <li><a href="{% url 'accounts.views.set_password' %}">Reset Password</a></li>
-                  <li><a href="{% url 'django.contrib.auth.views.logout' %}">Logout</a></li>
-                  {% if user.is_staff %}
-                  <li class="divider"></li>
-                  <li><a href="{% url 'admin:index' %}">Admin</a></li>
-                  {% endif %}
-                </ul>
-              </li>
-              {% else %}
-              <li><div><a class="btn btn-primary" href="/accounts/login">Sign in</a></div></li>
-              {% endif %}
-            </ul>
-          </div>
+          <a class="navbar-brand" href="/">PS:One Member Site</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            {% if user.is_authenticated %}
+            {# <li><a href="{% url 'paypal_integration.views.reports' %}">Reports</a></li> #}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ user.get_short_name }} <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'rfid.views.configure_rfid' %}">Configure RFID</a></li>
+                <li><a href="{% url 'accounts.views.set_password' %}">Reset Password</a></li>
+                <li><a href="{% url 'django.contrib.auth.views.logout' %}">Logout</a></li>
+                {% if user.is_staff %}<li class="divider"></li>
+                <li class="dropdown-header">Systems</li>
+                <li><a href="{% url 'member_management.views.person_list' %}">Member Management</a></li>
+                <li><a href="{% url 'admin:member_management_emailtemplate_changelist' %}">Mass Mail</a></li>
+                <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                {% endif %}
+              </ul>
+            </li>
+            {% else %}
+            <li><div><a class="btn btn-primary navbar-btn" href="/accounts/login">Sign in</a></div></li>
+            {% endif %}
+          </ul>
         </div>
       </div>
-    </div>
+    </nav>
     <div class="container">
       {% bootstrap_messages %}
       {% block content %}<h1>Empty page</h1><p>There doesn't seem to be anything here</p>{% endblock %}
     </div>
-    <footer class="navbar navbar-fixed-bottom" >
+    <footer class="footer" >
       <div class="container">
-        <div class="row">
-          <div class="span12">
-            <div class="floatLeft">
-              Pumping Station: One
-            </div>
-            <div class="floatRight"> 
-              3519 N. Elston Ave
-            </div>
-          </div>
+        <p class="text-muted pull-left">Pumping Station: One</p>
+        <p class="text-muted pull-right">3519 N. Elston Ave</p>
       </div>
-    </div>
     </footer>
-    <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+    {#<script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>#}
   </body>
 </html>

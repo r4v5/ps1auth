@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load bootstrap_toolkit %}
+{% load bootstrap3 %}
 
 {% block extra_head %}
 {{ form.media }}
@@ -8,23 +8,23 @@
 
 {% block content %}
 <div class="row">
-  <div class="span3 hidden-phone"></div>
-  <div class="span6">
-    <form class="form-horizontal well" id="form-login" action="" method="post">
-      <fieldset>
-        <legend>Sign In</legend>
-        {% csrf_token %}
-        {{ form|as_bootstrap }}
-        <div class="control-group">
-          <div class="controls">
-            <button type="submit" value="Submit" class="btn btn-primary">Sign In</button>
-            <a href={% url 'django.contrib.auth.views.password_reset' %}>Forgot Password</a> /
-            <a href={% url 'zoho_integration.views.activate_account' %}>Activate</a>
+  <div class="col-md-offset-3">
+    <div class="col-md-6">
+      <form class="form-horizontal well" id="form-login"" action="" method="post">
+        <fieldset>
+          <legend>Sign In</legend>
+          {% csrf_token %}
+          {% bootstrap_form form layout='inline' %}
+          <div class="control-group">
+            <div class="controls">
+              <button type="submit" value="Submit" class="btn btn-primary">Sign In</button>
+              <a href={% url 'django.contrib.auth.views.password_reset' %}>Forgot Password</a> /
+              <a href={% url 'zoho_integration.views.activate_account' %}>Activate</a>
+            </div>
           </div>
-        </div>
-      </fieldset>
-    </form>
+        </fieldset>
+      </form>
+    </div>
   </div>
-  <div class="span3 hidden-phone"></div>
 </div>
 {% endblock %}
