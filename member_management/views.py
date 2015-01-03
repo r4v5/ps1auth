@@ -69,6 +69,15 @@ def person_detail(request, person_id=None):
                 messages.success(request, 'Saved Changes Successfully')
                 if '_save_and_check_id' in request.POST:
                     return HttpResponseRedirect(reverse(id_check, kwargs={'person_id': person.pk}))
+                elif '_save_and_send_email' in request.POST:
+                    email_template_id = request.POST['_save_and_send_email']
+                    email_template = EmailTemplate.objects.get(id=email_template_id)
+                    count = email_template.send(request.user, person)
+                    if count == 1:
+                        messages.success(request, 'Sent "{}" to "{}'.format(email_template, person))
+                    elif count == 0:
+                        messages.error(request, 'Failed to Send "{}" to "{}'.format(email_template, person))
+                    return HttpResponseRedirect(person.get_absolute_url())
                 else:
                     return HttpResponseRedirect(person.get_absolute_url())
     else:
@@ -80,6 +89,7 @@ def person_detail(request, person_id=None):
     data['email_records'] = EmailRecord.objects.filter(recipient=person)
     data['person'] = person
     data['id_checks'] = IDCheck.objects.filter(person=person)
+    data['email_templates'] = EmailTemplate.objects.individual_recipient()
     return render(request, 'member_management/detail.html', data)
 
 @staff_member_required

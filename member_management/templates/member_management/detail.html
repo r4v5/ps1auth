@@ -19,8 +19,16 @@
       {% bootstrap_form paypal_form layout="horizontal" %}
       {% buttons layout='horizontal' %}
       <button type="submit" name="_save" class="btn btn-primary"> {% bootstrap_icon "star" %} Save</button>
-      <button type="submit" name="_save_and_check_id" class="btn">{% bootstrap_icon "user" %} Check ID</button>
-      <button type="reset" class="btn">Reset</button>
+      <button type="submit" name="_save_and_check_id" class="btn btn-default">{% bootstrap_icon "user" %} Check ID</button>
+      <div class="btn-group">
+        <button type="button" name="_save_and_send_email" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">{% bootstrap_icon "envelope" %} Email <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu">
+          {% for email_template in email_templates %}
+          <li><button type="submit" name="_save_and_send_email" value="{{email_template.id}}" class="btn btn-link">{{ email_template }}</button></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <button type="reset" class="btn btn-default">Reset</button>
       {% endbuttons %}
     </form>
   </div>
