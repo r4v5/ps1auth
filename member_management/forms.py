@@ -77,7 +77,7 @@ class IDCheckForm(forms.Form):
 
     def validate_id_checker(self):
         pass
-    
+
 
 class PayPalForm(forms.ModelForm):
 

@@ -115,7 +115,8 @@ def id_check(request, person_id):
         id_check_form = IDCheckForm(request.POST, person=person)
         id_check_form.full_clean()
         if id_check_form.is_valid():
-            id_check_form.save()
+            id_check = IDCheck(person=person, user=request.user)
+            id_check.save()
             return HttpResponseRedirect(person.get_absolute_url())
     else:
         id_check_form = IDCheckForm(person=person)
