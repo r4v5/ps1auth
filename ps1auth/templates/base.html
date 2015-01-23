@@ -36,8 +36,9 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            {% if user.is_authenticated %}
             {# <li><a href="{% url 'paypal_integration.views.reports' %}">Reports</a></li> #}
+            {% if user.is_staff %}<li><a href="{% url 'member_management.views.person_list' %}">Member Management</a></li>{% endif %}
+            {% if user.is_staff %}<li class="divider"></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ user.get_short_name }} <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
@@ -46,7 +47,6 @@
                 <li><a href="{% url 'django.contrib.auth.views.logout' %}">Logout</a></li>
                 {% if user.is_staff %}<li class="divider"></li>
                 <li class="dropdown-header">Systems</li>
-                <li><a href="{% url 'member_management.views.person_list' %}">Member Management</a></li>
                 <li><a href="{% url 'admin:member_management_emailtemplate_changelist' %}">Mass Mail</a></li>
                 <li><a href="{% url 'admin:index' %}">Admin</a></li>
                 {% endif %}
