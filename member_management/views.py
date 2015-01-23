@@ -102,7 +102,7 @@ def person_list(request):
     else:
         queryset = Person.objects.all()
     data = {}
-    table = PersonTable(queryset)
+    table = PersonTable(queryset, order_by="-updated_on")
     RequestConfig(request, paginate={'per_page':100}).configure(table)
     data['table'] = table
     data['search_form'] = search_form

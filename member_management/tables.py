@@ -6,6 +6,7 @@ class PersonTable(tables.Table):
     first_name = tables.LinkColumn('member_management.views.person_detail', kwargs={'person_id': A('pk')})
     last_name = tables.LinkColumn('member_management.views.person_detail', kwargs={'person_id': A('pk')})
     paypal = tables.Column(verbose_name='PayPal Email', accessor='paypal.email')
+    email = tables.Column(verbose_name="Email")
     class Meta:
         model = Person
         fields = (
