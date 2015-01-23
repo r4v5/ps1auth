@@ -3,20 +3,19 @@ from .forms import KeyForm
 from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.template.loader import get_template
-from django.template import RequestContext
+from django.shortcuts import render
 
 
 def check(request, resource_name, tag_number):
     try:
-        tag = RFIDNumber.objects.get(number=tag_number)
+        tag = RFIDNumber.objects.get(ASCII_125khz=tag_number)
         resource = Resource.objects.get(name=resource_name)
     except (RFIDNumber.DoesNotExist, Resource.DoesNotExist):
         return HttpResponse(content="No", status=404, reason="Resource or Tag not Found")
     if resource.is_allowed(tag):
         return HttpResponse(content="Yes", status=200, reason="Access Allowed")
     else:
-        return HttpResposne(content="No", status=403, reason="Access Denied")
+        return HttpResponse(content="No", status=403, reason="Access Denied")
 
 
 @login_required()
@@ -34,9 +33,9 @@ def configure_rfid(request):
     else:
         request.user.rfidnumber
         form = KeyForm(instance=tag)
-    t = get_template("configure_rfid.html")
-    context = RequestContext(request)
-    context["form"] = form
-    html = t.render(context)
-    return HttpResponse(html)
+
+    data = {}
+    data['form'] = form
+    data['title'] = 'Configure RFID'
+    return render(request, "ps1auth/form.html", data)
 

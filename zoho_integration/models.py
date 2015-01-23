@@ -2,6 +2,7 @@ from django.db import models
 import accounts.models
 from datetime import datetime
 import pytz
+from member_management.models import Person
 
 class Contact(models.Model):
     MEMBERSHIP_STATUS_CHOICES = (
@@ -26,13 +27,10 @@ class Contact(models.Model):
     def __unicode__(self):
         return self.get_full_name()
 
-    def __unicode__(self):
-        return self.get_full_name()
-
 
 class Token(models.Model):
     token = models.CharField(max_length=36)
-    zoho_contact = models.ForeignKey(Contact)
+    zoho_contact = models.ForeignKey(Person)
 
 class ContactChange(models.Model):
     contact = models.ForeignKey(Contact)

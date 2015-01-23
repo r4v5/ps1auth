@@ -10,3 +10,12 @@ local_settings.py
 cache
 .vagrant
 *.orig
+reports/
+.project
+.pydevproject
+.settings/
+*.csv
+media/
+celerybeat-schedule
+celerybeat.pid
+celeryev.pid

@@ -1,17 +1,14 @@
 {% extends "base.html" %}
-{% load bootstrap_toolkit %}
-
 {% block extra_head %}
 {{ form.media }}
 {% endblock %}
 
-
 {% block content %}
-<form class="form-horizontal" action="" method="post">
-  {% csrf_token %}
-  {{ form|as_bootstrap }}
-  <p class="form-actions">
-    <input type="submit" value="Submit" class="btn btn-primary">
-  </p>
-</form>
+
+<div class="row">
+  <div clas="col-md-12">
+    <h2>PS:One Account Registration</h2>
+  </div>
+</div>
+{% include 'ps1auth/_form.html' %}
 {% endblock %}

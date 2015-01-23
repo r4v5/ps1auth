@@ -1,67 +1,58 @@
 # -*- coding: utf-8 -*-
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+from django.conf import settings
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'Contact'
-        db.create_table(u'zoho_integration_contact', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('contact_id', self.gf('django.db.models.fields.BigIntegerField')(unique=True)),
-            ('first_name', self.gf('django.db.models.fields.CharField')(max_length=30)),
-            ('last_name', self.gf('django.db.models.fields.CharField')(max_length=30)),
-            ('email', self.gf('django.db.models.fields.CharField')(max_length=300)),
-            ('membership_status', self.gf('django.db.models.fields.CharField')(max_length=300)),
-            ('modified_time', self.gf('django.db.models.fields.DateTimeField')()),
-            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['accounts.PS1User'], unique=True, null=True)),
-        ))
-        db.send_create_signal(u'zoho_integration', ['Contact'])
+    dependencies = [
+        ('member_management', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
 
-        # Adding model 'Token'
-        db.create_table(u'zoho_integration_token', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('token', self.gf('django.db.models.fields.CharField')(max_length=36)),
-            ('zoho_contact', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['zoho_integration.Contact'])),
-        ))
-        db.send_create_signal(u'zoho_integration', ['Token'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'Contact'
-        db.delete_table(u'zoho_integration_contact')
-
-        # Deleting model 'Token'
-        db.delete_table(u'zoho_integration_token')
-
-
-    models = {
-        u'accounts.ps1user': {
-            'Meta': {'object_name': 'PS1User'},
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'object_guid': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '48', 'primary_key': 'True', 'db_index': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'})
-        },
-        u'zoho_integration.contact': {
-            'Meta': {'object_name': 'Contact'},
-            'contact_id': ('django.db.models.fields.BigIntegerField', [], {'unique': 'True'}),
-            'email': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
-            'membership_status': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
-            'modified_time': ('django.db.models.fields.DateTimeField', [], {}),
-            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['accounts.PS1User']", 'unique': 'True', 'null': 'True'})
-        },
-        u'zoho_integration.token': {
-            'Meta': {'object_name': 'Token'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'token': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
-            'zoho_contact': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['zoho_integration.Contact']"})
-        }
-    }
-
-    complete_apps = ['zoho_integration']
+    operations = [
+        migrations.CreateModel(
+            name='Contact',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('contact_id', models.BigIntegerField(unique=True)),
+                ('first_name', models.CharField(max_length=30)),
+                ('last_name', models.CharField(max_length=30)),
+                ('email', models.CharField(max_length=300)),
+                ('membership_status', models.CharField(max_length=300, choices=[(b'Full', b'Full Membership'), (b'Starving', b'Starving Hacker')])),
+                ('modified_time', models.DateTimeField()),
+                ('membership_end_date', models.DateField(null=True, blank=True)),
+                ('user', models.OneToOneField(null=True, to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ContactChange',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('field', models.CharField(max_length=300)),
+                ('detected_on', models.DateTimeField()),
+                ('old_value', models.CharField(default=b'None', max_length=300, null=True)),
+                ('new_value', models.CharField(default=b'None', max_length=300, null=True)),
+                ('contact', models.ForeignKey(to='zoho_integration.Contact')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Token',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('token', models.CharField(max_length=36)),
+                ('zoho_contact', models.ForeignKey(to='member_management.Person')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+    ]

@@ -9,15 +9,16 @@ from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
 from accounts.backends import PS1Backend, get_ldap_connection
 from accounts.models import PS1User
-from zoho_integration.models import Contact, Token
+from zoho_integration.models import Token
+from member_management.models import Person
 
 class activate_account_form(forms.Form):
     ps1_email = forms.EmailField(label="PS1 Email")
 
     def clean_ps1_email(self):
         try:
-            contact = Contact.objects.get(email=self.cleaned_data['ps1_email'])
-        except Contact.DoesNotExist:
+            contact = Person.objects.get(email=self.cleaned_data['ps1_email'])
+        except Person.DoesNotExist:
             raise forms.ValidationError("Unknown Email Address")
         if contact.user is not None:
             #HEFTODO an account recovery link would be nice.
@@ -28,7 +29,7 @@ class activate_account_form(forms.Form):
     def save(self, use_https, domain):
         email_address = self.cleaned_data['ps1_email']
         # HEFTODO check email against AD
-        zoho_contact = Contact.objects.get(email=email_address)
+        zoho_contact = Person.objects.get(email=email_address)
         token = Token(token=uuid.uuid4(), zoho_contact=zoho_contact)
         token.save()
         c = {
@@ -40,7 +41,7 @@ class activate_account_form(forms.Form):
         subject = render_to_string("activation_email_subject.txt", c)
         subject = ''.join(subject.splitlines())
         body = render_to_string("activation_email_body.html", c)
-        send_mail(subject, body, "hef@pbrfrat.com", [email_address])
+        send_mail(subject, body, "noreply@pumpingstationone.org", [email_address])
 
 class account_register_form(forms.Form):
     preferred_username = forms.CharField()
@@ -74,40 +75,15 @@ class account_register_form(forms.Form):
         needs to be refactored.
         """
         token = Token.objects.get(token=self.cleaned_data['token'])
-        user_dn = "CN={0},{1}".format(self.cleaned_data['preferred_username'], settings.AD_BASEDN)
-        user_attrs = {}
-        user_attrs['objectClass'] = ['top', 'person', 'organizationalPerson', 'user']
-        user_attrs['cn'] = str(self.cleaned_data['preferred_username'])
-        user_attrs['userPrincipalName'] = str(self.cleaned_data['preferred_username'] + '@' + settings.AD_DOMAIN)
-        user_attrs['sAMAccountName'] = str(self.cleaned_data['preferred_username'])
-        user_attrs['givenName'] = str(self.cleaned_data['first_name'])
-        user_attrs['sn'] = str(self.cleaned_data['last_name'])
-        user_attrs['userAccountControl'] = '514'
-        user_attrs['mail'] = str(self.cleaned_data['preferred_email']) 
-        user_ldif = ldap.modlist.addModlist(user_attrs)
-
-        # prep account enable
-        enable_account = [(ldap.MOD_REPLACE, 'userAccountControl', '512')]
-
-        ldap_connection = get_ldap_connection()
-
-        # add the user to AD
-        result = ldap_connection.add_s(user_dn, user_ldif)
-
-        #now get the user guid
-        filter_string = r'sAMAccountName={0}'.format(str(self.cleaned_data['preferred_username']))
-        result = ldap_connection.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
-        ldap_user = result[0][1]
-        guid = uuid.UUID(bytes_le=ldap_user['objectGUID'][0])
-        user = PS1Backend().get_user(guid)
-        user.save()
+                
+        username = str(self.cleaned_data['preferred_username'])
+        first_name = str(self.cleaned_data['first_name'])
+        last_name = str(self.cleaned_data['last_name'])
+        email = str(self.cleaned_data['preferred_email'])
+        
+        user = PS1User.objects.create_user(username, email=email, first_name=first_name, last_name=last_name)
         token.zoho_contact.user = user
         token.zoho_contact.save()
         token.delete()
-
-        #ldap_connection.modify_s(user_dn, add_pass)
-        ldap_connection.modify_s(user_dn, enable_account)
-
-        ldap_connection.unbind_s()
 
         return user

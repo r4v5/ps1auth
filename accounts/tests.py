@@ -5,12 +5,23 @@ when you run "manage.py test".
 Replace this with more appropriate tests for your application.
 """
 
+from .models import PS1User
 from django.test import TestCase
 
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+class AccountTest(TestCase):
+    
+    def test_create_user(self):
+        user = PS1User.objects.create_user("testuser", password="Garbage1",  email="foo@bar.com")
+        self.assertEqual(user.get_short_name(), 'testuser')
+        self.assertTrue(user.has_usable_password())
+        self.assertTrue(user.check_password('Garbage1'))
+        self.assertFalse(user.check_password('wrong_password'))
+        self.assertEqual("foo@bar.com", user.ldap_user['mail'][0])
+        PS1User.objects.delete_user(user)
+        
+    def test_create_superuser(self):
+        user = PS1User.objects.create_superuser("superuser", email='super@user.com', password='Garbage2')
+        self.assertTrue(user.is_superuser)
+        PS1User.objects.delete_user(user)
+        

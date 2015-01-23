@@ -19,7 +19,7 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', 
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'ps1auth',
     }
 }
@@ -58,7 +58,7 @@ MEDIA_ROOT = ''
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://example.com/media/", "http://media.example.com/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -103,6 +103,18 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
+    # Begin Non Default Template Context processors
+    'django.core.context_processors.request',
+)
+
 ROOT_URLCONF = 'ps1auth.urls'
 
 # Python dotted patH to the WSGI application used by Django's runserver.
@@ -115,13 +127,20 @@ TEMPLATE_DIRS = (
     #os.path.join(SITE_ROOT, "templates"),
 )
 
-INSTALLED_APPS = (
+PROJECT_APPS = (
     'ps1auth',
     'accounts',
     'rfid',
     'zoho_integration',
-    'money',
-    'bootstrap_toolkit',
+    'memberpoint',
+#    'paypal_integration',
+    'member_management',
+    'crm',
+)
+
+INSTALLED_APPS = (
+    'bootstrap3',
+    'bootstrap3_datetime',
     'django.contrib.webdesign',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -129,15 +148,21 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Uncomment the next line to enable the admin:
+    'ckeditor',
+    'djcelery',
+    'reversion',
+    'django_tables2',
+    #'paypal.standard.ipn',
+    #'billing',
+)
+
+POST_INSTALLED_APPS = (
     'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
-    'south',
-    'paypal.standard.ipn',
-    'billing',
     'audit',
 )
+
+INSTALLED_APPS = INSTALLED_APPS + PROJECT_APPS + POST_INSTALLED_APPS
 
 
 # A sample logging configuration. The only tangible logging
@@ -170,6 +195,41 @@ LOGGING = {
     }
 }
 
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar_full':[
+            ["Source","Save","NewPage","DocProps","Preview","Print","Templates","document"],
+            ["Cut","Copy","Paste","PasteText","PasteFromWord","Undo","Redo"],
+            ["Find","Replace","SelectAll","Scayt"],
+            ["Form","Checkbox","Radio","TextField","Textarea","Select","Button","ImageButton","HiddenField"],
+            ["Bold","Italic","Underline","Strike","Subscript","Superscript","RemoveFormat"],
+            ["NumberedList","BulletedList","Outdent","Indent","Blockquote","CreateDiv","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","BidiLtr","BidiRtl"],
+            ["Link","Unlink","Anchor"],
+            ["CreatePlaceholder","Image","Flash","Table","HorizontalRule","Smiley","SpecialChar","PageBreak","Iframe","InsertPre"],
+            ["Styles","Format","Font","FontSize"],
+            ["TextColor","BGColor"],
+            ["UIColor","Maximize","ShowBlocks"],
+            ["button1","button2","button3","oembed","MediaEmbed"],
+            ["About"],
+        ],
+        'toolbar_standard':[
+            ["Cut","Copy","Paste","PasteText","PasteFromWord",'-',"Undo","Redo"],
+            ["Scayt"],
+            ["Link","Unlink","Anchor"],
+            ["Image","Table","HorizontalRule","SpecialChar"],
+            ["Maximize"],
+            ["Source"],
+            ["Bold","Italic","Underline","-","RemoveFormat"],
+            ["NumberedList","BulletedList","-","Outdent","Indent","-","Blockquote"],
+            ["Styles","Format"],
+            ["About"],
+        ],
+        'width': 704,
+        'toolbar': 'standard',
+    }
+}
+
 AUTHENTICATION_BACKENDS = (
     'accounts.backends.PS1Backend',
 )
@@ -177,7 +237,13 @@ AUTHENTICATION_BACKENDS = (
 AUTH_USER_MODEL = 'accounts.PS1User'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-LOGIN_REDIRECT_URL = '/zoho/member_list'
+LOGIN_REDIRECT_URL = '/zinc/member_list'
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+
 
 SECRET_KEY = get_env_variable('SECRET_KEY')
 AD_URL = get_env_variable('AD_URL')
@@ -186,3 +252,5 @@ AD_BASEDN = get_env_variable('AD_BASEDN')
 AD_BINDDN = get_env_variable('AD_BINDDN')
 AD_BINDDN_PASSWORD = get_env_variable('AD_BINDDN_PASSWORD')
 ZOHO_AUTHTOKEN = get_env_variable('ZOHO_AUTHTOKEN')
+
+
