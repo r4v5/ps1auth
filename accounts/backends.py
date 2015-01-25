@@ -1,8 +1,8 @@
-import ldap
+import ldap3
 from django.contrib.auth.models import User, BaseUserManager
 from django.conf import settings
 import base64
-import models
+import accounts.models
 import uuid
 
 
@@ -54,8 +54,8 @@ class PS1Backend(object):
             # Happens when we get passed an invalid or outdated user_id
             return None
         try:
-            user = models.PS1User.objects.get(object_guid=str(guid))
-        except models.PS1User.DoesNotExist:
+            user = PS1User.objects.get(object_guid=str(guid))
+        except PS1User.DoesNotExist:
             l = get_ldap_connection()
             # certain byte sequences contain printable character that can
             # potentially be parseable by the query string.  Escape each byte as
@@ -63,7 +63,7 @@ class PS1Backend(object):
             restrung = ''.join(['\\%02x' % ord(x) for x in guid.bytes_le])
             filter_string = r'(objectGUID={0})'.format(restrung)
             result = l.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
-            user = models.PS1User(object_guid=str(guid))
+            user = PS1User(object_guid=str(guid))
             user.save()
         return user
 
