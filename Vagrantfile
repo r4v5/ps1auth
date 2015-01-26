@@ -24,7 +24,7 @@ EOF
 locale-gen
 
 # Install Dependencies 
-sudo pacman -S --noconfirm --needed postgresql python2-virtualenv samba nginx
+sudo pacman -S --noconfirm --needed postgresql samba nginx
 yaourt -Sy --noconfirm --aur rabbitmq
 
 # Setup Samba
@@ -55,7 +55,7 @@ sudo -u vagrant createdb ps1auth
 
 # Bootstrap App
 
-sudo -u vagrant virtualenv2 venv
+sudo -u vagrant python -m venv venv
 sudo -u vagrant venv/bin/pip install -r /vagrant/requirements/local.txt
 sudo -u vagrant venv/bin/pip install gunicorn
 sudo -u vagrant -E venv/bin/python /vagrant/manage.py syncdb --noinput
