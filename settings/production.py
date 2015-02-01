@@ -27,7 +27,7 @@ CACHES = {
 }
 
 INSTALLED_APPS += (
-    "debug_toolbar",
+#    "debug_toolbar",
 )
 
 INTERNAL_IPS = (
