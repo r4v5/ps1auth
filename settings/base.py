@@ -252,4 +252,4 @@ AD_BINDDN = get_env_variable('AD_BINDDN')
 AD_BINDDN_PASSWORD = get_env_variable('AD_BINDDN_PASSWORD')
 ZOHO_AUTHTOKEN = get_env_variable('ZOHO_AUTHTOKEN')
 
-
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'

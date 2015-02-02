@@ -1,17 +1,18 @@
-import ldap3
+from ldap3 import Connection, LEVEL, Server, Tls
+from ldap3.utils.conv import escape_bytes
 from django.contrib.auth.models import User, BaseUserManager
 from django.conf import settings
 import base64
 import accounts.models
 import uuid
+from pprint import pprint
 
 
 def get_ldap_connection( binddn=settings.AD_BINDDN, password=settings.AD_BINDDN_PASSWORD):
-    ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_ALLOW)
-    l = ldap.initialize(settings.AD_URL)
-    l.set_option(ldap.OPT_PROTOCOL_VERSION, 3)
-    l.simple_bind_s(binddn, password)
-    return l
+    tls = Tls()
+    server = Server(settings.AD_URL, tls=tls)
+    connection = Connection(server, user=binddn, password=password, auto_bind=True)
+    return connection
 
 class PS1Backend(object):
 
@@ -31,7 +32,7 @@ class PS1Backend(object):
             # would throw if bind fails
 
             filter_string ='(sAMAccountName={0})'.format(username)
-            ldap_user = l.search_ext_s(settings.AD_BASEDN ,ldap.SCOPE_ONELEVEL, filterstr=filter_string)[0][1]
+            ldap_user = l.search_ext_s(settings.AD_BASEDN ,ldap.SCOPE_LEVEL, filterstr=filter_string)[0][1]
             guid = uuid.UUID(bytes_le=ldap_user['objectGUID'][0])
             user = self.get_user(str(guid))
             l.unbind_s()
@@ -41,6 +42,7 @@ class PS1Backend(object):
         return user
 
     def get_user(self, user_id):
+        from .models import PS1User
         """
         Get's The user object and attached ldap_user data.
         Will create the database entry if required.
@@ -56,13 +58,10 @@ class PS1Backend(object):
         try:
             user = PS1User.objects.get(object_guid=str(guid))
         except PS1User.DoesNotExist:
-            l = get_ldap_connection()
-            # certain byte sequences contain printable character that can
-            # potentially be parseable by the query string.  Escape each byte as
-            # hex to make sure this doesn't happen.
-            restrung = ''.join(['\\%02x' % ord(x) for x in guid.bytes_le])
-            filter_string = r'(objectGUID={0})'.format(restrung)
-            result = l.search_ext_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
+            filter_string = '(objectGUID={})'.format(escape_bytes(guid.bytes_le))
+            with get_ldap_connection() as c:
+                c.search(settings.AD_BASEDN, filter_string, LEVEL)
+                user_dn = c.response[0]['dn']
             user = PS1User(object_guid=str(guid))
             user.save()
         return user
