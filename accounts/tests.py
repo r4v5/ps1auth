@@ -7,7 +7,7 @@ import uuid
 
 
 class AccountTest(TestCase):
-   
+
     def setUp(self):
         tls = Tls()
         server = Server(settings.AD_URL, tls=tls)
@@ -16,10 +16,9 @@ class AccountTest(TestCase):
             c.search(settings.AD_BASEDN, '(objectClass=user)', SUBTREE, attributes = ['sAMAccountName', 'objectGUID', 'userAccountControl'])
             response = c.response
             result =c.result
-        pprint(response)
 
-    def test_create_user_assumption(self):
-        username = 'testuser'
+    def skip_test_create_user_assumption(self):
+        username = 'assume'
         first_name = 'test'
         last_name = 'user'
         email = 'testuser@example.com'
@@ -33,7 +32,7 @@ class AccountTest(TestCase):
             'userAccountControl': '514'
         }
 
-        # Our forms will always define these, but django gets unhappy if you require 
+        # Our forms will always define these, but django gets unhappy if you require
         # more than a username and password
         if first_name:
             attributes['givenName'] = first_name
@@ -53,7 +52,6 @@ class AccountTest(TestCase):
             result = c.result
         guid_bytes = response[0]['attributes']['objectGUID'][0]
         guid = uuid.UUID(bytes_le=guid_bytes)
-        pprint(guid)
 
         changes = {
                 'userAccountControl': (MODIFY_REPLACE, ['512'])
@@ -63,7 +61,7 @@ class AccountTest(TestCase):
             c.modify(dn, changes)
             response = c.response
             result = c.result
-        
+
         with self.connection as c:
             c.delete(dn)
             response = c.response
@@ -76,10 +74,10 @@ class AccountTest(TestCase):
         self.assertTrue(user.check_password('Garbage1'))
         self.assertFalse(user.check_password('wrong_password'))
         self.assertEqual("foo@bar.com", user.ldap_user['mail'][0])
-        PS1User.objects.delete_user(user)
-        
+        #PS1User.objects.delete_user(user)
+
     def skip_test_create_superuser(self):
         user = PS1User.objects.create_superuser("superuser", email='super@user.com', password='Garbage2')
         self.assertTrue(user.is_superuser)
-        PS1User.objects.delete_user(user)
-        
+        #PS1User.objects.delete_user(user)
+

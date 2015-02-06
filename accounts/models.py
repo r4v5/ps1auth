@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from .backends import PS1Backend, get_ldap_connection
 from ldap3 import BASE, MODIFY_REPLACE, ALL_ATTRIBUTES, LEVEL
 from ldap3.utils.conv import escape_bytes
+from ldap3.core.exceptions import LDAPBindError
 from django.conf import settings
 import uuid
 from django.core.cache import cache
@@ -17,7 +18,7 @@ class PS1UserManager(BaseUserManager):
             'cn':  username,
             'userPrincipalName': username + '@' + settings.AD_DOMAIN,
             'sAMAccountName': username,
-            'userAccountControl': '514'
+            'userAccountControl': '514',
         }
 
         # Our forms will always define these, but django gets unhappy if you require 
@@ -37,12 +38,16 @@ class PS1UserManager(BaseUserManager):
         ldap_connection = get_ldap_connection()
 
         # add the user to AD
-        ldap_connection.add(dn, object_class, attributes)
+        with ldap_connection as c:
+            c.add(dn, object_class, attributes)
+            pprint((dn, c.result, c.response))
+
 
         #now get the user guid
         with ldap_connection as c:
             c.search(dn, '(objectClass=*)', BASE, attributes=['objectGUID'])
             response = c.response
+
         guid_bytes = response[0]['attributes']['objectGUID'][0]
         guid = uuid.UUID(bytes_le=guid_bytes)
 
@@ -58,7 +63,6 @@ class PS1UserManager(BaseUserManager):
             c.modify(dn, enable_account_changelist)
             response = c.response
             result = c.result
-            pprint(result, response)
         user._expire_ldap_data()
         return user
 
@@ -131,7 +135,7 @@ class PS1User(AbstractBaseUser):
         try:
             get_ldap_connection(username, raw_password)
             return True
-        except ldap.INVALID_CREDENTIALS:
+        except LDAPBindError:
             return False
 
     def set_password(self, raw_password):
