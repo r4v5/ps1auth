@@ -17,6 +17,9 @@ class AccountTest(TestCase):
             response = c.response
             result =c.result
 
+        with self.connection as c:
+            c.delete('cn=testuser,{}'.format(settings.AD_BASEDN))
+
     def skip_test_create_user_assumption(self):
         username = 'assume'
         first_name = 'test'
@@ -74,7 +77,7 @@ class AccountTest(TestCase):
         self.assertTrue(user.check_password('Garbage1'))
         self.assertFalse(user.check_password('wrong_password'))
         self.assertEqual("foo@bar.com", user.ldap_user['mail'][0])
-        #PS1User.objects.delete_user(user)
+        PS1User.objects.delete_user(user)
 
     def skip_test_create_superuser(self):
         user = PS1User.objects.create_superuser("superuser", email='super@user.com', password='Garbage2')

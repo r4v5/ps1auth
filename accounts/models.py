@@ -69,7 +69,7 @@ class PS1UserManager(BaseUserManager):
     def delete_user(self, user):
         l = get_ldap_connection()
         user_dn = user.ldap_user['distinguishedName'][0]
-        result = l.delete_s(user_dn)
+        result = l.delete(user_dn)
         user.delete()
 
     def create_superuser(self, object_guid, password, email = None):
@@ -131,7 +131,7 @@ class PS1User(AbstractBaseUser):
             return "AD User Set, but not found"
 
     def check_password(self, raw_password):
-        username = self.ldap_user['sAMAccountName'][0]
+        username = self.ldap_user['userPrincipalName'][0]
         try:
             get_ldap_connection(username, raw_password)
             return True
@@ -140,19 +140,19 @@ class PS1User(AbstractBaseUser):
 
     def set_password(self, raw_password):
         l = get_ldap_connection()
-        #unicode_pass = unicode('"' + raw_password + '"', 'iso-8859-1')
-        unicode_pass = '"' + raw_password + '"'
-        password_value = unicode_pass.encode('utf-16-le')
+        password_value=  '"{}"'.format(raw_password).encode('utf-16-le')
         
         password_changes = {
             'unicodePwd':  (MODIFY_REPLACE,[password_value])
         }
+        pprint(password_value)
 
         dn = self.ldap_user['distinguishedName'][0]
         with get_ldap_connection() as c:
             c.modify(dn, password_changes)
             response = c.response
             result = c.result
+            pprint(('password change', response, result))
 
     def set_unusable_password(self):
         raise NotImplementedError
