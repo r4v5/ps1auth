@@ -17,8 +17,8 @@ class AccountTest(TestCase):
             response = c.response
             result =c.result
 
-        with self.connection as c:
-            c.delete('cn=testuser,{}'.format(settings.AD_BASEDN))
+#        with self.connection as c:
+#            c.delete('cn=testuser,{}'.format(settings.AD_BASEDN))
 
     def skip_test_create_user_assumption(self):
         username = 'assume'
@@ -84,3 +84,9 @@ class AccountTest(TestCase):
         self.assertTrue(user.is_superuser)
         #PS1User.objects.delete_user(user)
 
+
+class TestPage(TestCase):
+    def setIp(self):
+        pass
+    def test_page_loads(self):
+        pass

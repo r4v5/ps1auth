@@ -10,22 +10,21 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.template import RequestContext
 
-import forms
-from models import Token
-from .models import Contact
+from .forms import activate_account_form, account_register_form
+from .models import Contact, Token
 
 def fetch_contacts(request):
     pass
 
 def activate_account(request):
     if request.method == 'POST':
-        form = forms.activate_account_form(request.POST)
+        form = activate_account_form(request.POST)
         if form.is_valid():
             site = get_current_site(request)
             user = form.save( request.is_secure(), site.domain)
             return HttpResponseRedirect(reverse('zoho_integration.views.activation_email_sent'))
     else:
-        form = forms.activate_account_form()
+        form = activate_account_form()
     return render(request, 'activate_account.html', {
         'form': form,
         })
@@ -41,7 +40,7 @@ def account_activate_confirm(request, token):
         return HttpResponseRedirect(reverse('zoho_integration.views.activate_account'))
     zoho_contact = token.zoho_contact 
     if request.method == 'POST':
-        form = forms.account_register_form(request.POST)
+        form = account_register_form(request.POST)
         if form.is_valid():
             user = form.save()
             user.backend = 'accounts.backends.PS1Backend'
@@ -53,7 +52,7 @@ def account_activate_confirm(request, token):
         data['last_name'] = zoho_contact.last_name
         data['preferred_email'] = zoho_contact.email
         data['token'] = token.token
-        form = forms.account_register_form(initial=data)
+        form = account_register_form(initial=data)
     return render(request, 'account_register.html', {
         'form': form,
     })

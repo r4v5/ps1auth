@@ -10,8 +10,6 @@ from django.template import RequestContext
 from django.template.loader import get_template
 from django.template.response import TemplateResponse
 
-import ldap
-
 from .tokens import default_token_generator
 from .forms import SetPasswordForm
 from .backends import PS1Backend, get_ldap_connection

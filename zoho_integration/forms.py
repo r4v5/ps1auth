@@ -1,5 +1,3 @@
-import ldap
-import ldap.modlist
 import re
 import uuid
 from django import forms

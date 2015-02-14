@@ -31,7 +31,7 @@ INTERNAL_IPS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
+#    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ) + MIDDLEWARE_CLASSES
 
 MEDIA_ROOT = os.path.join(SITE_ROOT,'media')
