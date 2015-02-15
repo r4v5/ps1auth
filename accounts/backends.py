@@ -1,7 +1,8 @@
-from ldap3 import Connection, LEVEL, Server, Tls
+from ldap3 import Connection, LEVEL, Server, Tls, LDAPBindError
 from ldap3.utils.conv import escape_bytes
 from django.contrib.auth.models import User, BaseUserManager
 from django.conf import settings
+from django.views.decorators.debug import sensitive_variables
 import base64
 import accounts.models
 import uuid
@@ -16,30 +17,31 @@ def get_ldap_connection( binddn=settings.AD_BINDDN, password=settings.AD_BINDDN_
 
 class PS1Backend(object):
 
+    @sensitive_variables('password')
     def authenticate(self, username=None, password=None, **kwargs):
         if len(password) == 0:
             return None
 
         user = None
-        try:
-            #ldap.set_option(ldap.OPT_X_TLS_CACERTFILE, 'cacert.pem')
-            # HEFTODO re enable strict checking
-            ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_ALLOW)
-            l = ldap.initialize(settings.AD_URL)
-            l.set_option(ldap.OPT_PROTOCOL_VERSION, 3)
-            binddn = "{0}@{1}".format(username, settings.AD_DOMAIN)
-            l.simple_bind_s(binddn, password)
-            # would throw if bind fails
+        binddn = "{0}@{1}".format(username, settings.AD_DOMAIN)
 
+        try:
+            get_ldap_connection( binddn, password )
+        except LDAPBindError:
+            return None
+
+        with get_ldap_connection() as c:
             filter_string ='(sAMAccountName={0})'.format(username)
-            ldap_user = l.search_ext_s(settings.AD_BASEDN ,ldap.SCOPE_LEVEL, filterstr=filter_string)[0][1]
-            guid = uuid.UUID(bytes_le=ldap_user['objectGUID'][0])
+            x = c.search(
+                search_base=settings.AD_BASEDN,
+                search_filter=filter_string,
+                search_scope=LEVEL,
+                attributes = ['objectGUID']
+            )
+            object_guid = c.response[0]['attributes']['objectGUID'][0]
+            guid = uuid.UUID(bytes_le=object_guid)
             user = self.get_user(str(guid))
-            l.unbind_s()
-        except ldap.INVALID_CREDENTIALS:
-            # Swallow the exception and return a None object.  Django handles this gracefully
-            pass
-        return user
+            return user
 
     def get_user(self, user_id):
         from .models import PS1User

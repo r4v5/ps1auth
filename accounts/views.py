@@ -9,6 +9,7 @@ from django.shortcuts import render
 from django.template import RequestContext
 from django.template.loader import get_template
 from django.template.response import TemplateResponse
+from django.views.decorators.debug import sensitive_variables, sensitive_post_parameters
 
 from .tokens import default_token_generator
 from .forms import SetPasswordForm
@@ -21,6 +22,7 @@ def hello_world(request):
     html = t.render(context)
     return HttpResponse(html)
 
+@sensitive_post_parameters('password')
 def login(request):
     if request.method == 'POST':
         form = AutenticationForm(request.POST)
