@@ -41,6 +41,7 @@ class PS1Backend(object):
             object_guid = c.response[0]['attributes']['objectGUID'][0]
             guid = uuid.UUID(bytes_le=object_guid)
             user = self.get_user(str(guid))
+            user._expire_ldap_data()
             return user
 
     def get_user(self, user_id):

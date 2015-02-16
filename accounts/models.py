@@ -1,13 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from .backends import PS1Backend, get_ldap_connection
-from ldap3 import BASE, MODIFY_REPLACE, ALL_ATTRIBUTES, LEVEL
+from ldap3 import BASE, MODIFY_ADD, MODIFY_REPLACE, ALL_ATTRIBUTES, LEVEL
 from ldap3.utils.conv import escape_bytes
 from ldap3.core.exceptions import LDAPBindError
 from django.conf import settings
 import uuid
 from django.core.cache import cache
-from pprint import pprint
 
 class PS1UserManager(BaseUserManager):
 
@@ -40,7 +39,6 @@ class PS1UserManager(BaseUserManager):
         # add the user to AD
         with ldap_connection as c:
             c.add(dn, object_class, attributes)
-            pprint((dn, c.result, c.response))
 
 
         #now get the user guid
@@ -80,9 +78,14 @@ class PS1UserManager(BaseUserManager):
         user = self.create_user(object_guid, email=email, password=password)
         admins_dn = "CN={0},{1}".format("Domain Admins", settings.AD_BASEDN)
         user_dn = user.ldap_user['distinguishedName'][0]
-        add_member = [(ldap.MOD_ADD, 'member', user_dn)]
-        l = get_ldap_connection()
-        l.modify_s(admins_dn, add_member)
+
+        add_to_group_changelist = {
+            'member': (MODIFY_ADD, [user_dn])
+        }
+
+        with get_ldap_connection() as c:
+            c.modify(user_dn, add_to_group_changelist)
+
         user._expire_ldap_data()
         return user
 
@@ -145,14 +148,12 @@ class PS1User(AbstractBaseUser):
         password_changes = {
             'unicodePwd':  (MODIFY_REPLACE,[password_value])
         }
-        pprint(password_value)
 
         dn = self.ldap_user['distinguishedName'][0]
         with get_ldap_connection() as c:
             c.modify(dn, password_changes)
             response = c.response
             result = c.result
-            pprint(('password change', response, result))
 
     def set_unusable_password(self):
         raise NotImplementedError
