@@ -83,7 +83,7 @@ After=vboxservice.service
 Type=simple
 User=vagrant
 WorkingDirectory=/vagrant
-ExecStart=/home/vagrant/venv/bin/gunicorn --debug --log-level debug ps1auth.wsgi:application --reload
+ExecStart=/home/vagrant/venv/bin/gunicorn --log-level debug ps1auth.wsgi:application --reload
 EnvironmentFile=-/home/vagrant/ps1auth.conf
 
 [Install]

@@ -22,7 +22,7 @@ class PersonForm(forms.ModelForm):
         widgets = {
                 'user': forms.TextInput(attrs={'readonly':'readonly'}),
                 'membership_start_date': DateTimePicker(options={"format": "YYYY-MM-DD","pickTime":False}),
-                'birthday': DateTimePicker(options={"format": "YYYY-MM-DD","pickTime":False}),
+                'birthday': DateTimePicker(options={"format": "YYYY-MM-DD","pickTime":False, "startDate":"1900"}),
         }
         model = Person
 
@@ -91,7 +91,7 @@ class PersonSearchForm(forms.Form):
     """ My Poor mans's search function """
     membership_status = forms.ChoiceField(choices=(('','--'),) + Person.MEMBERSHIP_LEVEL, required=False)
     search = forms.CharField(label='Search', required=False)
-    
+
     def get_queryset(self):
         search = self.cleaned_data['search']
         membership_status = self.cleaned_data['membership_status']
