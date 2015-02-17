@@ -1,13 +1,11 @@
-"""
-Test zoho integration functionality
-"""
-
-from django.test import TestCase
-from .models import Person
 from datetime import datetime
-from .forms import activate_account_form, account_register_form
+from django.test import TestCase
 import pytz
-from accounts.models import PS1UserManager
+
+from member_management.models import Person
+
+from .forms import activate_account_form
+from .models import Token
 
 
 class SimpleTest(TestCase):
@@ -16,12 +14,10 @@ class SimpleTest(TestCase):
         This tests most of the zoho activation path.
         """
         c = Person(
-                    contact_id="1",
                     first_name = "Jay",
                     last_name="Hacker",
                     email="J.R.Hacker@example.com",
                     membership_status="Starving",
-                    modified_time=datetime.now(pytz.UTC)
                     )
         c.save()
         activation_data = {}
@@ -31,7 +27,7 @@ class SimpleTest(TestCase):
         activation_form.save(use_https = False, domain = "example.com")
         
         #an email gets sent out. since I don't know how to retrieve it, I am going to cheat
-        token = Token.objects.get(zoho_contact = c);
+        token = Token.objects.get(person = c);
         self.assertIsNotNone(token)
         
         
@@ -50,8 +46,4 @@ class SimpleTest(TestCase):
             Token.objects.get(zoho_contact = c)
         
         PS1UserManager().delete_user(user)
-        
-        
-        
-        
         

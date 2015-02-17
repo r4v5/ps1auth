@@ -7,7 +7,6 @@ from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
 from accounts.backends import PS1Backend, get_ldap_connection
 from accounts.models import PS1User
-from zoho_integration.models import Token
 from member_management.models import Person
 
 class activate_account_form(forms.Form):

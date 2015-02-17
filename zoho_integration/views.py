@@ -11,7 +11,7 @@ from django.shortcuts import render
 from django.template import RequestContext
 
 from .forms import activate_account_form, account_register_form
-from .models import Contact, Token
+from .models import Contact
 
 def fetch_contacts(request):
     pass

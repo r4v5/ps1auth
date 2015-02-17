@@ -28,10 +28,6 @@ class Contact(models.Model):
         return self.get_full_name()
 
 
-class Token(models.Model):
-    token = models.CharField(max_length=36)
-    zoho_contact = models.ForeignKey(Person)
-
 class ContactChange(models.Model):
     contact = models.ForeignKey(Contact)
     field = models.CharField(max_length=300)

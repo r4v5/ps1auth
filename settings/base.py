@@ -136,6 +136,7 @@ PROJECT_APPS = (
 #    'paypal_integration',
     'member_management',
     'crm',
+    'signup',
 )
 
 INSTALLED_APPS = (

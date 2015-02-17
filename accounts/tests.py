@@ -34,3 +34,4 @@ class AccountTest(TestCase):
         self.assertTrue(result)
         PS1User.objects.delete_user(user)
 
+
