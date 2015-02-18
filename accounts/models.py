@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from .backends import PS1Backend, get_ldap_connection
 from ldap3 import BASE, MODIFY_ADD, MODIFY_REPLACE, ALL_ATTRIBUTES, LEVEL
 from ldap3.utils.conv import escape_bytes
+from ldap3.utils.dn import escape_attribute_value
 from ldap3.core.exceptions import LDAPBindError
 from django.conf import settings
 import uuid
@@ -90,14 +91,15 @@ class PS1UserManager(BaseUserManager):
         return user
 
     def get_users_by_field(self, field, value):
-        l = get_ldap_connection()
-        filter_string = "({0}={1})".format(field, value)
-        #HEFTODO build user result directly
-        result = l.search_s(settings.AD_BASEDN, ldap.SCOPE_ONELEVEL, filterstr=filter_string)
+        escaped_value = escape_attribute_value(value)
+        filter_string = "({0}={1})".format(field, escaped_value)
+        with get_ldap_connection() as c:
+            c.search(settings.AD_BASEDN, filter_string, LEVEL, attributes=['objectGUID'])
+            result = c.response
         backend = PS1Backend()
         users = []
         for ldap_user in result:
-            guid = uuid.UUID(bytes_le=(ldap_user[1]['objectGUID'][0]))
+            guid = uuid.UUID(bytes_le=(ldap_user['attributes']['objectGUID'][0]))
             users.append(backend.get_user(str(guid)))
         return users
 

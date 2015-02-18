@@ -1,6 +1,8 @@
-import uuid
 from django import forms
 from django.template import loader
+import re
+import uuid
+from accounts.models import PS1User
 from member_management.models import Person, EmailRecord
 from .models import Token
 
@@ -42,3 +44,47 @@ class activate_account_form(forms.Form):
             subject=subject,
             text_content=body,
         )
+
+class account_register_form(forms.Form):
+    preferred_username = forms.CharField()
+    first_name = forms.CharField()
+    last_name = forms.CharField()
+    preferred_email = forms.EmailField()
+    token = forms.CharField(widget = forms.HiddenInput())
+
+    def clean_preferred_username(self):
+        username = self.cleaned_data['preferred_username']
+
+        if not re.match(r"^[a-z][a-z0-9]{2,30}$", username):
+            error_string = """Username must be all lower case,
+            start with a letter,
+            contain only letters and numbers,
+            and be between 3 and 30 characters"""
+            raise(forms.ValidationError(error_string))
+
+        users = PS1User.objects.get_users_by_field('sAMAccountName', username)
+        if len(users) > 0:
+            error_string = "A member is already using '{0}' as his or her username.".format(username)
+            raise forms.ValidationError(error_string)
+
+        return username
+
+    def save(self):
+        """ Create the user
+        A lot of this functionality needs to be moved to PS1UserManager, and
+        some of the duplicate functionality needs with the accounts module
+        needs to be refactored.
+        """
+        token = Token.objects.get(token=self.cleaned_data['token'])
+                
+        username = str(self.cleaned_data['preferred_username'])
+        first_name = str(self.cleaned_data['first_name'])
+        last_name = str(self.cleaned_data['last_name'])
+        email = str(self.cleaned_data['preferred_email'])
+        
+        user = PS1User.objects.create_user(username, email=email, first_name=first_name, last_name=last_name)
+        token.person.user = user
+        token.person.save()
+        token.delete()
+        return user
+

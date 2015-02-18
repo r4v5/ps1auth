@@ -2,9 +2,10 @@ from datetime import datetime
 from django.test import TestCase
 import pytz
 
+from accounts.models import PS1User
 from member_management.models import Person
 
-from .forms import activate_account_form
+from .forms import activate_account_form, account_register_form
 from .models import Token
 
 
@@ -43,7 +44,8 @@ class SimpleTest(TestCase):
         self.assertIsNotNone(user)
         
         with self.assertRaises(Token.DoesNotExist):
-            Token.objects.get(zoho_contact = c)
+            Token.objects.get(person = c)
         
-        PS1UserManager().delete_user(user)
+        PS1User.objects.delete_user(user)
+
         
