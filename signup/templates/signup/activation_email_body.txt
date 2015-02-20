@@ -1,2 +1,2 @@
 Your activation link is: 
-{{ protocol}}://{{ domain }}{% url 'zoho_integration.views.account_activate_confirm' token=token %}
+{{ protocol}}://{{ domain }}{% url 'signup.views.account_activate_confirm' token=token %}
