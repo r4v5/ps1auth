@@ -1,3 +1,7 @@
+from django.contrib import messages
+from django.contrib.auth import login
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .forms import activate_account_form, account_register_form

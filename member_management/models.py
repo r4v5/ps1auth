@@ -127,31 +127,31 @@ class EmailRecordManager(models.Manager):
             email_message.attach_alternative(html_content, "text/html")
             email_message.mixed_subtype = 'related'
 
-            # attachements
-            for attachment in attachments:
-                email_message.attach(attachment)
+        # attachements
+        for attachment in attachments:
+            email_message.attach(attachment)
 
-            # Record the email
-            email_record = EmailRecord(
-                subject=subject,
-                message = email_message.message(),
-                from_email = from_email,
-                to_email = to_person.email,
-                recipient = to_person,
-                sender = user,
-            )
+        # Record the email
+        email_record = EmailRecord(
+            subject=subject,
+            message = email_message.message(),
+            from_email = from_email,
+            to_email = to_person.email,
+            recipient = to_person,
+            sender = user,
+        )
+        email_record.save()
+
+        # Send
+        try:
+            email_message.send(fail_silently=False)
+            email_record.status = 'sent'
             email_record.save()
-
-            # Send
-            try:
-                email_message.send(fail_silently=False)
-                email_record.status = 'sent'
-                email_record.save()
-                total_emails_sent += 1
-            except SMTPException:
-                email_record.statis = 'failed'
-                email_record.save()
-                total_emails_failed += 1
+            total_emails_sent += 1
+        except SMTPException:
+            email_record.statis = 'failed'
+            email_record.save()
+            total_emails_failed += 1
         return total_emails_sent
 
 class EmailRecord(models.Model):
@@ -160,7 +160,7 @@ class EmailRecord(models.Model):
     from_email = models.EmailField()
     reply_to_email = models.EmailField(blank=True)
     to_email = models.EmailField()
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL)
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
     recipient = models.ForeignKey('Person')
     created_at = models.DateTimeField(auto_now_add=True)
     objects = EmailRecordManager()
