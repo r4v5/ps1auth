@@ -9,13 +9,15 @@ from django.utils.decorators import method_decorator
 from django.views.generic.edit import FormView
 from .models import MemberPoint
 from .forms import GrantMemberPointForm
+from accounts.models import PS1User
 import reversion
 
 @login_required
-def list(request):
+def list(request, user_id):
+    user = PS1User.objects.get(object_guid=user_id)
     context = {}
-    context['points'] = MemberPoint.objects.valid()
-    context['consumed_points'] = MemberPoint.objects.consumed
+    context['user'] = user
+    context['points'] = user.memberpoint_set.all()
     return render(request, 'memberpoint/list.html', context)
 
 class MemberPointFormView(FormView):
