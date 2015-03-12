@@ -53,6 +53,7 @@
       <a href="{% url 'memberpoint-grant' user_id=person.user.pk %}" role="button" class="btn btn-success">{% bootstrap_icon "plus" %} Grant</a>
       <a href="{% url 'memberpoint-consume' user_id=person.user.pk %}" role="button" class="btn btn-danger">{% bootstrap_icon "minus" %} Consume</a>
     </div>
+    <a href="{% url 'memberpoint-list' user_id=person.user.pk %}" role="button" class="btn btn-default">{% bootstrap_icon "th-list" %} List</a>
   </div>
 </div>
 {% else %}
