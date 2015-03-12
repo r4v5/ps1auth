@@ -55,5 +55,5 @@ class MemberPointFormView(FormView):
             return self.form_invalid(form)
 
     @method_decorator(staff_member_required)
-    def dispath(self, *args, **kwargs):
+    def dispatch(self, *args, **kwargs):
         return super(MemberPointFormView, self).dispath(*args, **kwargs)
