@@ -56,4 +56,4 @@ class MemberPointFormView(FormView):
 
     @method_decorator(staff_member_required)
     def dispatch(self, *args, **kwargs):
-        return super(MemberPointFormView, self).dispath(*args, **kwargs)
+        return super(MemberPointFormView, self).dispatch(*args, **kwargs)
