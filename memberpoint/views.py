@@ -14,10 +14,10 @@ import reversion
 
 @login_required
 def list(request, user_id):
-    user = PS1User.objects.get(object_guid=user_id)
+    target_user = PS1User.objects.get(object_guid=user_id)
     context = {}
-    context['user'] = user
-    context['points'] = user.memberpoint_set.all()
+    context['target_user'] = target_user
+    context['points'] = target_user.memberpoint_set.all()
     return render(request, 'memberpoint/list.html', context)
 
 class MemberPointFormView(FormView):

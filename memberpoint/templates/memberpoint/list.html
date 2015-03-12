@@ -7,7 +7,7 @@
 {% block content %}
 <div class="row">
   <div class="col-md-12">
-    <h2>{{ user.get_short_name }}'s Member Points</h2>
+    <h2>{{ target_user.get_short_name }}'s Member Points</h2>
     <ul>
       {% for point in points %}
       <li>Member Point awarded on {{ point.created_on }}</li>
