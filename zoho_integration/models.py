@@ -24,7 +24,7 @@ class Contact(models.Model):
         else:
             return u"{} {}".format(self.first_name, self.last_name)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.get_full_name()
 
 

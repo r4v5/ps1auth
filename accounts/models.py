@@ -216,7 +216,7 @@ class PS1User(AbstractBaseUser):
             del(self._ldap_user)
         cache.delete(self.object_guid)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.get_short_name()
 
 def gen_uuid():

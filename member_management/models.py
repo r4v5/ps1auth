@@ -55,7 +55,7 @@ class Person(models.Model):
     updated_on = models.DateTimeField(auto_now=True)
     objects = PersonManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return u'{0} {1}'.format(self.first_name, self.last_name)
 
     def get_full_name(self):
@@ -78,7 +78,7 @@ class IDCheck(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return "ID Check for {} performed by {}".format(self.person, self.user)
 
 class CRMPaymentMethod(models.Model):
@@ -190,7 +190,7 @@ class EmailTemplate(models.Model):
     message = RichTextField()
     objects = EmailTemplateManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return u'{}'.format(self.subject)
 
     def _convert_inline_images(self, html_content):
