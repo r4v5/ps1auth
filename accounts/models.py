@@ -85,7 +85,7 @@ class PS1UserManager(BaseUserManager):
         }
 
         with get_ldap_connection() as c:
-            c.modify(user_dn, add_to_group_changelist)
+            c.modify(admins_dn, add_to_group_changelist)
 
         user._expire_ldap_data()
         return user
