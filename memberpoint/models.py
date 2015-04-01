@@ -31,7 +31,7 @@ class MemberPoint(models.Model):
     consumed_on = models.DateTimeField(null=True, blank=True)
     objects = MemberPointManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return u'MemberPoint({}, {}, {}, {})'.format(
             self.owner,
             self.reason,

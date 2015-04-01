@@ -28,7 +28,7 @@ EOF
 locale-gen
 
 # Install Dependencies 
-pacman -S --noconfirm --needed postgresql python2-virtualenv samba nginx
+pacman -S --noconfirm --needed postgresql samba nginx
 sudo -u vagrant yaourt -Sy --noconfirm --aur rabbitmq
 
 # Setup Samba
@@ -59,7 +59,7 @@ sudo -u vagrant createdb ps1auth
 
 # Bootstrap App
 
-sudo -u vagrant virtualenv2 venv
+sudo -u vagrant python -m venv venv
 sudo -u vagrant venv/bin/pip install -r /vagrant/requirements/local.txt
 sudo -u vagrant venv/bin/pip install gunicorn
 sudo -u vagrant -E venv/bin/python /vagrant/manage.py syncdb --noinput
@@ -181,6 +181,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 5555, host: 5555, auto_correct: true
   config.vm.network "forwarded_port", guest: 8001, host: 8001, auto_correct: true
   config.vm.network "forwarded_port", guest: 19531, host: 8002, auto_correct: true
+  config.vm.network "forwarded_port", guest: 389, host: 1389, auto_correct: true
+
   config.vm.provider "virtualbox" do |v|
     v.memory = 2048
     v.cpus = 2
