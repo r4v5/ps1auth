@@ -15,6 +15,10 @@ export PAYPAL_RECEIVER_EMAIL="money@vagrant.lan"
 # Update the System
 #sudo pacman -Syu --noconfirm
 pacman -Syy
+pacman -S archlinux-keyring --noconfirm
+
+# Set Timezone
+timedatectl set-timezone America/Chicago
 
 # Setup locale.gen
 cat << EOF > /etc/locale.gen
